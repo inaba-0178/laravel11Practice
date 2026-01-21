@@ -43,23 +43,21 @@ return [
             'transaction_mode' => 'DEFERRED',
         ],
 
-        'mysql' => [
+         'mysql' => [
             'driver' => 'mysql',
-            'url' => env('DB_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'laravel'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
+            'host' => env('DB_USER_HOST', 'user-db'),        # user-dbコンテナ
+            'port' => env('DB_USER_PORT', '3308'),           # ホストポート3308
+            'database' => env('USER_DATABASE', 'user_db'),
+            'username' => env('USER_USER', 'user_user'),
+            'password' => env('USER_PASSWORD', 'user_pass'),
             'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => env('DB_CHARSET', 'utf8mb4'),
-            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 
@@ -111,6 +109,27 @@ return [
             'prefix_indexes' => true,
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+        ],
+
+        'mst' => [
+            'driver' => 'mysql',
+            'host' => env('DB_MST_HOST', 'mst-db'),
+            'port' => env('DB_MST_PORT', '3306'),
+            'database' => env('MST_DATABASE', 'mst_db'),
+            'username' => env('MST_USER', 'admin'),
+            'password' => env('MST_PASSWORD', 'mst_pass'),
+            'unix_socket' => env('MST_DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::ATTR_PERSISTENT => true,     // ← 永続的接続
+                PDO::ATTR_TIMEOUT => 5,           // ← タイムアウト5秒
+                PDO::ATTR_EMULATE_PREPARES => true, // ← プリペアドステートメントの高速化
+            ]) : [],
         ],
 
     ],
