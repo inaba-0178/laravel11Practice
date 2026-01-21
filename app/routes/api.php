@@ -22,5 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Region関連のルート
 Route::prefix('regions')->group(function () {
     Route::get('/', GetRegionListController::class)->name('regions.list');
+    Route::get('/grouped', [GetRegionListController::class, 'groupedByArea'])->name('regions.grouped');
 });
+
 

@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('mst_regions', function (Blueprint $table) {
             $table->id();
+            $table->integer('area_code')->nullable();
             $table->string('name');
             $table->string('url')->nullable();
             $table->string('query_param')->nullable();

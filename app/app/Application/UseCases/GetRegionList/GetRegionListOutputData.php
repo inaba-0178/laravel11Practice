@@ -21,6 +21,7 @@ class GetRegionListOutputData
     public function toArray(): array
     {
         return [
+            'success' => true,
             'data' => [
                 'regions' => array_map(fn(Region $region) => $region->toArray(), $this->regions),
                 'count' => $this->count,

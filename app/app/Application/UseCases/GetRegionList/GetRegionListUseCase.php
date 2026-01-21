@@ -15,24 +15,34 @@ class GetRegionListUseCase
     }
 
     /**
-     * Region一覧を取得する
+     * 都道府県一覧を取得する
      * 
-     * @param GetRegionListInputData $inputData
      * @return GetRegionListOutputData
      * @throws Exception
      */
-    public function execute(GetRegionListInputData $inputData): GetRegionListOutputData
+    public function execute(): GetRegionListOutputData
     {
         try {
-            if ($inputData->isActiveOnly()) {
-                $regions = $this->regionRepository->findActive();
-            } else {
-                $regions = $this->regionRepository->findAll();
-            }
-
+            $regions = $this->regionRepository->findActive();
             return new GetRegionListOutputData($regions);
         } catch (Exception $e) {
-            throw new Exception('Region一覧の取得に失敗しました: ' . $e->getMessage());
+            throw new Exception('都道府県一覧の取得に失敗しました: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * 地方ごとに都道府県一覧を取得する
+     * 
+     * @return GetAreaListOutputData
+     * @throws Exception
+     */
+    public function executeGroupedByArea(): GetAreaListOutputData
+    {
+        try {
+            $areas = $this->regionRepository->findAllGroupedByArea();
+            return new GetAreaListOutputData($areas);
+        } catch (Exception $e) {
+            throw new Exception('地方別Region一覧の取得に失敗しました: ' . $e->getMessage());
         }
     }
 }
