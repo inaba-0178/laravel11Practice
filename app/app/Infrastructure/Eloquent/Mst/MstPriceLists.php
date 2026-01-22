@@ -17,10 +17,4 @@ class MstPriceLists extends Model
         'max_amount',
         'is_unlimited',
     ];
-
-    // protected $casts = [
-    //     'area_code' => 'integer',
-    //     'sort_order' => 'integer',
-    // ];
-
 }
