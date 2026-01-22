@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Presentation\Controllers\GetRegionList\GetRegionListController;
+use App\Presentation\Controllers\PriceList\PriceListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +26,8 @@ Route::prefix('regions')->group(function () {
     Route::get('/grouped', [GetRegionListController::class, 'groupedByArea'])->name('regions.grouped');
 });
 
+// Price関連のルート
+Route::prefix('Prices')->group(function () {
+    Route::get('/', PriceListController::class)->name('prices.list');
+});
 
