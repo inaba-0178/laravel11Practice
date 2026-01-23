@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Presentation\Controllers\PriceList;
+namespace App\Presentation\Controllers\MileageList;
 
-use App\Application\UseCases\PriceList\PriceListUseCase;
+use App\Application\UseCases\MileageList\MileageListUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Exception;
 
-class PriceListController extends Controller
+class MileageListController extends Controller
 {
-    private PriceListUseCase $useCase;
+    private MileageListUseCase $useCase;
 
-    public function __construct(PriceListUseCase $useCase)
+    public function __construct(MileageListUseCase $useCase)
     {
         $this->useCase = $useCase;
     }
 
     /**
-     * 価格一覧を取得
+     * 走行距離一覧を取得
      * 
      * @return JsonResponse
      */
