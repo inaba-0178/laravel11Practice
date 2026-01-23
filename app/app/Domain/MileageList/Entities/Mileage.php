@@ -1,22 +1,25 @@
 <?php
 
-namespace App\Domain\PriceList\Entities;
+namespace App\Domain\MileageList\Entities;
 
-class Price
+class Mileage
 {
     private int $id;
     private ?string $name;
-    private float $maxAmount;
+    private ?float $minAmount;
+    private ?float $maxAmount;
     private bool $isUnlimited;
 
     public function __construct(
         int $id,
         ?string $name,
-        float $maxAmount,
+        ?float $minAmount,
+        ?float $maxAmount,
         bool $isUnlimited,
     ) {
         $this->id = $id;
         $this->name = $name;
+        $this->minAmount= $minAmount;
         $this->maxAmount= $maxAmount;
         $this->isUnlimited = $isUnlimited;
     }
@@ -29,6 +32,11 @@ class Price
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getMinAmount(): float
+    {
+        return $this->minAmount;
     }
 
     public function getMaxAmount(): float
@@ -46,6 +54,7 @@ class Price
         return [
             'id' => $this->id,
             'name' => $this->name ?? '',
+            'min_amount' => $this->minAmount,
             'max_amount' => $this->maxAmount,
             'is_unlimited' => $this->isUnlimited,
         ];
