@@ -10,7 +10,7 @@ class MstMileageLists extends Model
     use HasFactory;
 
     protected $connection = 'mst'; 
-    protected $table = 'mst_c_lists';
+    protected $table = 'mst_mileage_lists';
 
     protected $fillable = [
         'name',
