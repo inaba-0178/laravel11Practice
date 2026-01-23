@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Presentation\Controllers\GetRegionList\GetRegionListController;
 use App\Presentation\Controllers\PriceList\PriceListController;
 use App\Presentation\Controllers\MileageList\MileageListController;
+use App\Presentation\Controllers\DisplacementList\DisplacementListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,4 +38,8 @@ Route::prefix('Mileages')->group(function () {
     Route::get('/', MileageListController::class)->name('Mileages.list');
 });
 
+// Displacement関連のルート
+Route::prefix('Displacements')->group(function () {
+    Route::get('/', DisplacementListController::class)->name('Displacements.list');
+});
 
