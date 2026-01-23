@@ -6,6 +6,7 @@ use App\Presentation\Controllers\GetRegionList\GetRegionListController;
 use App\Presentation\Controllers\PriceList\PriceListController;
 use App\Presentation\Controllers\MileageList\MileageListController;
 use App\Presentation\Controllers\DisplacementList\DisplacementListController;
+use App\Presentation\Controllers\RidingCapacityList\RidingCapacityListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,3 +44,7 @@ Route::prefix('Displacements')->group(function () {
     Route::get('/', DisplacementListController::class)->name('Displacements.list');
 });
 
+// RidingCapacity関連のルート
+Route::prefix('RidingCapacities')->group(function () {
+    Route::get('/', RidingCapacityListController::class)->name('RidingCapacities.list');
+});
