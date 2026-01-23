@@ -5,4 +5,5 @@ return [
     App\Providers\RepositoryServiceProvider::class,
     App\Providers\PriceListServiceProvider::class,
     App\Providers\MileageListServiceProvider::class,
+    App\Providers\DisplacementListServiceProvider::class,
 ];
