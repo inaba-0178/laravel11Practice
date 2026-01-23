@@ -52,7 +52,7 @@ class EloquentPriceListRepository implements PriceRepositoryInterface
     {
         return new Price(
             $model->id,
-            $model->range_name,
+            $model->name,
             $model->max_amount,
             $model->is_unlimited,
         );

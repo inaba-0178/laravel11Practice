@@ -13,7 +13,7 @@ class MstPriceLists extends Model
     protected $table = 'mst_price_lists';
 
     protected $fillable = [
-        'range_name',
+        'name',
         'max_amount',
         'is_unlimited',
     ];

@@ -5,18 +5,18 @@ namespace App\Domain\PriceList\Entities;
 class Price
 {
     private int $id;
-    private ?string $rangeName;
+    private ?string $name;
     private float $maxAmount;
     private bool $isUnlimited;
 
     public function __construct(
         int $id,
-        ?string $rangeName,
+        ?string $name,
         float $maxAmount,
         bool $isUnlimited,
     ) {
         $this->id = $id;
-        $this->rangeName = $rangeName;
+        $this->name = $name;
         $this->maxAmount= $maxAmount;
         $this->isUnlimited = $isUnlimited;
     }
@@ -26,9 +26,9 @@ class Price
         return $this->id;
     }
 
-    public function getRangeName(): string
+    public function getName(): string
     {
-        return $this->rangeName;
+        return $this->name;
     }
 
     public function getMaxAmount(): float
@@ -45,7 +45,7 @@ class Price
     {
         return [
             'id' => $this->id,
-            'range_name' => $this->rangeName ?? '',
+            'name' => $this->name ?? '',
             'max_amount' => $this->maxAmount,
             'is_unlimited' => $this->isUnlimited,
         ];
