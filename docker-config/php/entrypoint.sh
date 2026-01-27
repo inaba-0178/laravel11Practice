@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# Laravel自動セットアップ（初回のみ）
 if [ ! -f /var/www/artisan ]; then
     echo "🚀 Initializing Laravel environment..."
     
@@ -17,8 +16,8 @@ if [ ! -f /var/www/artisan ]; then
     chmod -R 775 storage bootstrap/cache database
     chmod 664 database/database.sqlite
     
-    echo "✅ Laravel setup completed!"
+    echo "✁ELaravel setup completed!"
 fi
 
-# php-fpm起動
+# php-fpm起勁E
 exec "$@"

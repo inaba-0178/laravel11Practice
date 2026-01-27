@@ -7,6 +7,7 @@ use App\Presentation\Controllers\PriceList\PriceListController;
 use App\Presentation\Controllers\MileageList\MileageListController;
 use App\Presentation\Controllers\DisplacementList\DisplacementListController;
 use App\Presentation\Controllers\RidingCapacityList\RidingCapacityListController;
+use App\Presentation\Controllers\FeaturedBrandList\FeaturedBrandListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,4 +48,9 @@ Route::prefix('Displacements')->group(function () {
 // RidingCapacity関連のルート
 Route::prefix('RidingCapacities')->group(function () {
     Route::get('/', RidingCapacityListController::class)->name('RidingCapacities.list');
+});
+
+// FeaturedBrand関連のルート
+Route::prefix('FeaturedBrands')->group(function () {
+    Route::get('/', FeaturedBrandListController::class)->name('FeaturedBrands.list');
 });
