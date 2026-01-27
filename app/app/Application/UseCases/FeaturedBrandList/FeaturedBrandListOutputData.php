@@ -2,20 +2,21 @@
 
 namespace App\Application\UseCases\FeaturedBrandList;
 
-use App\Domain\FeaturedBrandList\Entities\FeaturedBrand;
-
+use App\Domain\FeaturedBrandList\Entities\ManufacturerInfo;
 class FeaturedBrandListOutputData
 {
-    private ?array $featuredBrands;
+    private ?array $manufacturerInfo;
     private int $count;
 
     /**
-     * @param FeaturedBrands[] $featuredBrands
+     * @param ManufacturerInfo[] $manufacturerInfo
      */
-    public function __construct(array $featuredBrands)
+    public function __construct(
+        array $manufacturerInfo,
+    )
     {
-        $this->featuredBrands = $featuredBrands;
-        $this->count = count($featuredBrands);
+        $this->manufacturerInfo = $manufacturerInfo;
+        $this->count = count($manufacturerInfo);
     }
 
     public function toArray(): array
@@ -23,19 +24,20 @@ class FeaturedBrandListOutputData
         return [
             'success' => true,
             'data' => [
-                'FeaturedBrandList' => array_map(fn(FeaturedBrand $featuredBrand) => $featuredBrand->toArray(), $this->featuredBrands),
+                'ManufacturerInfo' => array_map( fn($item) => $item instanceof ManufacturerInfo ? $item->toArray() : $item, $this->manufacturerInfo),
                 'count' => $this->count,
             ],
         ];
     }
 
-    public function FeaturedBrands(): array
+    public function ManufacturerInfo(): array
     {
-        return $this->featuredBrands;
+        return $this->manufacturerInfo;
     }
 
     public function getCount(): int
     {
         return $this->count;
     }
+
 }
