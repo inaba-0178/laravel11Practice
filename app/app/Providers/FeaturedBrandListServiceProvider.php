@@ -7,6 +7,8 @@ use App\Infrastructure\Repositories\FeaturedBrandList\EloquentFeaturedBrandListR
 use App\Application\UseCases\FeaturedBrandList\FeaturedBrandListUseCase;
 use App\Domain\FeaturedBrandList\Repositories\ManufacturerRepositoryInterface;
 use App\Infrastructure\Repositories\FeaturedBrandList\EloquentManufacturersRepository;
+use App\Domain\FeaturedBrandList\Repositories\ManufacturerImageRepositoryInterface;
+use App\Infrastructure\Repositories\FeaturedBrandList\EloquentManufacturerImagesRepository;
 use Illuminate\Support\ServiceProvider;
 
 class FeaturedBrandListServiceProvider extends ServiceProvider
@@ -28,10 +30,16 @@ class FeaturedBrandListServiceProvider extends ServiceProvider
             EloquentManufacturersRepository::class,
         );
 
+        $this->app->bind(
+            ManufacturerImageRepositoryInterface::class,
+            EloquentManufacturerImagesRepository::class,
+        );
+
         $this->app->bind(FeaturedBrandListUseCase::class, function ($app) {
             return new FeaturedBrandListUseCase(
                 $app->make(FeaturedBrandRepositoryInterface::class),
                 $app->make(ManufacturerRepositoryInterface::class),
+                $app->make(ManufacturerImageRepositoryInterface::class),
             );
         });
     }

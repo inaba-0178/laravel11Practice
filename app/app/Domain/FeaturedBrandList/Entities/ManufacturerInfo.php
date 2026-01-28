@@ -5,13 +5,16 @@ class ManufacturerInfo
 {
     private FeaturedBrand $featuredBrand;
     private ?Manufacturer $manufacturer;
+    private ?ManufacturerImage $manufacturerImage;
 
     public function __construct(
         FeaturedBrand $featuredBrand, 
-        ?Manufacturer $manufacturer = null
+        ?Manufacturer $manufacturer = null,
+        ?ManufacturerImage $manufacturerImage = null
     ) {
         $this->featuredBrand = $featuredBrand;
         $this->manufacturer = $manufacturer;
+        $this->manufacturerImage = $manufacturerImage;
     }
 
     // ゲッター

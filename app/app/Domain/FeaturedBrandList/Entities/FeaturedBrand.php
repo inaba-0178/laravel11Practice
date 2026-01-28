@@ -8,14 +8,14 @@ class FeaturedBrand
     private ?string $manufacturerCode;
     private ?string $position;
     private int $sortOrder;
-    private bool $isActive;
+    private int $isActive;
 
     public function __construct(
         int $id,
         ?string $manufacturerCode,
         ?string $position,
         int $sortOrder,
-        bool $isActive,
+        int $isActive,
     ) {
         $this->id = $id;
         $this->manufacturerCode = $manufacturerCode;
@@ -44,7 +44,7 @@ class FeaturedBrand
         return $this->sortOrder;
     }
 
-    public function getIsActive(): bool
+    public function getIsActive(): int
     {
         return $this->isActive;
     }
