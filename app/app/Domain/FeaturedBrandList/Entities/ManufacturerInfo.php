@@ -20,7 +20,7 @@ class ManufacturerInfo
     public function getId(): int { return $this->featuredBrand->getId(); }
     public function getPosition(): ?string { return $this->featuredBrand->getPosition(); }
     public function getSortOrder(): int { return $this->featuredBrand->getSortOrder(); }
-    public function getIsActive(): bool { return $this->featuredBrand->getIsActive(); }
+    public function getIsActive(): int { return $this->featuredBrand->getIsActive(); }
     
     public function getName(): ?string { return $this->manufacturer?->getName(); }
     public function getNameKana(): ?string { return $this->manufacturer?->getNameKana(); }

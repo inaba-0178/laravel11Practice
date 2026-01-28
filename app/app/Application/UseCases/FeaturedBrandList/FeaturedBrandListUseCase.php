@@ -10,21 +10,21 @@ use Exception;
 
 class FeaturedBrandListUseCase
 {
-    private FeaturedBrandRepositoryInterface $FeaturedBrandRepository;
-    private ManufacturerRepositoryInterface $ManufacturerRepository;
-    private ManufacturerImageRepositoryInterface $ManufacturerImageRepository;
+    private FeaturedBrandRepositoryInterface $featuredBrandRepository;
+    private ManufacturerRepositoryInterface $manufacturerRepository;
+    private ManufacturerImageRepositoryInterface $manufacturerImageRepository;
     private ManufacturerInfoFactory $factory;
 
     public function __construct(
-        FeaturedBrandRepositoryInterface $FeaturedBrandRepository,
-        ManufacturerRepositoryInterface $ManufacturerRepository,
-        ManufacturerImageRepositoryInterface $ManufacturerImageRepository,
+        FeaturedBrandRepositoryInterface $featuredBrandRepository,
+        ManufacturerRepositoryInterface $manufacturerRepository,
+        ManufacturerImageRepositoryInterface $manufacturerImageRepository,
         ManufacturerInfoFactory $factory
     )
     {
-        $this->FeaturedBrandRepository = $FeaturedBrandRepository;
-        $this->ManufacturerRepository = $ManufacturerRepository;
-        $this->ManufacturerImageRepository = $ManufacturerImageRepository;
+        $this->featuredBrandRepository = $featuredBrandRepository;
+        $this->manufacturerRepository = $manufacturerRepository;
+        $this->manufacturerImageRepository = $manufacturerImageRepository;
         $this->factory = $factory;
     }
 
@@ -37,12 +37,12 @@ class FeaturedBrandListUseCase
     public function execute(): FeaturedBrandListOutputData
     {
         try {
-            $featuredBrands = $this->FeaturedBrandRepository->findActive();
+            $featuredBrands = $this->featuredBrandRepository->findActive();
             $manufacturerCodes = array_map(fn($featuredBrand) => $featuredBrand->getManufacturerCode(), $featuredBrands);
 
-            $manufacturers = $this->ManufacturerRepository->findByCodes($manufacturerCodes);
+            $manufacturers = $this->manufacturerRepository->findByCodes($manufacturerCodes);
             $manufacturerIds = array_map(fn($m) => $m->getId(), $manufacturers);
-            $manufacturerImages = $this->ManufacturerImageRepository->findByManufacturerIds($manufacturerIds);
+            $manufacturerImages = $this->manufacturerImageRepository->findByManufacturerIds($manufacturerIds);
 
             $manufacturerInfoList = $this->factory->createFromFeaturedBrands(
                 $featuredBrands,

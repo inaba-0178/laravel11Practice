@@ -30,7 +30,7 @@ class FeaturedBrandListOutputData
         ];
     }
 
-    public function ManufacturerInfo(): array
+    public function getManufacturerInfo(): array
     {
         return $this->manufacturerInfo;
     }

@@ -9,4 +9,11 @@ interface FeaturedBrandRepositoryInterface
      * @return FeaturedBrand[]
      */
     public function findAll(): array;
+
+    /**
+     * アクティブなFeaturedBrandを取得
+     * 
+     * @return FeaturedBrand[]
+     */
+    public function findActive(): array;
 }
