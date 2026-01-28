@@ -25,8 +25,9 @@ class EloquentFeaturedBrandListRepository implements FeaturedBrandRepositoryInte
     public function findActive(): array
     {
         $featuredBrands = $this->model
+            ->where('is_active', 1)
+            ->orderBy('sort_order')
             ->get();
-
         return $this->toEntities($featuredBrands);
     }
 

@@ -17,7 +17,6 @@ class ManufacturerInfo
         $this->manufacturerImage = $manufacturerImage;
     }
 
-    // ゲッター
     public function getId(): int { return $this->featuredBrand->getId(); }
     public function getPosition(): ?string { return $this->featuredBrand->getPosition(); }
     public function getSortOrder(): int { return $this->featuredBrand->getSortOrder(); }
@@ -27,6 +26,16 @@ class ManufacturerInfo
     public function getNameKana(): ?string { return $this->manufacturer?->getNameKana(); }
     public function getDisplayName(): ?string { return $this->manufacturer?->getDisplayName(); }
     public function getCode(): string { return $this->featuredBrand->getManufacturerCode(); }
+
+    public function getManufacturerImageType(): ?string { 
+        return $this->manufacturerImage?->getImageType(); 
+    }
+    public function getManufacturerImageFilePath(): ?string { 
+        return $this->manufacturerImage?->getFilePath(); 
+    }
+    public function getManufacturerImageAltText(): ?string { 
+        return $this->manufacturerImage?->getAltText(); 
+    }
 
     public function toArray(): array
     {
@@ -42,6 +51,10 @@ class ManufacturerInfo
             'url' => $this->manufacturer?->getUrl() ?? '',
             'description' => $this->manufacturer?->getDescription() ?? '',
             'countryCode' => $this->manufacturer?->getCountryCode() ?? '',
+            'manufacturerIsActive' => $this->manufacturer?->getIsActive() ?? false,
+            'manufacturerImageType' => $this->getManufacturerImageType() ?? '',
+            'manufacturerImageFilePath' => $this->getManufacturerImageFilePath() ?? '',
+            'manufacturerImageAltText' => $this->getManufacturerImageAltText() ?? '',
         ];
     }
 }
