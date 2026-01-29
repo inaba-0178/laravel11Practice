@@ -8,6 +8,7 @@ use App\Presentation\Controllers\MileageList\MileageListController;
 use App\Presentation\Controllers\DisplacementList\DisplacementListController;
 use App\Presentation\Controllers\RidingCapacityList\RidingCapacityListController;
 use App\Presentation\Controllers\FeaturedBrandList\FeaturedBrandListController;
+use App\Presentation\Controllers\FeaturedBodyTypeList\FeaturedBodyTypeListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,4 +54,9 @@ Route::prefix('RidingCapacities')->group(function () {
 // FeaturedBrand関連のルート
 Route::prefix('FeaturedBrands')->group(function () {
     Route::get('/', FeaturedBrandListController::class)->name('FeaturedBrands.list');
+});
+
+// FeaturedBodyTypes関連のルート
+Route::prefix('FeaturedBodyTypes')->group(function () {
+    Route::get('/', FeaturedBodyTypeListController::class)->name('FeaturedBodyTypes.list');
 });
