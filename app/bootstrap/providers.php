@@ -7,4 +7,5 @@ return [
     App\Providers\MileageListServiceProvider::class,
     App\Providers\DisplacementListServiceProvider::class,
     App\Providers\RidingCapacityListServiceProvider::class,
+    App\Providers\FeaturedBrandListServiceProvider::class,
 ];
