@@ -1,5 +1,4 @@
 <?php
-// database/migrations/Mst/xxxx_create_mst_featured_brands_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

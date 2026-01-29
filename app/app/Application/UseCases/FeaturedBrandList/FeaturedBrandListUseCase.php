@@ -36,11 +36,12 @@ class FeaturedBrandListUseCase
      */
     public function execute(): FeaturedBrandListOutputData
     {
-        try {
+        try {            
             $featuredBrands = $this->featuredBrandRepository->findActive();
+            
             $manufacturerCodes = array_map(fn($featuredBrand) => $featuredBrand->getManufacturerCode(), $featuredBrands);
-
             $manufacturers = $this->manufacturerRepository->findByCodes($manufacturerCodes);
+
             $manufacturerIds = array_map(fn($m) => $m->getId(), $manufacturers);
             $manufacturerImages = $this->manufacturerImageRepository->findByManufacturerIds($manufacturerIds);
 
