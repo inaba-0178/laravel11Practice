@@ -29,7 +29,7 @@ class FeaturedBodyTypeListUseCase
     }
 
     /**
-     * topページメーカー一覧表示データ取得する
+     * topページボディタイプ一覧表示データ取得する
      * 
      * @return FeaturedBodyTypeListOutputData
      * @throws Exception
