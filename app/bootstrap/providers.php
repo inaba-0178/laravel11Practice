@@ -8,4 +8,5 @@ return [
     App\Providers\DisplacementListServiceProvider::class,
     App\Providers\RidingCapacityListServiceProvider::class,
     App\Providers\FeaturedBrandListServiceProvider::class,
+    App\Providers\FeaturedBodyTypeListServiceProvider::class,
 ];

@@ -1,64 +1,62 @@
 <?php
-namespace App\Infrastructure\Repositories\FeaturedBrandList; 
+namespace App\Infrastructure\Repositories\FeaturedBodyTypeList; 
 
-use App\Domain\FeaturedBrandList\Entities\Manufacturer;
-use App\Domain\FeaturedBrandList\Repositories\ManufacturerRepositoryInterface;
-use App\Infrastructure\Eloquent\Mst\MstManufacturers;
+use App\Domain\FeaturedBodyTypeList\Entities\BodyType;
+use App\Domain\FeaturedBodyTypeList\Repositories\BodyTypeRepositoryInterface;
+use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
 
-class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
+class EloquentBodyTypesRepository implements BodyTypeRepositoryInterface
 {
-    private MstManufacturers $model;
+    private MstBodyTypes $model;
 
-    public function __construct(MstManufacturers $model)
+    public function __construct(MstBodyTypes $model)
     {
         $this->model = $model;
     }
 
     public function findAll(): array
     {
-        $manufacturers = $this->model
+        $bodyTypes = $this->model
             ->get();
 
-        return $this->toEntities($manufacturers);
+        return $this->toEntities($bodyTypes);
     }
 
     public function findActive(): array
     {
-        $manufacturers = $this->model
+        $bodyTypes = $this->model
             ->get();
 
-        return $this->toEntities($manufacturers);
+        return $this->toEntities($bodyTypes);
     }
 
-    public function findById(int $id): ?Manufacturer
+    public function findById(int $id): ?BodyType
     {
-        $manufacturer = $this->model
+        $bodyType = $this->model
             ->find($id);
 
-        if (!$manufacturer) {
+        if (!$bodyType) {
             return null;
         }
 
-        return $this->toEntity($manufacturer);
+        return $this->toEntity($bodyType);
     }
 
     /**
      * EloquentモデルをEntityに変換
      * 
-     * @param MstManufacturers
-     * @return Manufacturer
+     * @param MstBodyTypes
+     * @return BodyType
      */
-    private function toEntity(MstManufacturers $model): Manufacturer
+    private function toEntity(MstBodyTypes $model): BodyType
     {
-        return new Manufacturer(
+        return new BodyType(
             $model->id,
             $model->name,
             $model->name_kana,
-            $model->display_name,
             $model->code,
-            $model->url,
             $model->description,
-            $model->country_code,
+            $model->available_countries,
             $model->sort_order,
             $model->is_active,
         );
@@ -80,18 +78,16 @@ class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
 
     public function findByCodes(array $codes, array $conditions = []): array
     {
-        return MstManufacturers::whereIn('code', $codes)
+        return MstBodyTypes::whereIn('code', $codes)
             ->orderBy('sort_order')
             ->get()
-            ->map(fn($m) => new Manufacturer(
+            ->map(fn($m) => new BodyType(
                 $m->id,
                 $m->name,
                 $m->name_kana,
-                $m->display_name,
                 $m->code,
-                $m->url,
                 $m->description,
-                $m->country_code,
+                $m->availableCountries,
                 $m->sort_order,
                 $m->is_active,
             ))
