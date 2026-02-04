@@ -9,4 +9,5 @@ return [
     App\Providers\RidingCapacityListServiceProvider::class,
     App\Providers\FeaturedBrandListServiceProvider::class,
     App\Providers\FeaturedBodyTypeListServiceProvider::class,
+    App\Providers\SelectManufacturerListServiceProvider::class,
 ];
