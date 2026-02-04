@@ -28,7 +28,7 @@ class SelectManufacturerListServiceProvider extends ServiceProvider
             EloquentManufacturersRepository::class,
         );
 
-        $this->app->bind(UseCase::class, function ($app) {
+        $this->app->bind(SelectManufacturerListUseCase::class, function ($app) {
             return new SelectManufacturerListUseCase(
                 $app->make(CarSerieRepositoryInterface::class),
                 $app->make(ManufacturerRepositoryInterface::class),

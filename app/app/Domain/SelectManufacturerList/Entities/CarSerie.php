@@ -6,12 +6,12 @@ class CarSerie
 {
     private int $seriesId;
     private ?string $seriesName;
-    private ?string $manufacturerId;
+    private int $manufacturerId;
 
     public function __construct(
         int $seriesId,
         ?string $seriesName,
-        ?string $manufacturerId,
+        int $manufacturerId,
     ) {
         $this->seriesId = $seriesId;
         $this->seriesName = $seriesName;
@@ -28,7 +28,7 @@ class CarSerie
         return $this->seriesName;
     }
 
-    public function getManufacturerId(): string
+    public function getManufacturerId(): int
     {
         return $this->manufacturerId;
     }
@@ -38,7 +38,7 @@ class CarSerie
         return [
             'seriesId' => $this->seriesId,
             'seriesName' => $this->seriesName ?? '',
-            'manufacturerId' => $this->manufacturerId ?? '',
+            'manufacturerId' => $this->manufacturerId,
         ];
     }
 

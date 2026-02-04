@@ -42,6 +42,15 @@ class EloquentCarSeriesRepository implements CarSerieRepositoryInterface
         return $this->toEntity($carSerie);
     }
 
+    public function findByManufacturerId(int $manufacturerId, array $conditions = []): array
+    {
+        $carSeries = $this->model
+            ->where('manufacturer_id', $manufacturerId)
+            ->get();
+            
+        return $this->toEntities($carSeries);
+    }
+
     /**
      * EloquentモデルをEntityに変換
      * 
@@ -55,18 +64,6 @@ class EloquentCarSeriesRepository implements CarSerieRepositoryInterface
             $model->series_name,
             $model->manufacturer_id,
         );
-    }
-
-    public function findByManufacturerId(int $manufacturerId, array $conditions = []): array
-    {
-        return MstCarSeries::where('manufacturer_id', $manufacturerId)
-            ->get()
-            ->map(fn($m) => new CarSerie(
-                $m->series_id,
-                $m->series_name,
-                $m->manufacturer_id,
-            ))
-            ->toArray();
     }
 
     /**
