@@ -9,6 +9,7 @@ use App\Presentation\Controllers\DisplacementList\DisplacementListController;
 use App\Presentation\Controllers\RidingCapacityList\RidingCapacityListController;
 use App\Presentation\Controllers\FeaturedBrandList\FeaturedBrandListController;
 use App\Presentation\Controllers\FeaturedBodyTypeList\FeaturedBodyTypeListController;
+use App\Presentation\Controllers\SelectManufacturerList\SelectManufacturerListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,4 +60,9 @@ Route::prefix('FeaturedBrands')->group(function () {
 // FeaturedBodyTypes関連のルート
 Route::prefix('FeaturedBodyTypes')->group(function () {
     Route::get('/', FeaturedBodyTypeListController::class)->name('FeaturedBodyTypes.list');
+});
+
+// SelectManufacturerList関連のルート
+Route::prefix('SelectManufacturers')->group(function () {
+    Route::get('/', SelectManufacturerListController::class)->name('SelectManufacturers.list');
 });
