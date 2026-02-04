@@ -46,9 +46,11 @@ services:
       MYSQL_PASSWORD: ${MST_PASSWORD}
       TZ: Asia/Tokyo
     volumes:
-      - ./docker-config/mariadb/mst/data:/var/lib/mysql  # ← DBデータ保持！
-      - ./docker-config/mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
+      - mst-db-data:/var/lib/mysql  # ← 名前付きボリューム使用
       - ./docker-config/mariadb/mst/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
       interval: 10s
@@ -69,9 +71,11 @@ services:
       MYSQL_PASSWORD: ${USER_PASSWORD}
       TZ: Asia/Tokyo
     volumes:
-      - ./docker-config/mariadb/user/data:/var/lib/mysql  # ← DBデータ保持！
-      - ./docker-config/mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
+      - user-db-data:/var/lib/mysql  # ← 名前付きボリューム使用
       - ./docker-config/mariadb/user/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
       interval: 10s
@@ -83,3 +87,7 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  mst-db-data:  # ← 名前付きボリューム定義
+  user-db-data:  # ← 名前付きボリューム定義
