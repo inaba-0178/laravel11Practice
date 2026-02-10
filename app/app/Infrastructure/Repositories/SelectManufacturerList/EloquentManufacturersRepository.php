@@ -2,6 +2,7 @@
 namespace App\Infrastructure\Repositories\SelectManufacturerList; 
 
 use App\Domain\SelectManufacturerList\Repositories\ManufacturerRepositoryInterface;
+use App\Domain\SelectManufacturerList\Entities\Manufacturer;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
 
 class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
@@ -13,11 +14,30 @@ class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
         $this->model = $model;
     }
 
-    public function findByName(string $name): ?int
+    public function findByName(string $name): ?Manufacturer
     {
         $manufacturer = $this->model::where('name', $name)
             ->first();
-            
-        return $manufacturer?->id;  // NULL安全演算子
+
+        return $manufacturer ? $this->toEntity($manufacturer) : null;
+    }
+
+    /**
+     * EloquentモデルをEntityに変換
+     * 
+     * @param MstManufacturers
+     * @return Manufacturer
+     */
+    private function toEntity(MstManufacturers $model): Manufacturer
+    {
+        return new Manufacturer(
+            $model->id,
+            $model->name,
+            $model->display_name,
+            $model->url,
+            $model->description,
+            $model->country_code,
+            $model->is_active,
+        );
     }
 }

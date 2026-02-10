@@ -7,6 +7,7 @@ use App\Infrastructure\Repositories\SelectManufacturerList\EloquentCarSeriesRepo
 use App\Application\UseCases\SelectManufacturerList\SelectManufacturerListUseCase;
 use App\Domain\SelectManufacturerList\Repositories\ManufacturerRepositoryInterface;
 use App\Infrastructure\Repositories\SelectManufacturerList\EloquentManufacturersRepository;
+use App\Domain\Common\Services\JapaneseInitialGroupingService;
 use Illuminate\Support\ServiceProvider;
 
 class SelectManufacturerListServiceProvider extends ServiceProvider
@@ -28,10 +29,15 @@ class SelectManufacturerListServiceProvider extends ServiceProvider
             EloquentManufacturersRepository::class,
         );
 
+        $this->app->singleton(JapaneseInitialGroupingService::class, function ($app) {
+            return new JapaneseInitialGroupingService();
+        });
+
         $this->app->bind(SelectManufacturerListUseCase::class, function ($app) {
             return new SelectManufacturerListUseCase(
                 $app->make(CarSerieRepositoryInterface::class),
                 $app->make(ManufacturerRepositoryInterface::class),
+                $app->make(JapaneseInitialGroupingService::class),
             );
         });
     }
