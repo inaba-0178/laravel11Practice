@@ -33,7 +33,6 @@ class SelectManufacturerListOutputData
             'success' => true,
             'data' => [
                 'ManufacturerInfo' => $this->manufacturer?->toArray(),
-                'VehicleInfo' => array_map(fn(CarSerie $carSerie) => $carSerie->toArray(), $this->carSeries),
                 'count' => $this->count,
             ],
         ];
