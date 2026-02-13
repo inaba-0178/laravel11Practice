@@ -9,7 +9,6 @@ use App\Infrastructure\Repositories\SelectBodyTypeList\EloquentCarSeriesReposito
 use App\Application\UseCases\SelectBodyTypeList\SelectBodyTypeListUseCase;
 use App\Domain\SelectBodyTypeList\Repositories\BodyTypeRepositoryInterface;
 use App\Infrastructure\Repositories\SelectBodyTypeList\EloquentBodyTypeRepository;
-use App\Domain\Common\Services\JapaneseInitialGroupingService;
 use Illuminate\Support\ServiceProvider;
 
 class SelectBodyTypeListServiceProvider extends ServiceProvider
@@ -36,16 +35,11 @@ class SelectBodyTypeListServiceProvider extends ServiceProvider
             EloquentBodyTypeRepository::class,
         );
 
-        $this->app->singleton(JapaneseInitialGroupingService::class, function ($app) {
-            return new JapaneseInitialGroupingService();
-        });
-
         $this->app->bind(SelectBodyTypeListUseCase::class, function ($app) {
             return new SelectBodyTypeListUseCase(
                 $app->make(CarSeriesBodyTypeRepositoryInterface::class),
                 $app->make(CarSerieRepositoryInterface::class),
                 $app->make(BodyTypeRepositoryInterface::class),
-                //$app->make(JapaneseInitialGroupingService::class),
             );
         });
     }

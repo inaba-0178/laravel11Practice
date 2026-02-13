@@ -5,10 +5,10 @@ use Exception;
 
 class BodyTypeNotFoundException extends Exception
 {
-    public function __construct(string $BodyTypeName, ?Exception $previous = null)
+    public function __construct(string $bodyTypeName, ?Exception $previous = null)
     {
         parent::__construct(
-            "ボディタイプ '{$BodyTypeName}' が見つかりませんでした。",
+            "ボディタイプ '{$bodyTypeName}' が見つかりませんでした。",
             404,
             $previous
         );

@@ -57,9 +57,14 @@ class EloquentBodyTypeRepository implements BodyTypeRepositoryInterface
 
     public function findByBodyType(string $code, array $conditions = []): BodyType
     {
-        $manufacturer = $this->model::where('code', $code)
+        $bodyType = $this->model::where('code', $code)
             ->first();
+        
+        if ($bodyType === null) {
+            // 空のエンティティを返すか、例外を投げる
+            return new BodyType(0, null, null, null, null, null, 0, 0);
+        }
 
-        return $this->toEntity($manufacturer);
+        return $this->toEntity($bodyType);
     }
 }

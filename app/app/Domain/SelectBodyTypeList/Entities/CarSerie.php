@@ -4,18 +4,18 @@ namespace App\Domain\SelectBodyTypeList\Entities;
 
 class CarSerie
 {
-    private int $seriesId;
+    private int     $seriesId;
     private ?string $seriesName;
-    private int $BodyTypeId;
+    private int     $bodyTypeId;
 
     public function __construct(
-        int $seriesId,
+        int     $seriesId,
         ?string $seriesName,
-        int $BodyTypeId,
+        int     $bodyTypeId,
     ) {
-        $this->seriesId = $seriesId;
-        $this->seriesName = $seriesName;
-        $this->BodyTypeId = $BodyTypeId;
+        $this->seriesId     = $seriesId;
+        $this->seriesName   = $seriesName;
+        $this->bodyTypeId   = $bodyTypeId;
     }
 
     public function getSeriesId(): int
@@ -30,15 +30,15 @@ class CarSerie
 
     public function getBodyTypeId(): int
     {
-        return $this->BodyTypeId;
+        return $this->bodyTypeId;
     }
 
     public function toArray(): array
     {
         return [
-            'seriesId' => $this->seriesId,
-            'seriesName' => $this->seriesName ?? '',
-            'BodyTypeId' => $this->BodyTypeId,
+            'seriesId'      => $this->seriesId,
+            'seriesName'    => $this->seriesName ?? '',
+            'BodyTypeId'    => $this->bodyTypeId,
         ];
     }
 

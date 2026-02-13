@@ -4,33 +4,33 @@ namespace App\Domain\SelectBodyTypeList\Entities;
 
 class BodyType
 {
-    private int $id;
+    private int     $id;
     private ?string $name;
     private ?string $nameKana;
     private ?string $code;
     private ?string $description;
-    private ?array $availableCountries;
-    private int $sortOrder;
-    private int $isActive;
+    private ?array  $availableCountries;
+    private int     $sortOrder;
+    private int     $isActive;
 
     public function __construct(
-        int $id,
+        int     $id,
         ?string $name,
         ?string $nameKana,
         ?string $code,
         ?string $description,
-        ?array $availableCountries,
-        int $sortOrder,
-        int $isActive,
+        ?array  $availableCountries,
+        int     $sortOrder,
+        int     $isActive,
     ) {
-        $this->id = $id;
-        $this->name = $name;
-        $this->nameKana = $nameKana;
-        $this->code = $code;
-        $this->description = $description;
-        $this->availableCountries = $availableCountries;
-        $this->sortOrder = $sortOrder;
-        $this->isActive = $isActive;
+        $this->id                   = $id;
+        $this->name                 = $name;
+        $this->nameKana             = $nameKana;
+        $this->code                 = $code;
+        $this->description          = $description;
+        $this->availableCountries   = $availableCountries;
+        $this->sortOrder            = $sortOrder;
+        $this->isActive             = $isActive;
     }
 
     public function getId(): int
@@ -76,14 +76,14 @@ class BodyType
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name ?? '',
-            'nameKana' => $this->nameKana ?? '',
-            'code' => $this->code ?? '',
-            'description' => $this->description ?? '',
-            'availableCountries' => $this->availableCountries,
-            'sortOrder' => $this->sortOrder,
-            'isActive' => $this->isActive,
+            'id'                    => $this->id,
+            'name'                  => $this->name ?? '',
+            'nameKana'              => $this->nameKana ?? '',
+            'code'                  => $this->code ?? '',
+            'description'           => $this->description ?? '',
+            'availableCountries'    => $this->availableCountries,
+            'sortOrder'             => $this->sortOrder,
+            'isActive'              => $this->isActive,
         ];
     }
 
