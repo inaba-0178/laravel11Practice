@@ -38,7 +38,7 @@ class CarSerie
         return [
             'seriesId'      => $this->seriesId,
             'seriesName'    => $this->seriesName ?? '',
-            'BodyTypeId'    => $this->bodyTypeId,
+            'bodyTypeId'    => $this->bodyTypeId,
         ];
     }
 

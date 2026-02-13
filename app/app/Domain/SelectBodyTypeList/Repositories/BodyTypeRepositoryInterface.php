@@ -6,9 +6,9 @@ use App\Domain\SelectBodyTypeList\Entities\BodyType;
 interface BodyTypeRepositoryInterface
 {
     /**
-     * すべてのCarSerieを取得
+     * すべてのBodyTypeを取得
      * 
-     * @return CarSerie[]
+     * @return BodyType[]
      */
     public function findAll(): array;
 

@@ -36,7 +36,7 @@ class CarSeriesBodyType
     public function toArray(): array
     {
         return [
-            'id'            => $this->seriesId,
+            'id'            => $this->id,
             'seriesId'      => $this->seriesId,
             'bodyTypeId'    => $this->bodyTypeId,
         ];
