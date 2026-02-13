@@ -10,4 +10,5 @@ return [
     App\Providers\FeaturedBrandListServiceProvider::class,
     App\Providers\FeaturedBodyTypeListServiceProvider::class,
     App\Providers\SelectManufacturerListServiceProvider::class,
+    App\Providers\SelectBodyTypeListServiceProvider::class,
 ];
