@@ -31,7 +31,7 @@ class EloquentCarSeriesRepository implements CarSerieRepositoryInterface
         return new CarSerie(
             $model->series_id,
             $model->series_name,
-            $model->manufacturer_id, // ← ここは実際のカラム名に合わせてください
+            $model->manufacturer_id,
         );
     }
 
