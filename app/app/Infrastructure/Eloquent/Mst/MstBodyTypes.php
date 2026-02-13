@@ -23,5 +23,7 @@ class MstBodyTypes extends Model
         'is_active',
     ];
 
-
+    protected $casts = [
+        'available_countries' => 'array',
+    ];
 }
