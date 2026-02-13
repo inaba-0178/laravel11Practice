@@ -25,7 +25,10 @@ class SelectBodyTypeListOutputData
         $response = [
             'success' => true,
             'data' => [
-                'BodyTypeCarList' => $this->carSeries,
+                'BodyTypeCarList' => array_map(
+                    fn(CarSerie $carSerie) => $carSerie->toArray(), 
+                    $this->carSeries
+                ),
                 'count' => $this->count,
             ],
         ];
