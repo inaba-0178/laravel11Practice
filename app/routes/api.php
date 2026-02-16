@@ -12,6 +12,8 @@ use App\Presentation\Controllers\FeaturedBodyTypeList\FeaturedBodyTypeListContro
 use App\Presentation\Controllers\SelectManufacturerList\SelectManufacturerListController;
 use App\Presentation\Controllers\SelectBodyTypeList\SelectBodyTypeListController;
 use App\Presentation\Controllers\ManufacturerList\ManufacturerListController;
+use App\Presentation\Controllers\BodyTypeInfo\BodyTypeInfoController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -77,4 +79,9 @@ Route::prefix('SelectBodyTypeLists')->group(function () {
 // Manufacturer関連のルート
 Route::prefix('Manufacturers')->group(function () {
     Route::get('/', ManufacturerListController::class)->name('Manufacturers.list');
+});
+
+// BodyTypeInfo関連のルート
+Route::prefix('BodyTypeInfo')->group(function () {
+    Route::get('/', BodyTypeInfoController::class)->name('BodyTypeInfo.list');
 });
