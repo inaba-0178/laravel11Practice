@@ -1,24 +1,16 @@
 <?php
-
 namespace App\Application\UseCases\ManufacturerList;
 
 use App\Domain\ManufacturerList\Entities\Manufacturer;
 
 class ManufacturerListOutputData
 {
-    private ?array $manufacturerIds;
-    private int $count;
-
     /**
-     * @param manufacturerIds[] $manufacturerIds
+     * @param Manufacturer[] $manufacturers
      */
     public function __construct(
-        array $manufacturerIds,
-    )
-    {
-        $this->manufacturerIds = $manufacturerIds;
-        $this->count = count($manufacturerIds);
-    }
+        private readonly array $manufacturers,
+    ) {}
 
     public function toArray(): array
     {
@@ -27,21 +19,23 @@ class ManufacturerListOutputData
             'data' => [
                 'ManufacturerList' => array_map(
                     fn(Manufacturer $manufacturer) => $manufacturer->toArray(), 
-                    $this->manufacturerIds
+                    $this->manufacturers
                 ),
-                'count' => $this->count,
+                'count' => count($this->manufacturers),
             ],
         ];
     }
 
-    public function getManufacturerInfo(): array
+    /**
+     * @return Manufacturer[]
+     */
+    public function getManufacturers(): array
     {
-        return $this->manufacturerInfo;
+        return $this->manufacturers;
     }
 
     public function getCount(): int
     {
-        return $this->count;
+        return count($this->manufacturers);
     }
-
 }

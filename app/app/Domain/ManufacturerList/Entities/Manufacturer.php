@@ -2,42 +2,20 @@
 
 namespace App\Domain\ManufacturerList\Entities;
 
-class Manufacturer
+final class Manufacturer  // finalを追加（エンティティは継承させない）
 {
-    private int $id;
-    private ?string $name;
-    private ?string $nameKana;
-    private ?string $displayName;
-    private ?string $code;
-    private ?string $url;
-    private ?string $description;
-    private ?string $countryCode;
-    private int $sortOrder;
-    private int $isActive;
-
     public function __construct(
-        int $id,
-        ?string $name,
-        ?string $nameKana,
-        ?string $displayName,
-        ?string $code,
-        ?string $url,
-        ?string $description,
-        ?string $countryCode,
-        int $sortOrder,
-        int $isActive,
-    ) {
-        $this->id = $id;
-        $this->name = $name;
-        $this->nameKana = $nameKana;
-        $this->displayName = $displayName;
-        $this->code = $code;
-        $this->url = $url;
-        $this->description = $description;
-        $this->countryCode = $countryCode;
-        $this->sortOrder = $sortOrder;
-        $this->isActive = $isActive;
-    }
+        private readonly int $id,
+        private readonly ?string $name,
+        private readonly ?string $nameKana,
+        private readonly ?string $displayName,
+        private readonly ?string $code,
+        private readonly ?string $url,
+        private readonly ?string $description,
+        private readonly ?string $countryCode,
+        private readonly int $sortOrder,
+        private readonly int $isActive,
+    ) {}
 
     public function getId(): int
     {
@@ -92,16 +70,16 @@ class Manufacturer
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name ?? '',
-            'nameKana' => $this->nameKana ?? '',
-            'displayName' => $this->displayName ?? '',
-            'code' => $this->code ?? '',
-            'url' => $this->url ?? '',
-            'description' => $this->description ?? '',
-            'countryCode' => $this->countryCode ?? '',
-            'sortOrder' => $this->sortOrder,
-            'isActive' => $this->isActive,
+            'id'            => $this->id,
+            'name'          => $this->name ?? '',
+            'nameKana'      => $this->nameKana ?? '',
+            'displayName'   => $this->displayName ?? '',
+            'code'          => $this->code ?? '',
+            'url'           => $this->url ?? '',
+            'description'   => $this->description ?? '',
+            'countryCode'   => $this->countryCode ?? '',
+            'sortOrder'     => $this->sortOrder,
+            'isActive'      => $this->isActive,
         ];
     }
 
