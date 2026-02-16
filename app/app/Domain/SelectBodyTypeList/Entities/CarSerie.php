@@ -6,16 +6,16 @@ class CarSerie
 {
     private int     $seriesId;
     private ?string $seriesName;
-    private int     $bodyTypeId;
+    private int     $manufacturerId;
 
     public function __construct(
         int     $seriesId,
         ?string $seriesName,
-        int     $bodyTypeId,
+        int     $manufacturerId,
     ) {
-        $this->seriesId     = $seriesId;
-        $this->seriesName   = $seriesName;
-        $this->bodyTypeId   = $bodyTypeId;
+        $this->seriesId         = $seriesId;
+        $this->seriesName       = $seriesName;
+        $this->manufacturerId   = $manufacturerId;
     }
 
     public function getSeriesId(): int
@@ -28,17 +28,17 @@ class CarSerie
         return $this->seriesName;
     }
 
-    public function getBodyTypeId(): int
+    public function getManufacturerId(): int
     {
-        return $this->bodyTypeId;
+        return $this->manufacturerId;
     }
 
     public function toArray(): array
     {
         return [
-            'seriesId'      => $this->seriesId,
-            'seriesName'    => $this->seriesName ?? '',
-            'bodyTypeId'    => $this->bodyTypeId,
+            'seriesId'          => $this->seriesId,
+            'seriesName'        => $this->seriesName ?? '',
+            'manufacturerId'    => $this->manufacturerId,
         ];
     }
 
