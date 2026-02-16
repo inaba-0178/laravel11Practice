@@ -7,48 +7,54 @@ use App\Domain\BodyTypeInfo\Exceptions\BodyTypeNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use InvalidArgumentException;
-use Illuminate\Http\Request; 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class BodyTypeInfoController extends Controller
 {
-    private BodyTypeInfoUseCase $useCase;
-
-    public function __construct(BodyTypeInfoUseCase $useCase)
-    {
-        $this->useCase = $useCase;
-    }
+    public function __construct(
+        private readonly BodyTypeInfoUseCase $useCase
+    ) {}
 
     /**
      * 選択したボディタイプデータ取得
-     * 
-     * @return JsonResponse
      */
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            $bodyTypeName = new BodyTypeName($request->get('bodyTypeName'));
-
+            $bodyTypeNameParam = $request->get('bodyTypeName');
+            
+            if (empty($bodyTypeNameParam)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'bodyTypeNameパラメータが必要です',
+                ], 400);
+            }
+            
+            $bodyTypeName = new BodyTypeName($bodyTypeNameParam);
             $outputData = $this->useCase->execute($bodyTypeName);
             
             return response()->json($outputData->toArray());
             
         } catch (InvalidArgumentException $e) {
-            // バリデーションエラー → 422
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 422);
             
         } catch (BodyTypeNotFoundException $e) {
-            // リソース未検出 → 404
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 404);
-
+            
         } catch (Exception $e) {
-            // その他の予期しないエラー → 500
+            Log::error('BodyType info error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'サーバーエラーが発生しました。',

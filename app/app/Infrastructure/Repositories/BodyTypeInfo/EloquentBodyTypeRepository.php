@@ -3,68 +3,57 @@ namespace App\Infrastructure\Repositories\BodyTypeInfo;
 
 use App\Domain\BodyTypeInfo\Repositories\BodyTypeRepositoryInterface;
 use App\Domain\BodyTypeInfo\Entities\BodyType;
+use App\Domain\BodyTypeInfo\Exceptions\BodyTypeNotFoundException;
 use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
+use Illuminate\Support\Collection;
 
 class EloquentBodyTypeRepository implements BodyTypeRepositoryInterface
 {
-    private MstBodyTypes $model;
-
-    public function __construct(MstBodyTypes $model)
-    {
-        $this->model = $model;
-    }
+    public function __construct(
+        private readonly MstBodyTypes $model
+    ) {}
 
     public function findAll(): array
     {
-        $bodyTypes = $this->model
-            ->get();
-
+        $bodyTypes = $this->model->get();
         return $this->toEntities($bodyTypes);
     }
 
     /**
-     * EloquentモデルをEntityに変換
-     * 
-     * @param MstBodyTypes
-     * @return BodyType
+     * @throws BodyTypeNotFoundException
      */
+    public function findByBodyType(string $code): BodyType
+    {
+        $bodyType = $this->model
+            ->where('code', $code)
+            ->first();
+        
+        if ($bodyType === null) {
+            throw new BodyTypeNotFoundException($code);
+        }
+        
+        return $this->toEntity($bodyType);
+    }
+
     private function toEntity(MstBodyTypes $model): BodyType
     {
         return new BodyType(
-            $model->id,
-            $model->name,
-            $model->name_kana,
-            $model->code,
-            $model->description,
-            $model->available_countries,
-            $model->sort_order,
-            $model->is_active,
+            id: $model->id,
+            name: $model->name,
+            nameKana: $model->name_kana,
+            code: $model->code,
+            description: $model->description,
+            availableCountries: $model->available_countries,
+            sortOrder: $model->sort_order,
+            isActive: $model->is_active,
         );
     }
 
     /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @param  $models
-     * @return array
+     * @return BodyType[]
      */
-    private function toEntities($models): array
+    private function toEntities(Collection $models): array
     {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
-    }
-
-    public function findByBodyType(string $code, array $conditions = []): BodyType
-    {
-        $bodyType = $this->model::where('code', $code)
-            ->first();
-        
-        if ($bodyType === null) {
-            // 空のエンティティを返すか、例外を投げる
-            return new BodyType(0, null, null, null, null, null, 0, 0);
-        }
-
-        return $this->toEntity($bodyType);
+        return $models->map(fn($model) => $this->toEntity($model))->all();
     }
 }

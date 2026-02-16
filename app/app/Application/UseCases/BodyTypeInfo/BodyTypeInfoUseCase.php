@@ -7,35 +7,21 @@ use App\Domain\BodyTypeInfo\Exceptions\BodyTypeNotFoundException;
 
 class BodyTypeInfoUseCase
 {
-    private BodyTypeRepositoryInterface $bodyTypeRepository;
-
     public function __construct(
-        BodyTypeRepositoryInterface $bodyTypeRepository,
-    )
-    {
-        $this->bodyTypeRepository = $bodyTypeRepository;
-    }
+        private readonly BodyTypeRepositoryInterface $bodyTypeRepository,
+    ) {}
 
     /**
-     * 対象のメーカーデータ取得する
+     * 対象のボディタイプデータ取得する
      * 
      * @return BodyTypeInfoOutputData
      * @throws BodyTypeNotFoundException
      */
-    public function execute(BodyTypeName $bodyTypeName) : BodyTypeInfoOutputData
+    public function execute(BodyTypeName $bodyTypeName): BodyTypeInfoOutputData
     {
-        try {
-            $bodyType = $this->bodyTypeRepository->findByBodyType($bodyTypeName->getValue());
-
-            // メーカーが見つからない場合
-            if ($bodyType->getId() === null) {
-                throw new BodyTypeNotFoundException($bodyTypeName->getValue());
-            }
-            return new BodyTypeInfoOutputData($bodyType);
-
-        } catch (BodyTypeNotFoundException $e) {
-            throw $e;
-            
-        }
+        $bodyType = $this->bodyTypeRepository->findByBodyType($bodyTypeName->getValue());
+        
+        // リポジトリ層で例外を投げるべき（後述）
+        return new BodyTypeInfoOutputData($bodyType);
     }
 }

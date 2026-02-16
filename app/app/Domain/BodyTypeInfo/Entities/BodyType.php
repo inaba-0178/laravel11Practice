@@ -1,54 +1,35 @@
 <?php
-
 namespace App\Domain\BodyTypeInfo\Entities;
 
-class BodyType
+final class BodyType
 {
-    private int     $id;
-    private ?string $name;
-    private ?string $nameKana;
-    private ?string $code;
-    private ?string $description;
-    private ?array  $availableCountries;
-    private int     $sortOrder;
-    private int     $isActive;
-
     public function __construct(
-        int     $id,
-        ?string $name,
-        ?string $nameKana,
-        ?string $code,
-        ?string $description,
-        ?array  $availableCountries,
-        int     $sortOrder,
-        int     $isActive,
-    ) {
-        $this->id                   = $id;
-        $this->name                 = $name;
-        $this->nameKana             = $nameKana;
-        $this->code                 = $code;
-        $this->description          = $description;
-        $this->availableCountries   = $availableCountries;
-        $this->sortOrder            = $sortOrder;
-        $this->isActive             = $isActive;
-    }
+        private readonly int $id,
+        private readonly ?string $name,
+        private readonly ?string $nameKana,
+        private readonly ?string $code,
+        private readonly ?string $description,
+        private readonly ?array $availableCountries,
+        private readonly int $sortOrder,
+        private readonly int $isActive,
+    ) {}
 
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getNameKana(): string
+    public function getNameKana(): ?string
     {
         return $this->nameKana;
     }
 
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }
@@ -58,6 +39,9 @@ class BodyType
         return $this->description;
     }
 
+    /**
+     * @return string[]|null
+     */
     public function getAvailableCountries(): ?array
     {
         return $this->availableCountries;
@@ -76,15 +60,14 @@ class BodyType
     public function toArray(): array
     {
         return [
-            'id'                    => $this->id,
-            'name'                  => $this->name ?? '',
-            'nameKana'              => $this->nameKana ?? '',
-            'code'                  => $this->code ?? '',
-            'description'           => $this->description ?? '',
-            'availableCountries'    => $this->availableCountries,
-            'sortOrder'             => $this->sortOrder,
-            'isActive'              => $this->isActive,
+            'id'                 => $this->id,
+            'name'               => $this->name ?? '',
+            'nameKana'           => $this->nameKana ?? '',
+            'code'               => $this->code ?? '',
+            'description'        => $this->description ?? '',
+            'availableCountries' => $this->availableCountries ?? [],
+            'sortOrder'          => $this->sortOrder,
+            'isActive'           => $this->isActive,
         ];
     }
-
 }

@@ -1,28 +1,19 @@
 <?php
-
 namespace App\Domain\BodyTypeInfo\ValueObjects;
 
 use InvalidArgumentException;
 
-class BodyTypeName
+final class BodyTypeName
 {
-    private string $value;
+    private readonly string $value;
 
-    public function __construct(mixed $value)
+    public function __construct(string $value)  // ← mixed を削除
     {
-        $this->validate($value);
-        $this->value = (string) $value;
-    }
-
-    private function validate(mixed $value): void
-    {
-        if ($value === null || $value === '') {
+        if ($value === '') {
             throw new InvalidArgumentException('BodyTypeNameは必須です。');
         }
-
-        if (!is_string($value)) {
-            throw new InvalidArgumentException('BodyTypeNameは文字列である必要があります。');
-        }
+        
+        $this->value = $value;
     }
 
     public function getValue(): string
