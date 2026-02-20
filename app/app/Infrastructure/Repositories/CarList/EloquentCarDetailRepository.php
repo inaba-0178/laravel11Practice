@@ -17,7 +17,9 @@ class EloquentCarDetailRepository implements CarDetailRepositoryInterface
      */
     public function findByCarId(array $carId): array
     {
-        
+        if (empty($carId)) {
+            return [];
+        }
         $carDetails = $this->model
             ->whereIn('car_id', $carId)
             ->get();
@@ -30,8 +32,8 @@ class EloquentCarDetailRepository implements CarDetailRepositoryInterface
         return new CarDetail(
             id                      : $model->id,
             carId                   : $model->car_id ?? 0,
-            firstRegistrationDate   : $model->first_registration_date,
-            inspectionExpireDate    : $model->inspection_expire_date,
+            firstRegistrationDate   : $model->first_registration_date ? new \DateTimeImmutable($model->first_registration_date) : null,
+            inspectionExpireDate    : $model->inspection_expire_date ? new \DateTimeImmutable($model->inspection_expire_date) : null,
             inspectionStatus        : $model->inspection_status ?? '',
             driveSystem             : $model->drive_system,
             displacement            : $model->displacement,

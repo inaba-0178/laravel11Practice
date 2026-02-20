@@ -2,8 +2,8 @@
 namespace App\Presentation\Controllers\CarList;
 
 use App\Application\UseCases\CarList\CarListUseCase;
-use App\Domain\CarList\ValueObjects\seriesId;
-use App\Domain\CarList\Exceptions\CarListNotFoundException;
+use App\Domain\CarList\ValueObjects\SeriesId;
+use App\Domain\CarList\Exceptions\CarNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use InvalidArgumentException;
@@ -31,7 +31,7 @@ class CarListController extends Controller
                 ], 400);
             }
             
-            $seriesId = new seriesId($seriesIdParam);
+            $seriesId = new SeriesId($seriesIdParam);
             $outputData = $this->useCase->execute($seriesId);
             
             return response()->json($outputData->toArray());
@@ -42,7 +42,7 @@ class CarListController extends Controller
                 'message' => $e->getMessage(),
             ], 422);
             
-        } catch (CarListNotFoundException $e) {
+        } catch (CarNotFoundException $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),

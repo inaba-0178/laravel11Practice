@@ -9,8 +9,8 @@ final class SeriesId
 
     public function __construct(int $value)
     {
-        if ($value === '') {
-            throw new InvalidArgumentException('SeriesIdは必須です。');
+        if ($value <= 0) {
+            throw new InvalidArgumentException('SeriesIdは正の整数である必要があります。');
         }
         
         $this->value = $value;

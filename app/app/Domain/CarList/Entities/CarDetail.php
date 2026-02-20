@@ -27,7 +27,7 @@ final class CarDetail
         return $this->id;
     }
 
-    public function getCarId(): int
+    public function getCarId(): ?int
     {
         return $this->carId;
     }
@@ -60,11 +60,6 @@ final class CarDetail
     public function getSteeringWheel(): string
     {
         return $this->steeringWheel;
-    }
-
-    public function getPriceDisplayType(): string
-    {
-        return $this->priceDisplayType;
     }
 
     public function getNumberOfDoors(): int
