@@ -13,6 +13,7 @@ use App\Presentation\Controllers\SelectManufacturerList\SelectManufacturerListCo
 use App\Presentation\Controllers\SelectBodyTypeList\SelectBodyTypeListController;
 use App\Presentation\Controllers\ManufacturerList\ManufacturerListController;
 use App\Presentation\Controllers\BodyTypeInfo\BodyTypeInfoController;
+use App\Presentation\Controllers\CarList\CarListController;
 
 
 /*
@@ -84,4 +85,9 @@ Route::prefix('Manufacturers')->group(function () {
 // BodyTypeInfo関連のルート
 Route::prefix('BodyTypeInfo')->group(function () {
     Route::get('/', BodyTypeInfoController::class)->name('BodyTypeInfo.list');
+});
+
+// CarList関連のルート
+Route::prefix('CarList')->group(function () {
+    Route::get('/', CarListController::class)->name('CarList.list');
 });

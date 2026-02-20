@@ -13,4 +13,5 @@ return [
     App\Providers\SelectBodyTypeListServiceProvider::class,
     App\Providers\ManufacturerListServiceProvider::class,
     App\Providers\BodyTypeInfoServiceProvider::class,
+    App\Providers\CarServiceProvider::class,
 ];
