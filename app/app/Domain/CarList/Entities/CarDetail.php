@@ -18,8 +18,8 @@ final class CarDetail
         public readonly ?int                $loanAvailable,
         public readonly ?string             $description,
         public readonly ?string             $freeText,
-        public readonly string              $seoTitle,
-        public readonly string              $seoDescription,
+        public readonly ?string             $seoTitle,
+        public readonly ?string             $seoDescription,
     ) {}
 
     public function getId(): int
@@ -62,7 +62,7 @@ final class CarDetail
         return $this->steeringWheel;
     }
 
-    public function getNumberOfDoors(): int
+    public function getNumberOfDoors(): ?int
     {
         return $this->numberOfDoors;
     }
@@ -105,9 +105,9 @@ final class CarDetail
     public function toArray(): array
     {
         return [
-            'carId'                 => $this->carId ?? 0,
-            'firstRegistrationDate' => $this->firstRegistrationDate?->format('Y-m-d H:i:s'),
-            'inspectionExpireDate'  => $this->inspectionExpireDate?->format('Y-m-d H:i:s'),
+            'carId'                 => $this->carId,
+            'firstRegistrationDate' => $this->firstRegistrationDate?->format('Y-m-d'),
+            'inspectionExpireDate'  => $this->inspectionExpireDate?->format('Y-m-d'),
             'inspectionStatus'      => $this->inspectionStatus ?? '',
             'steeringWheel'         => $this->steeringWheel,
             'numberOfDoors'         => $this->numberOfDoors,

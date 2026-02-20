@@ -49,7 +49,7 @@ class CarListController extends Controller
             ], 404);
             
         } catch (Exception $e) {
-            Log::error('BodyType info error:', [
+            Log::error('CarList error:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
