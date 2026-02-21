@@ -24,11 +24,6 @@ final class Region
         $this->sortOrder    = $sortOrder ?? 0;
     }
 
-    public function getArea(): ?Area
-    {
-        return $this->area;
-    }
-
     public function getId(): int
     {
         return $this->id;
@@ -39,17 +34,17 @@ final class Region
         return $this->areaCode;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getQueryParam(): string
+    public function getQueryParam(): ?string
     {
         return $this->queryParam;
     }
 
-    public function getSortOrder(): int
+    public function getSortOrder(): ?int
     {
         return $this->sortOrder;
     }
@@ -58,7 +53,7 @@ final class Region
     {
         return [
             'id'            => $this->id,
-            'areacode'      => $this->name ?? '',
+            'areaCode'      => $this->areaCode,
             'name'          => $this->name ?? '',
             'queryParam'    => $this->queryParam ?? '',
             'sortOrder'     => $this->sortOrder ?? 0,

@@ -37,10 +37,6 @@ class AreaCarServiceProvider extends ServiceProvider
             EloquentRegionRepository::class,
         );
 
-        $this->app->bind(AreaCarListDomainService::class, function ($app) {
-            return new AreaCarListDomainService();
-        });
-
         $this->app->bind(AreaCarListUseCase::class, function ($app) {
             return new AreaCarListUseCase(
                 $app->make(CarRepositoryInterface::class),

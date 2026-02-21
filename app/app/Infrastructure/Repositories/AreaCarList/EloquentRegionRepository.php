@@ -16,11 +16,11 @@ class EloquentRegionRepository implements RegionRepositoryInterface
 
     public function findAll(): array
     {
-        $areas = $this->model
+        $regions = $this->model
             ->orderBy('sort_order')
             ->get();
 
-        return $areas->map(fn (MstRegions $area) => $this->toEntity($area))->all();
+        return $regions->map(fn (MstRegions $region) => $this->toEntity($region))->all();
     }
 
     /**

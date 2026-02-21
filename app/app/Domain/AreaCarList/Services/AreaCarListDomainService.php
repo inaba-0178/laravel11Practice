@@ -8,7 +8,7 @@ class AreaCarListDomainService
         // 1. regionId => count のマップを作成
         $carCountByRegion = [];
         foreach ($cars as $car) {
-            $carCountByRegion[$car->regionId] = ($carCountByRegion[$car->regionId] ?? 0) + 1;
+            $carCountByRegion[$car->getRegionId()] = ($carCountByRegion[$car->regionId] ?? 0) + 1;
         }
 
         // 2. areaCode => Region[] のマップを作成
