@@ -26,7 +26,7 @@ class DisplacementListUseCase
             $displacements = $this->displacementRepository->findActive();
             return new DisplacementListOutputData($displacements);
         } catch (Exception $e) {
-            throw new Exception('排気量一覧の取得に失敗しました: ' . $e->getMessage());
+            throw new Exception('排気量一覧の取得に失敗しました: ' . $e->getMessage(), 0, $e);
         }
     }
 }

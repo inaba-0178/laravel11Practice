@@ -6,6 +6,7 @@ use App\Application\UseCases\DisplacementList\DisplacementListUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class DisplacementListController extends Controller
 {
@@ -27,10 +28,14 @@ class DisplacementListController extends Controller
             $outputData = $this->useCase->execute();
             return response()->json($outputData->toArray());
         } catch (Exception $e) {
+            Log::error('DisplacementList error:', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-            ], 404);
+                'message' => 'サーバーエラーが発生しました。',
+            ], 500);
         }
     }
 }

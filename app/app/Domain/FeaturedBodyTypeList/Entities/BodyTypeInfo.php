@@ -47,7 +47,7 @@ class BodyTypeInfo
             'nameKana'              => $this->getNameKana() ?? '',
             'code'                  => $this->getCode(),
             'description'           => $this->bodyType?->getDescription() ?? '',
-            'availableCountries'    => $this->bodyType?->getAvailableCountries() ?? '',
+            'availableCountries'    => $this->bodyType?->getAvailableCountries() ?? [],
             'bodyTypeIsActive'      => $this->bodyType?->getIsActive() ?? false,
             'bodyTypeImageType'     => $this->getBodyTypeImageType() ?? '',
             'bodyTypeImageFilePath' => $this->getBodyTypeImageFilePath() ?? '',

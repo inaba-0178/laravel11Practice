@@ -8,7 +8,7 @@ interface BodyTypeRepositoryInterface
      * 
      * @param array $codes
      * @param array $conditions
-     * @return BodyTypeImage[]
+     * @return BodyType[]
      */
     public function findByCodes(array $codes, array $conditions = []): array;
 }

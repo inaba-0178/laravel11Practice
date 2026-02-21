@@ -14,12 +14,12 @@ class EloquentDisplacementListRepository implements DisplacementRepositoryInterf
         $this->model = $model;
     }
 
-    public function findAll(): array
+    public function findActive(): array
     {
-        $displacementLists = $this->model
+        $displacements = $this->model
             ->get();
 
-        return $this->toEntities($displacementLists);
+        return $this->toEntities($displacements);
     }
 
     /**

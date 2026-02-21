@@ -8,5 +8,5 @@ interface DisplacementRepositoryInterface
      * 
      * @return Displacement[]
      */
-    public function findAll(): array;
+    public function findActive(): array;
 }
