@@ -2,26 +2,26 @@
 
 namespace App\Domain\DisplacementList\Entities;
 
-class Displacement
+final class Displacement
 {
-    private int $id;
-    private ?string $name;
-    private ?float $minAmount;
-    private ?float $maxAmount;
-    private bool $isUnlimited;
+    private readonly int     $id;
+    private readonly ?string $name;
+    private readonly ?float  $minAmount;
+    private readonly ?float  $maxAmount;
+    private readonly bool    $isUnlimited;
 
     public function __construct(
-        int $id,
+        int     $id,
         ?string $name,
-        ?float $minAmount,
-        ?float $maxAmount,
-        bool $isUnlimited,
+        ?float  $minAmount,
+        ?float  $maxAmount,
+        bool    $isUnlimited,
     ) {
-        $this->id = $id;
-        $this->name = $name;
-        $this->minAmount= $minAmount;
-        $this->maxAmount= $maxAmount;
-        $this->isUnlimited = $isUnlimited;
+        $this->id           = $id;
+        $this->name         = $name;
+        $this->minAmount    = $minAmount;
+        $this->maxAmount    = $maxAmount;
+        $this->isUnlimited  = $isUnlimited;
     }
 
     public function getId(): int
@@ -29,17 +29,17 @@ class Displacement
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getMinAmount(): float
+    public function getMinAmount(): ?float
     {
         return $this->minAmount;
     }
 
-    public function getMaxAmount(): float
+    public function getMaxAmount(): ?float
     {
         return $this->maxAmount;
     }
@@ -52,11 +52,11 @@ class Displacement
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name ?? '',
-            'min_amount' => $this->minAmount,
-            'max_amount' => $this->maxAmount,
-            'is_unlimited' => $this->isUnlimited,
+            'id'            => $this->id,
+            'name'          => $this->name ?? '',
+            'min_amount'    => $this->minAmount ?? 0,
+            'max_amount'    => $this->maxAmount ?? 0,
+            'is_unlimited'  => $this->isUnlimited,
         ];
     }
 }

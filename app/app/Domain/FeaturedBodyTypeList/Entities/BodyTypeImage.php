@@ -1,35 +1,35 @@
 <?php
 namespace App\Domain\FeaturedBodyTypeList\Entities;
 
-class BodyTypeImage
+final class BodyTypeImage
 {
-    private int $id;
-    private int $bodyTypeId;
-    private ?string $imageType;
-    private ?string $filePath;
-    private ?string $altText;
-    private int $sortOrder;
-    private int $isMain;
-    private int $isActive;
+    private readonly int        $id;
+    private readonly int        $bodyTypeId;
+    private readonly ?string    $imageType;
+    private readonly ?string    $filePath;
+    private readonly ?string    $altText;
+    private readonly int        $sortOrder;
+    private readonly int        $isMain;
+    private readonly int        $isActive;
 
     public function __construct(
-        int $id,
-        int $bodyTypeId,
+        int     $id,
+        int     $bodyTypeId,
         ?string $imageType,
         ?string $filePath,
         ?string $altText,
-        int $sortOrder,
-        int $isMain,
-        int $isActive,
+        int     $sortOrder,
+        int     $isMain,
+        int     $isActive,
     ) {
-        $this->id = $id;
-        $this->bodyTypeId = $bodyTypeId;
-        $this->imageType = $imageType;
-        $this->filePath = $filePath;
-        $this->altText = $altText;
-        $this->sortOrder = $sortOrder;
-        $this->isMain = $isMain;
-        $this->isActive = $isActive;
+        $this->id           = $id;
+        $this->bodyTypeId   = $bodyTypeId;
+        $this->imageType    = $imageType;
+        $this->filePath     = $filePath;
+        $this->altText      = $altText;
+        $this->sortOrder    = $sortOrder;
+        $this->isMain       = $isMain;
+        $this->isActive     = $isActive;
     }
 
     public function getId(): int
@@ -75,14 +75,14 @@ class BodyTypeImage
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'bodyTypeId' => $this->bodyTypeId,
-            'imageType' => $this->imageType ?? '',
-            'filePath' => $this->filePath ?? '',
-            'altText' => $this->altText ?? '',
-            'sortOrder' => $this->sortOrder,
-            'isMain' => $this->isMain,
-            'isActive' => $this->isActive,
+            'id'            => $this->id,
+            'bodyTypeId'    => $this->bodyTypeId,
+            'imageType'     => $this->imageType ?? '',
+            'filePath'      => $this->filePath ?? '',
+            'altText'       => $this->altText ?? '',
+            'sortOrder'     => $this->sortOrder,
+            'isMain'        => $this->isMain,
+            'isActive'      => $this->isActive,
         ];
     }
 

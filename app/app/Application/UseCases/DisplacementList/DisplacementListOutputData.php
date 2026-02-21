@@ -6,16 +6,16 @@ use App\Domain\DisplacementList\Entities\Displacement;
 
 class DisplacementListOutputData
 {
-    private ?array $displacements;
-    private int $count;
+    private ?array  $displacements;
+    private int     $count;
 
     /**
      * @param Displacement[] $displacements
      */
     public function __construct(array $displacements)
     {
-        $this->displacements = $displacements;
-        $this->count = count($displacements);
+        $this->displacements    = $displacements;
+        $this->count            = count($displacements);
     }
 
     public function toArray(): array
@@ -24,7 +24,7 @@ class DisplacementListOutputData
             'success' => true,
             'data' => [
                 'DisplacementList' => array_map(fn(Displacement $displacement) => $displacement->toArray(), $this->displacements),
-                'count' => $this->count,
+                'count'            => $this->count,
             ],
         ];
     }

@@ -22,26 +22,6 @@ class EloquentDisplacementListRepository implements DisplacementRepositoryInterf
         return $this->toEntities($displacementLists);
     }
 
-    public function findActive(): array
-    {
-        $displacements = $this->model
-            ->get();
-
-        return $this->toEntities($displacements);
-    }
-
-    public function findById(int $id): ?Displacement
-    {
-        $displacement = $this->model
-            ->find($id);
-
-        if (!$displacement) {
-            return null;
-        }
-
-        return $this->toEntity($displacement);
-    }
-
     /**
      * EloquentモデルをEntityに変換
      * 

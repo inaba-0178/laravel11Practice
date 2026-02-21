@@ -2,26 +2,26 @@
 
 namespace App\Domain\FeaturedBodyTypeList\Entities;
 
-class FeaturedBodyType
+final class FeaturedBodyType
 {
-    private int $id;
-    private ?string $bodyTypeCode;
-    private ?string $position;
-    private int $sortOrder;
-    private int $isActive;
+    private readonly int        $id;
+    private readonly ?string    $bodyTypeCode;
+    private readonly ?string    $position;
+    private readonly int        $sortOrder;
+    private readonly int        $isActive;
 
     public function __construct(
-        int $id,
+        int     $id,
         ?string $bodyTypeCode,
         ?string $position,
-        int $sortOrder,
-        int $isActive,
+        int     $sortOrder,
+        int     $isActive,
     ) {
-        $this->id = $id;
+        $this->id           = $id;
         $this->bodyTypeCode = $bodyTypeCode;
-        $this->position= $position;
-        $this->sortOrder = $sortOrder;
-        $this->isActive = $isActive;
+        $this->position     = $position;
+        $this->sortOrder    = $sortOrder;
+        $this->isActive     = $isActive;
     }
 
     public function getId(): int
@@ -52,11 +52,11 @@ class FeaturedBodyType
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'bodyTypeCode' => $this->bodyTypeCode ?? '',
-            'position' => $this->position,
-            'sortOrder' => $this->sortOrder,
-            'isActive' => $this->isActive,
+            'id'            => $this->id,
+            'bodyTypeCode'  => $this->bodyTypeCode ?? '',
+            'position'      => $this->position,
+            'sortOrder'     => $this->sortOrder,
+            'isActive'      => $this->isActive,
         ];
     }
 }

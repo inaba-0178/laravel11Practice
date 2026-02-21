@@ -4,11 +4,11 @@ namespace App\Domain\FeaturedBodyTypeList\Repositories;
 interface BodyTypeRepositoryInterface
 {
     /**
-     * すべてのbodyTypeを取得
+     * 指定されたボディタイプIDに紐づく画像を取得
      * 
-     * @return Manufacturer[]
+     * @param array $codes
+     * @param array $conditions
+     * @return BodyTypeImage[]
      */
-    public function findAll(): array;
-
     public function findByCodes(array $codes, array $conditions = []): array;
 }

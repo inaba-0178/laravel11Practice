@@ -14,33 +14,14 @@ class EloquentFeaturedBodyTypeListRepository implements FeaturedBodyTypeReposito
         $this->model = $model;
     }
 
-    public function findAll(): array
-    {
-        $featuredBodyTypeLists = $this->model
-            ->get();
-
-        return $this->toEntities($featuredBodyTypeLists);
-    }
-
     public function findActive(): array
     {
         $featuredBodyTypes = $this->model
             ->where('is_active', 1)
             ->orderBy('sort_order')
             ->get();
-        return $this->toEntities($featuredBodyTypes);
-    }
 
-    public function findById(int $id): ?FeaturedBodyType
-    {
-        $featuredBodyType = $this->model
-            ->find($id);
-
-        if (!$featuredBodyType) {
-            return null;
-        }
-
-        return $this->toEntity($featuredBodyType);
+        return $featuredBodyTypes->map(fn (MstFeaturedBodyTypes $featuredBodyType) => $this->toEntity($featuredBodyType))->all();
     }
 
     /**
@@ -60,18 +41,4 @@ class EloquentFeaturedBodyTypeListRepository implements FeaturedBodyTypeReposito
         );
 
     }
-
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @param  $models
-     * @return array
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
-    }
-
 }

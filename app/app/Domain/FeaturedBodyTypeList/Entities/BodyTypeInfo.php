@@ -3,18 +3,18 @@ namespace App\Domain\FeaturedBodyTypeList\Entities;
 
 class BodyTypeInfo 
 {
-    private FeaturedBodyType $featuredBodyType;
-    private ?BodyType $bodyType;
-    private ?BodyTypeImage $bodyTypeImage;
+    private FeaturedBodyType    $featuredBodyType;
+    private ?BodyType           $bodyType;
+    private ?BodyTypeImage      $bodyTypeImage;
 
     public function __construct(
-        FeaturedBodyType $featuredBodyType, 
-        ?BodyType $bodyType = null,
-        ?BodyTypeImage $bodyTypeImage = null
+        FeaturedBodyType    $featuredBodyType, 
+        ?BodyType           $bodyType = null,
+        ?BodyTypeImage      $bodyTypeImage = null
     ) {
         $this->featuredBodyType = $featuredBodyType;
-        $this->bodyType = $bodyType;
-        $this->bodyTypeImage = $bodyTypeImage;
+        $this->bodyType         = $bodyType;
+        $this->bodyTypeImage    = $bodyTypeImage;
     }
 
     public function getId(): int { return $this->featuredBodyType->getId(); }
@@ -39,19 +39,19 @@ class BodyTypeInfo
     public function toArray(): array
     {
         return [
-            'id' => $this->getId(),
-            'position' => $this->getPosition(),
-            'sortOrder' => $this->getSortOrder(),
-            'isActive' => $this->getIsActive(),
-            'name' => $this->getName() ?? '',
-            'nameKana' => $this->getNameKana() ?? '',
-            'code' => $this->getCode(),
-            'description' => $this->bodyType?->getDescription() ?? '',
-            'availableCountries' => $this->bodyType?->getAvailableCountries() ?? '',
-            'bodyTypeIsActive' => $this->bodyType?->getIsActive() ?? false,
-            'bodyTypeImageType' => $this->getBodyTypeImageType() ?? '',
+            'id'                    => $this->getId(),
+            'position'              => $this->getPosition(),
+            'sortOrder'             => $this->getSortOrder(),
+            'isActive'              => $this->getIsActive(),
+            'name'                  => $this->getName() ?? '',
+            'nameKana'              => $this->getNameKana() ?? '',
+            'code'                  => $this->getCode(),
+            'description'           => $this->bodyType?->getDescription() ?? '',
+            'availableCountries'    => $this->bodyType?->getAvailableCountries() ?? '',
+            'bodyTypeIsActive'      => $this->bodyType?->getIsActive() ?? false,
+            'bodyTypeImageType'     => $this->getBodyTypeImageType() ?? '',
             'bodyTypeImageFilePath' => $this->getBodyTypeImageFilePath() ?? '',
-            'bodyTypeImageAltText' => $this->getBodyTypeImageAltText() ?? '',
+            'bodyTypeImageAltText'  => $this->getBodyTypeImageAltText() ?? '',
         ];
     }
 }

@@ -11,21 +11,21 @@ use Exception;
 class FeaturedBodyTypeListUseCase
 {
     private FeaturedBodyTypeRepositoryInterface $featuredBodyTypeRepository;
-    private BodyTypeRepositoryInterface $bodyTypeRepository;
-    private BodyTypeImageRepositoryInterface $bodyTypeImageRepository;
-    private BodyTypeInfoFactory $factory;
+    private BodyTypeRepositoryInterface         $bodyTypeRepository;
+    private BodyTypeImageRepositoryInterface    $bodyTypeImageRepository;
+    private BodyTypeInfoFactory                 $factory;
 
     public function __construct(
         FeaturedBodyTypeRepositoryInterface $featuredBodyTypeRepository,
-        BodyTypeRepositoryInterface $bodyTypeRepository,
-        BodyTypeImageRepositoryInterface $bodyTypeImageRepository,
-        BodyTypeInfoFactory $factory
+        BodyTypeRepositoryInterface         $bodyTypeRepository,
+        BodyTypeImageRepositoryInterface    $bodyTypeImageRepository,
+        BodyTypeInfoFactory                 $factory
     )
     {
-        $this->featuredBodyTypeRepository = $featuredBodyTypeRepository;
-        $this->bodyTypeRepository = $bodyTypeRepository;
-        $this->bodyTypeImageRepository = $bodyTypeImageRepository;
-        $this->factory = $factory;
+        $this->featuredBodyTypeRepository   = $featuredBodyTypeRepository;
+        $this->bodyTypeRepository           = $bodyTypeRepository;
+        $this->bodyTypeImageRepository      = $bodyTypeImageRepository;
+        $this->factory                      = $factory;
     }
 
     /**
