@@ -26,8 +26,8 @@ class EloquentBodyTypesRepository implements BodyTypeRepositoryInterface
     /**
      * EloquentモデルをEntityに変換
      * 
-     * @param MstBodyTypes
-     * @return BodyType
+     * @param   MstBodyTypes
+     * @return  BodyType
      */
     private function toEntity(MstBodyTypes $model): BodyType
     {

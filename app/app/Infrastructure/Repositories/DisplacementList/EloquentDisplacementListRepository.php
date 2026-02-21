@@ -19,14 +19,15 @@ class EloquentDisplacementListRepository implements DisplacementRepositoryInterf
         $displacements = $this->model
             ->get();
 
-        return $this->toEntities($displacements);
+        return $displacements->map(fn (MstDisplacementLists $displacement) => $this->toEntity($displacement))->all();
+        
     }
 
     /**
      * EloquentモデルをEntityに変換
      * 
-     * @param MstDisplacementLists
-     * @return Displacement
+     * @param   MstDisplacementLists
+     * @return  Displacement
      */
     private function toEntity(MstDisplacementLists $model): Displacement
     {
@@ -38,19 +39,6 @@ class EloquentDisplacementListRepository implements DisplacementRepositoryInterf
             $model->is_unlimited,
         );
 
-    }
-
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @param  $models
-     * @return array
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
     }
 
 }

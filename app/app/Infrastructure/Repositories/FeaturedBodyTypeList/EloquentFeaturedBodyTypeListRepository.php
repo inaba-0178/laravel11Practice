@@ -27,8 +27,8 @@ class EloquentFeaturedBodyTypeListRepository implements FeaturedBodyTypeReposito
     /**
      * EloquentモデルをEntityに変換
      * 
-     * @param MstFeaturedBodyTypes
-     * @return FeaturedBodyType
+     * @param   MstFeaturedBodyTypes
+     * @return  FeaturedBodyType
      */
     private function toEntity(MstFeaturedBodyTypes $model): FeaturedBodyType
     {

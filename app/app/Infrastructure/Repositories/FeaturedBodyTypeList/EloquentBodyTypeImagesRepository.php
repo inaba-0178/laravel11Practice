@@ -27,8 +27,8 @@ class EloquentBodyTypeImagesRepository implements BodyTypeImageRepositoryInterfa
     /**
      * EloquentモデルをEntityに変換
      * 
-     * @param MstBodyTypeImages
-     * @return BodyTypeImage
+     * @param   MstBodyTypeImages
+     * @return  BodyTypeImage
      */
     private function toEntity(MstBodyTypeImages $model): BodyTypeImage
     {

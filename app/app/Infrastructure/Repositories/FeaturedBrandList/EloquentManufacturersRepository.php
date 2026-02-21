@@ -14,32 +14,14 @@ class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
         $this->model = $model;
     }
 
-    public function findAll(): array
+    public function findByCodes(array $codes, array $conditions = []): array
     {
         $manufacturers = $this->model
+            ->whereIn('code', $codes)
+            ->orderBy('sort_order')
             ->get();
 
-        return $this->toEntities($manufacturers);
-    }
-
-    public function findActive(): array
-    {
-        $manufacturers = $this->model
-            ->get();
-
-        return $this->toEntities($manufacturers);
-    }
-
-    public function findById(int $id): ?Manufacturer
-    {
-        $manufacturer = $this->model
-            ->find($id);
-
-        if (!$manufacturer) {
-            return null;
-        }
-
-        return $this->toEntity($manufacturer);
+        return $manufacturers->map(fn (MstManufacturers $manufacturer) => $this->toEntity($manufacturer))->all();
     }
 
     /**
@@ -65,36 +47,4 @@ class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
 
     }
 
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @param  $models
-     * @return array
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
-    }
-
-    public function findByCodes(array $codes, array $conditions = []): array
-    {
-        return MstManufacturers::whereIn('code', $codes)
-            ->orderBy('sort_order')
-            ->get()
-            ->map(fn($m) => new Manufacturer(
-                $m->id,
-                $m->name,
-                $m->name_kana,
-                $m->display_name,
-                $m->code,
-                $m->url,
-                $m->description,
-                $m->country_code,
-                $m->sort_order,
-                $m->is_active,
-            ))
-            ->toArray();
-    }
 }

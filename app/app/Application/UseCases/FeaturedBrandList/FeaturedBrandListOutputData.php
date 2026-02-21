@@ -5,8 +5,8 @@ namespace App\Application\UseCases\FeaturedBrandList;
 use App\Domain\FeaturedBrandList\Entities\ManufacturerInfo;
 class FeaturedBrandListOutputData
 {
-    private ?array $manufacturerInfo;
-    private int $count;
+    private ?array  $manufacturerInfo;
+    private int     $count;
 
     /**
      * @param ManufacturerInfo[] $manufacturerInfo
@@ -15,8 +15,8 @@ class FeaturedBrandListOutputData
         array $manufacturerInfo,
     )
     {
-        $this->manufacturerInfo = $manufacturerInfo;
-        $this->count = count($manufacturerInfo);
+        $this->manufacturerInfo     = $manufacturerInfo;
+        $this->count                = count($manufacturerInfo);
     }
 
     public function toArray(): array
@@ -24,8 +24,8 @@ class FeaturedBrandListOutputData
         return [
             'success' => true,
             'data' => [
-                'ManufacturerInfo' => array_map( fn($item) => $item instanceof ManufacturerInfo ? $item->toArray() : $item, $this->manufacturerInfo),
-                'count' => $this->count,
+                'ManufacturerInfo'  => array_map( fn($item) => $item instanceof ManufacturerInfo ? $item->toArray() : $item, $this->manufacturerInfo),
+                'count'             => $this->count,
             ],
         ];
     }

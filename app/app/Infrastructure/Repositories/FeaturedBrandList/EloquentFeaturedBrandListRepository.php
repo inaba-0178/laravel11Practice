@@ -14,40 +14,21 @@ class EloquentFeaturedBrandListRepository implements FeaturedBrandRepositoryInte
         $this->model = $model;
     }
 
-    public function findAll(): array
-    {
-        $featuredBrandLists = $this->model
-            ->get();
-
-        return $this->toEntities($featuredBrandLists);
-    }
-
     public function findActive(): array
     {
         $featuredBrands = $this->model
             ->where('is_active', 1)
             ->orderBy('sort_order')
             ->get();
-        return $this->toEntities($featuredBrands);
-    }
 
-    public function findById(int $id): ?FeaturedBrand
-    {
-        $featuredBrand = $this->model
-            ->find($id);
-
-        if (!$featuredBrand) {
-            return null;
-        }
-
-        return $this->toEntity($featuredBrand);
+        return $featuredBrands->map(fn (MstFeaturedBrands $featuredBrand) => $this->toEntity($featuredBrand))->all();
     }
 
     /**
      * EloquentモデルをEntityに変換
      * 
-     * @param MstFeaturedBrands
-     * @return FeaturedBrand
+     * @param   MstFeaturedBrands
+     * @return  FeaturedBrand
      */
     private function toEntity(MstFeaturedBrands $model): FeaturedBrand
     {
@@ -60,18 +41,4 @@ class EloquentFeaturedBrandListRepository implements FeaturedBrandRepositoryInte
         );
 
     }
-
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @param  $models
-     * @return array
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
-    }
-
 }

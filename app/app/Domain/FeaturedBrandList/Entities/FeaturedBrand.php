@@ -2,26 +2,26 @@
 
 namespace App\Domain\FeaturedBrandList\Entities;
 
-class FeaturedBrand
+final class FeaturedBrand
 {
-    private int $id;
-    private ?string $manufacturerCode;
-    private ?string $position;
-    private int $sortOrder;
-    private int $isActive;
+    private readonly int        $id;
+    private readonly ?string    $manufacturerCode;
+    private readonly ?string    $position;
+    private readonly int        $sortOrder;
+    private readonly int        $isActive;
 
     public function __construct(
-        int $id,
+        int     $id,
         ?string $manufacturerCode,
         ?string $position,
-        int $sortOrder,
-        int $isActive,
+        int     $sortOrder,
+        int     $isActive,
     ) {
-        $this->id = $id;
+        $this->id               = $id;
         $this->manufacturerCode = $manufacturerCode;
-        $this->position= $position;
-        $this->sortOrder = $sortOrder;
-        $this->isActive = $isActive;
+        $this->position         = $position;
+        $this->sortOrder        = $sortOrder;
+        $this->isActive         = $isActive;
     }
 
     public function getId(): int
@@ -29,12 +29,12 @@ class FeaturedBrand
         return $this->id;
     }
 
-    public function getManufacturerCode(): string
+    public function getManufacturerCode(): ?string
     {
         return $this->manufacturerCode;
     }
 
-    public function getPosition(): string
+    public function getPosition(): ?string
     {
         return $this->position;
     }
@@ -52,11 +52,11 @@ class FeaturedBrand
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'manufacturerCode' => $this->manufacturerCode ?? '',
-            'position' => $this->position,
-            'sortOrder' => $this->sortOrder,
-            'isActive' => $this->isActive,
+            'id'                => $this->id,
+            'manufacturerCode'  => $this->manufacturerCode ?? '',
+            'position'          => $this->position ?? '',
+            'sortOrder'         => $this->sortOrder,
+            'isActive'          => $this->isActive,
         ];
     }
 }

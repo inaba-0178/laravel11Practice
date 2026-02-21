@@ -14,39 +14,22 @@ class EloquentManufacturerImagesRepository implements ManufacturerImageRepositor
         $this->model = $model;
     }
 
-    public function findAll(): array
+    //
+    public function findByManufacturerIds(array $manufacturerIds, array $conditions = []): array
     {
         $manufacturerImages = $this->model
+            ->whereIn('manufacturer_id', $manufacturerIds)
+            ->orderBy('sort_order')
             ->get();
 
-        return $this->toEntities($manufacturerImages);
-    }
-
-    public function findActive(): array
-    {
-        $manufacturerImages = $this->model
-            ->get();
-
-        return $this->toEntities($manufacturerImages);
-    }
-
-    public function findById(int $id): ?ManufacturerImage
-    {
-        $manufacturerImage = $this->model
-            ->find($id);
-
-        if (!$manufacturerImage) {
-            return null;
-        }
-
-        return $this->toEntity($manufacturerImage);
+        return $manufacturerImages->map(fn (MstManufacturerImages $manufacturerImage) => $this->toEntity($manufacturerImage))->all();
     }
 
     /**
      * EloquentモデルをEntityに変換
      * 
-     * @param MstManufacturerImages
-     * @return ManufacturerImage
+     * @param   MstManufacturerImages
+     * @return  ManufacturerImage
      */
     private function toEntity(MstManufacturerImages $model): ManufacturerImage
     {
@@ -63,35 +46,4 @@ class EloquentManufacturerImagesRepository implements ManufacturerImageRepositor
 
     }
 
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @param  $models
-     * @return array
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
-    }
-
-    //
-    public function findByManufacturerIds(array $manufacturerIds, array $conditions = []): array
-    {
-        return MstManufacturerImages::whereIn('manufacturer_id', $manufacturerIds)
-            ->orderBy('sort_order')
-            ->get()
-            ->map(fn($m) => new ManufacturerImage(
-                $m->id,
-                $m->manufacturer_id,
-                $m->image_type,
-                $m->file_path,
-                $m->alt_text,
-                $m->sort_order,
-                $m->is_main,
-                $m->is_active,
-            ))
-            ->toArray();
-    }
 }

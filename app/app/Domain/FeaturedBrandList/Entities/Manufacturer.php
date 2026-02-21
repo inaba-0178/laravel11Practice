@@ -2,21 +2,21 @@
 
 namespace App\Domain\FeaturedBrandList\Entities;
 
-class Manufacturer
+final class Manufacturer
 {
-    private int $id;
-    private ?string $name;
-    private ?string $nameKana;
-    private ?string $displayName;
-    private ?string $code;
-    private ?string $url;
-    private ?string $description;
-    private ?string $countryCode;
-    private int $sortOrder;
-    private int $isActive;
+    private readonly int        $id;
+    private readonly ?string    $name;
+    private readonly ?string    $nameKana;
+    private readonly ?string    $displayName;
+    private readonly ?string    $code;
+    private readonly ?string    $url;
+    private readonly ?string    $description;
+    private readonly ?string    $countryCode;
+    private readonly int        $sortOrder;
+    private readonly int        $isActive;
 
     public function __construct(
-        int $id,
+        int     $id,
         ?string $name,
         ?string $nameKana,
         ?string $displayName,
@@ -24,19 +24,19 @@ class Manufacturer
         ?string $url,
         ?string $description,
         ?string $countryCode,
-        int $sortOrder,
-        int $isActive,
+        int     $sortOrder,
+        int     $isActive,
     ) {
-        $this->id = $id;
-        $this->name = $name;
-        $this->nameKana = $nameKana;
-        $this->displayName = $displayName;
-        $this->code = $code;
-        $this->url = $url;
-        $this->description = $description;
-        $this->countryCode = $countryCode;
-        $this->sortOrder = $sortOrder;
-        $this->isActive = $isActive;
+        $this->id           = $id;
+        $this->name         = $name;
+        $this->nameKana     = $nameKana;
+        $this->displayName  = $displayName;
+        $this->code         = $code;
+        $this->url          = $url;
+        $this->description  = $description;
+        $this->countryCode  = $countryCode;
+        $this->sortOrder    = $sortOrder;
+        $this->isActive     = $isActive;
     }
 
     public function getId(): int
@@ -44,22 +44,22 @@ class Manufacturer
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getNameKana(): string
+    public function getNameKana(): ?string
     {
         return $this->nameKana;
     }
 
-    public function getDisplayName(): string
+    public function getDisplayName(): ?string
     {
         return $this->displayName;
     }
 
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }
@@ -74,7 +74,7 @@ class Manufacturer
         return $this->description;
     }
 
-    public function getCountryCode(): string
+    public function getCountryCode(): ?string
     {
         return $this->countryCode;
     }
@@ -92,16 +92,16 @@ class Manufacturer
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name ?? '',
-            'nameKana' => $this->nameKana ?? '',
-            'displayName' => $this->displayName ?? '',
-            'code' => $this->code ?? '',
-            'url' => $this->url ?? '',
-            'description' => $this->description ?? '',
-            'countryCode' => $this->countryCode ?? '',
-            'sortOrder' => $this->sortOrder,
-            'isActive' => $this->isActive,
+            'id'            => $this->id,
+            'name'          => $this->name ?? '',
+            'nameKana'      => $this->nameKana ?? '',
+            'displayName'   => $this->displayName ?? '',
+            'code'          => $this->code ?? '',
+            'url'           => $this->url ?? '',
+            'description'   => $this->description ?? '',
+            'countryCode'   => $this->countryCode ?? '',
+            'sortOrder'     => $this->sortOrder,
+            'isActive'      => $this->isActive,
         ];
     }
 
