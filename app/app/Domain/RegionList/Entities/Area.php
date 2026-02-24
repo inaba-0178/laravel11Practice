@@ -1,23 +1,23 @@
 <?php
-namespace App\Domain\GetRegionList\Entities;
+namespace App\Domain\RegionList\Entities;
 
-class Area
+final class Area
 {
-    private int $id;
-    private string $name;
-    private int $sortOrder;
-    private array $regions;
+    private readonly int    $id;
+    private readonly string $name;
+    private readonly int    $sortOrder;
+    private readonly array  $regions;
 
     public function __construct(
-        int $id,
-        string $name,
-        int $sortOrder,
-        array $regions = []
+        int     $id,
+        string  $name,
+        int     $sortOrder,
+        array   $regions = []
     ){
-        $this->id = $id;
-        $this->name = $name;
-        $this->sortOrder = $sortOrder;
-        $this->regions = $regions;
+        $this->id           = $id;
+        $this->name         = $name;
+        $this->sortOrder    = $sortOrder;
+        $this->regions      = $regions;
     }
 
     public function getId(): int
@@ -43,9 +43,9 @@ class Area
     public function toArray(): array
     {
         $result = [
-            'id' => $this->id,
-            'name' => $this->name,
-            'sort_order' => $this->sortOrder,
+            'id'            => $this->id,
+            'name'          => $this->name,
+            'sort_order'    => $this->sortOrder,
         ];
 
         if (!empty($this->regions)) {

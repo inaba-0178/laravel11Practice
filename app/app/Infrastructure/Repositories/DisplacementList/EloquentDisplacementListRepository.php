@@ -4,14 +4,14 @@ namespace App\Infrastructure\Repositories\DisplacementList;
 use App\Domain\DisplacementList\Entities\Displacement;
 use App\Domain\DisplacementList\Repositories\DisplacementRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstDisplacementLists;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentDisplacementListRepository implements DisplacementRepositoryInterface
+class EloquentDisplacementListRepository extends BaseRepository implements DisplacementRepositoryInterface
 {
-    private MstDisplacementLists $model;
 
     public function __construct(MstDisplacementLists $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
     public function findActive(): array
@@ -19,7 +19,7 @@ class EloquentDisplacementListRepository implements DisplacementRepositoryInterf
         $displacements = $this->model
             ->get();
 
-        return $displacements->map(fn (MstDisplacementLists $displacement) => $this->toEntity($displacement))->all();
+        return $this->toEntities($displacements, fn($model) => $this->toEntity($model));
         
     }
 

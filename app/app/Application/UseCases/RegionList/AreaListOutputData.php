@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Application\UseCases\GetRegionList;
+namespace App\Application\UseCases\RegionList;
 
-use App\Domain\GetRegionList\Entities\Area;
+use App\Domain\RegionList\Entities\Area;
 
-class GetAreaListOutputData
+class AreaListOutputData
 {
     private array $areas;
     private int $count;

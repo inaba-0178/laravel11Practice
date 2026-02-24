@@ -4,14 +4,14 @@ namespace App\Infrastructure\Repositories\FeaturedBodyTypeList;
 use App\Domain\FeaturedBodyTypeList\Entities\FeaturedBodyType;
 use App\Domain\FeaturedBodyTypeList\Repositories\FeaturedBodyTypeRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstFeaturedBodyTypes;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentFeaturedBodyTypeListRepository implements FeaturedBodyTypeRepositoryInterface
+class EloquentFeaturedBodyTypeListRepository extends BaseRepository implements FeaturedBodyTypeRepositoryInterface
 {
-    private MstFeaturedBodyTypes $model;
 
     public function __construct(MstFeaturedBodyTypes $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
     public function findActive(): array
@@ -21,7 +21,7 @@ class EloquentFeaturedBodyTypeListRepository implements FeaturedBodyTypeReposito
             ->orderBy('sort_order')
             ->get();
 
-        return $featuredBodyTypes->map(fn (MstFeaturedBodyTypes $featuredBodyType) => $this->toEntity($featuredBodyType))->all();
+        return $this->toEntities($featuredBodyTypes, fn($model) => $this->toEntity($model));
     }
 
     /**

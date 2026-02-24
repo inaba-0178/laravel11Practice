@@ -1,13 +1,13 @@
 <?php
-namespace App\Infrastructure\Repositories\GetRegionList; 
+namespace App\Infrastructure\Repositories\RegionList; 
 
-use App\Domain\GetRegionList\Entities\Region;
-use App\Domain\GetRegionList\Entities\Area;
-use App\Domain\GetRegionList\Repositories\RegionRepositoryInterface;
+use App\Domain\RegionList\Entities\Region;
+use App\Domain\RegionList\Entities\Area;
+use App\Domain\RegionList\Repositories\RegionRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstRegions;
 use App\Infrastructure\Eloquent\Mst\MstAreas;
 
-class EloquentGetRegionListRepository implements RegionRepositoryInterface
+class EloquentRegionListRepository implements RegionRepositoryInterface
 {
     private MstRegions $model;
 

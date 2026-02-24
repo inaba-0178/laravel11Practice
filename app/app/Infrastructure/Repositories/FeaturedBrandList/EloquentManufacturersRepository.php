@@ -4,14 +4,14 @@ namespace App\Infrastructure\Repositories\FeaturedBrandList;
 use App\Domain\FeaturedBrandList\Entities\Manufacturer;
 use App\Domain\FeaturedBrandList\Repositories\ManufacturerRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
+class EloquentManufacturersRepository extends BaseRepository implements ManufacturerRepositoryInterface
 {
-    private MstManufacturers $model;
 
     public function __construct(MstManufacturers $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
     public function findByCodes(array $codes, array $conditions = []): array
@@ -21,7 +21,7 @@ class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
             ->orderBy('sort_order')
             ->get();
 
-        return $manufacturers->map(fn (MstManufacturers $manufacturer) => $this->toEntity($manufacturer))->all();
+        return $this->toEntities($manufacturers, fn($model) => $this->toEntity($model));
     }
 
     /**

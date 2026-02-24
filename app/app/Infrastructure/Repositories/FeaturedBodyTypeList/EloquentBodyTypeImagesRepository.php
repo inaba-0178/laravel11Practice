@@ -4,14 +4,13 @@ namespace App\Infrastructure\Repositories\FeaturedBodyTypeList;
 use App\Domain\FeaturedBodyTypeList\Entities\BodyTypeImage;
 use App\Domain\FeaturedBodyTypeList\Repositories\BodyTypeImageRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstBodyTypeImages;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentBodyTypeImagesRepository implements BodyTypeImageRepositoryInterface
+class EloquentBodyTypeImagesRepository extends BaseRepository implements BodyTypeImageRepositoryInterface
 {
-    private MstBodyTypeImages $model;
-
     public function __construct(MstBodyTypeImages $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
     public function findByBodyTypeIds(array $bodyTypeIds, array $conditions = []): array
@@ -21,7 +20,7 @@ class EloquentBodyTypeImagesRepository implements BodyTypeImageRepositoryInterfa
             ->orderBy('sort_order')
             ->get();
 
-        return $bodyTypeImages->map(fn (MstBodyTypeImages $bodyTypeImage) => $this->toEntity($bodyTypeImage))->all();
+        return $this->toEntities($bodyTypeImages, fn($model) => $this->toEntity($model));
     }
 
     /**

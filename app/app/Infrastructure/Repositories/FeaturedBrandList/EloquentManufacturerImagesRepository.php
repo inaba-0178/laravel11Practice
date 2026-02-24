@@ -4,14 +4,14 @@ namespace App\Infrastructure\Repositories\FeaturedBrandList;
 use App\Domain\FeaturedBrandList\Entities\ManufacturerImage;
 use App\Domain\FeaturedBrandList\Repositories\ManufacturerImageRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstManufacturerImages;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentManufacturerImagesRepository implements ManufacturerImageRepositoryInterface
+class EloquentManufacturerImagesRepository extends BaseRepository implements ManufacturerImageRepositoryInterface
 {
-    private MstManufacturerImages $model;
 
     public function __construct(MstManufacturerImages $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
     //
@@ -22,7 +22,7 @@ class EloquentManufacturerImagesRepository implements ManufacturerImageRepositor
             ->orderBy('sort_order')
             ->get();
 
-        return $manufacturerImages->map(fn (MstManufacturerImages $manufacturerImage) => $this->toEntity($manufacturerImage))->all();
+        return $this->toEntities($manufacturerImages, fn($model) => $this->toEntity($model));
     }
 
     /**

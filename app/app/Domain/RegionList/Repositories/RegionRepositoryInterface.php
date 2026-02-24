@@ -1,5 +1,5 @@
 <?php
-namespace App\Domain\GetRegionList\Repositories;
+namespace App\Domain\RegionList\Repositories;
 
 interface RegionRepositoryInterface
 {

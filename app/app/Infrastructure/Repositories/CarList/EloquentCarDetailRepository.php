@@ -5,12 +5,14 @@ use App\Domain\CarList\Repositories\CarDetailRepositoryInterface;
 use App\Domain\CarList\Entities\CarDetail;
 use App\Domain\CarList\Exceptions\CarNotFoundException;
 use App\Infrastructure\Eloquent\Opr\OprCarDetails;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentCarDetailRepository implements CarDetailRepositoryInterface
+class EloquentCarDetailRepository extends BaseRepository implements CarDetailRepositoryInterface
 {
-    public function __construct(
-        private readonly OprCarDetails $model
-    ) {}
+    public function __construct(OprCarDetails $model)
+    {
+        parent::__construct($model);
+    }
 
     /**
      * @throws CarNotFoundException
@@ -23,8 +25,7 @@ class EloquentCarDetailRepository implements CarDetailRepositoryInterface
         $carDetails = $this->model
             ->whereIn('car_id', $carId)
             ->get();
-        
-        return $this->toEntities($carDetails);
+        return $this->toEntities($carDetails, fn($model) => $this->toEntity($model));
     }
 
     private function toEntity(OprCarDetails $model): CarDetail
@@ -47,13 +48,5 @@ class EloquentCarDetailRepository implements CarDetailRepositoryInterface
             seoTitle                : $model->seo_title ?? '',
             seoDescription          : $model->seo_description,
         );
-    }
-
-    /**
-     * @return CarDetail[]
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(fn($model) => $this->toEntity($model))->all();
     }
 }

@@ -2,7 +2,7 @@
 
 return [
     App\Providers\AppServiceProvider::class,
-    App\Providers\RepositoryServiceProvider::class,
+    App\Providers\RegionServiceProvider::class,
     App\Providers\PriceListServiceProvider::class,
     App\Providers\MileageListServiceProvider::class,
     App\Providers\DisplacementListServiceProvider::class,

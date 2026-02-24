@@ -4,22 +4,14 @@ namespace App\Infrastructure\Repositories\PriceList;
 use App\Domain\PriceList\Entities\Price;
 use App\Domain\PriceList\Repositories\PriceRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstPriceLists;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentPriceListRepository implements PriceRepositoryInterface
+class EloquentPriceListRepository extends BaseRepository implements PriceRepositoryInterface
 {
-    private MstPriceLists $model;
 
     public function __construct(MstPriceLists $model)
     {
-        $this->model = $model;
-    }
-
-    public function findAll(): array
-    {
-        $priceLists = $this->model
-            ->get();
-
-        return $this->toEntities($priceLists);
+        parent::__construct($model);
     }
 
     public function findActive(): array
@@ -27,19 +19,7 @@ class EloquentPriceListRepository implements PriceRepositoryInterface
         $regions = $this->model
             ->get();
 
-        return $this->toEntities($regions);
-    }
-
-    public function findById(int $id): ?Price
-    {
-        $price = $this->model
-            ->find($id);
-
-        if (!$price) {
-            return null;
-        }
-
-        return $this->toEntity($price);
+        return $this->toEntities($regions, fn($model) => $this->toEntity($model));
     }
 
     /**
@@ -57,19 +37,6 @@ class EloquentPriceListRepository implements PriceRepositoryInterface
             $model->is_unlimited,
         );
 
-    }
-
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @param  $models
-     * @return array
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
     }
 
 }

@@ -19,8 +19,8 @@ class EloquentCarSeriesRepository implements CarSerieRepositoryInterface
         $carSeries = $this->model
             ->whereIn('series_id', $seriesIds)
             ->get();
-            
-        return $this->toEntities($carSeries);
+
+        return $carSeries->map(fn (MstCarSeries $carSerie) => $this->toEntity($carSerie))->all();
     }
 
     /**
@@ -33,15 +33,5 @@ class EloquentCarSeriesRepository implements CarSerieRepositoryInterface
             $model->series_name,
             $model->manufacturer_id,
         );
-    }
-
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
     }
 }

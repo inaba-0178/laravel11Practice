@@ -4,14 +4,14 @@ namespace App\Infrastructure\Repositories\FeaturedBrandList;
 use App\Domain\FeaturedBrandList\Entities\FeaturedBrand;
 use App\Domain\FeaturedBrandList\Repositories\FeaturedBrandRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstFeaturedBrands;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentFeaturedBrandListRepository implements FeaturedBrandRepositoryInterface
+class EloquentFeaturedBrandListRepository extends BaseRepository implements FeaturedBrandRepositoryInterface
 {
-    private MstFeaturedBrands $model;
 
     public function __construct(MstFeaturedBrands $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
     public function findActive(): array
@@ -21,7 +21,7 @@ class EloquentFeaturedBrandListRepository implements FeaturedBrandRepositoryInte
             ->orderBy('sort_order')
             ->get();
 
-        return $featuredBrands->map(fn (MstFeaturedBrands $featuredBrand) => $this->toEntity($featuredBrand))->all();
+        return $this->toEntities($featuredBrands, fn($model) => $this->toEntity($model));
     }
 
     /**

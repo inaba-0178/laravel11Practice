@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Presentation\Controllers\GetRegionList;
+namespace App\Presentation\Controllers\RegionList;
 
-use App\Application\UseCases\GetRegionList\GetRegionListUseCase;
-use App\Presentation\Requests\Region\GetRegionListRequest;
+use App\Application\UseCases\RegionList\RegionListUseCase;
+use App\Presentation\Requests\Region\RegionListRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Exception;
 
-class GetRegionListController extends Controller
+class RegionListController extends Controller
 {
-    private GetRegionListUseCase $useCase;
+    private RegionListUseCase $useCase;
 
-    public function __construct(GetRegionListUseCase $useCase)
+    public function __construct(RegionListUseCase $useCase)
     {
         $this->useCase = $useCase;
     }

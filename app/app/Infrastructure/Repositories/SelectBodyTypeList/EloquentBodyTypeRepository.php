@@ -4,22 +4,34 @@ namespace App\Infrastructure\Repositories\SelectBodyTypeList;
 use App\Domain\SelectBodyTypeList\Repositories\BodyTypeRepositoryInterface;
 use App\Domain\SelectBodyTypeList\Entities\BodyType;
 use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentBodyTypeRepository implements BodyTypeRepositoryInterface
+class EloquentBodyTypeRepository extends BaseRepository implements BodyTypeRepositoryInterface
 {
-    private MstBodyTypes $model;
 
     public function __construct(MstBodyTypes $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
     public function findAll(): array
     {
         $bodyTypes = $this->model
             ->get();
+        return $this->toEntities($bodyTypes, fn($model) => $this->toEntity($model));
+    }
 
-        return $this->toEntities($bodyTypes);
+    public function findByBodyType(string $code, array $conditions = []): BodyType
+    {
+        $bodyType = $this->model::where('code', $code)
+            ->first();
+        
+        if ($bodyType === null) {
+            // 空のエンティティを返すか、例外を投げる
+            return new BodyType(0, null, null, null, null, null, 0, 0);
+        }
+
+        return $this->toEntity($bodyType);
     }
 
     /**
@@ -42,29 +54,4 @@ class EloquentBodyTypeRepository implements BodyTypeRepositoryInterface
         );
     }
 
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @param  $models
-     * @return array
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
-    }
-
-    public function findByBodyType(string $code, array $conditions = []): BodyType
-    {
-        $bodyType = $this->model::where('code', $code)
-            ->first();
-        
-        if ($bodyType === null) {
-            // 空のエンティティを返すか、例外を投げる
-            return new BodyType(0, null, null, null, null, null, 0, 0);
-        }
-
-        return $this->toEntity($bodyType);
-    }
 }

@@ -11,7 +11,7 @@ class RidingCapacityListUseCase
 
     public function __construct(RidingCapacityRepositoryInterface $ridingCapacityRepository)
     {
-        $this->RidingCapacityRepository = $ridingCapacityRepository;
+        $this->ridingCapacityRepository = $ridingCapacityRepository;
     }
 
     /**
@@ -23,8 +23,7 @@ class RidingCapacityListUseCase
     public function execute(): RidingCapacityListOutputData
     {
         try {
-            $ridingCapacities = $this->RidingCapacityRepository->findActive();
-            \Log::info($ridingCapacities);
+            $ridingCapacities = $this->ridingCapacityRepository->findActive();
             return new RidingCapacityListOutputData($ridingCapacities);
         } catch (Exception $e) {
             throw new Exception('排気量一覧の取得に失敗しました: ' . $e->getMessage());
