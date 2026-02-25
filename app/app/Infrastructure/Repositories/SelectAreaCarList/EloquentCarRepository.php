@@ -24,7 +24,7 @@ class EloquentCarRepository implements CarRepositoryInterface
             ->limit($limit)
             ->get();
 
-        return $cars->map(fn($car) => $this->toEntity($car))->all();
+        return $this->toEntities($cars, fn($car) => $this->toEntity($car));
     }
 
     private function toEntity(OprCars $model): Car

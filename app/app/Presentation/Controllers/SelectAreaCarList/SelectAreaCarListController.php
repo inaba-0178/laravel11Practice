@@ -40,7 +40,7 @@ class SelectAreaCarListController extends Controller
             
             $seriesId   = new SeriesId($seriesIdParam);
             $regionIds  = new RegionIds($regionIdsParam);
-            $offset     = new Offset($offsetParam);
+            $offset     = new OffSet($offsetParam);
             $limit      = new Limit($limitParam);
             $outputData = $this->useCase->execute($seriesId, $regionIds, $offset, $limit);
             

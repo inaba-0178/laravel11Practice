@@ -5,6 +5,7 @@ use App\Domain\SelectAreaCarList\Entities\Car;
 
 class SelectAreaCarListOutputData
 {
+    private readonly int $count;
     public function __construct(
         private readonly array $carLists,
     ) {
@@ -21,7 +22,7 @@ class SelectAreaCarListOutputData
         ];
     }
 
-    public function CarList(): array
+    public function getCarList(): array
     {
         return $this->carLists;
     }
