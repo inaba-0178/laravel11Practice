@@ -9,11 +9,8 @@ final class RegionIds
 
     public function __construct(array $values)
     {
-        if ($values === null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'RegionIdsパラメータが必要です',
-            ], 400);
+        if (empty($values)) {
+            throw new InvalidArgumentException('RegionIdsは空にできません。');
         }
 
         foreach ($values as $value) {

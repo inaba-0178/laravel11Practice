@@ -9,13 +9,6 @@ final class Limit
 
     public function __construct(int $value)
     {
-        if ($value === null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'limitパラメータが必要です',
-            ], 400);
-        }
-
         if ($value <= 0) {
             throw new InvalidArgumentException('Limitは正の整数である必要があります。');
         }

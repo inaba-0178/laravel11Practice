@@ -9,13 +9,6 @@ final class OffSet
 
     public function __construct(int $value)
     {
-        if ($value === null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'offsetパラメータが必要です',
-            ], 400);
-        }
-
         if ($value < 0) {
             throw new InvalidArgumentException('OffSetは正の整数である必要があります。');
         }
