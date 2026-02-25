@@ -4,42 +4,24 @@ namespace App\Infrastructure\Repositories\FeaturedBrandList;
 use App\Domain\FeaturedBrandList\Entities\Manufacturer;
 use App\Domain\FeaturedBrandList\Repositories\ManufacturerRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
+class EloquentManufacturersRepository extends BaseRepository implements ManufacturerRepositoryInterface
 {
-    private MstManufacturers $model;
 
     public function __construct(MstManufacturers $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
-    public function findAll(): array
+    public function findByCodes(array $codes, array $conditions = []): array
     {
         $manufacturers = $this->model
+            ->whereIn('code', $codes)
+            ->orderBy('sort_order')
             ->get();
 
-        return $this->toEntities($manufacturers);
-    }
-
-    public function findActive(): array
-    {
-        $manufacturers = $this->model
-            ->get();
-
-        return $this->toEntities($manufacturers);
-    }
-
-    public function findById(int $id): ?Manufacturer
-    {
-        $manufacturer = $this->model
-            ->find($id);
-
-        if (!$manufacturer) {
-            return null;
-        }
-
-        return $this->toEntity($manufacturer);
+        return $this->toEntities($manufacturers, fn($model) => $this->toEntity($model));
     }
 
     /**
@@ -65,36 +47,4 @@ class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
 
     }
 
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @param  $models
-     * @return array
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
-    }
-
-    public function findByCodes(array $codes, array $conditions = []): array
-    {
-        return MstManufacturers::whereIn('code', $codes)
-            ->orderBy('sort_order')
-            ->get()
-            ->map(fn($m) => new Manufacturer(
-                $m->id,
-                $m->name,
-                $m->name_kana,
-                $m->display_name,
-                $m->code,
-                $m->url,
-                $m->description,
-                $m->country_code,
-                $m->sort_order,
-                $m->is_active,
-            ))
-            ->toArray();
-    }
 }

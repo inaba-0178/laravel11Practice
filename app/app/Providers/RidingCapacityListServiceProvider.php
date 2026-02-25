@@ -20,12 +20,6 @@ class RidingCapacityListServiceProvider extends ServiceProvider
             RidingCapacityRepositoryInterface::class,
             EloquentRidingCapacityListRepository::class,
         );
-
-        $this->app->bind(RidingCapacityListUseCase::class, function ($app) {
-            return new RidingCapacityListUseCase(
-                $app->make(RidingCapacityRepositoryInterface::class)
-            );
-        });
     }
 
     /**

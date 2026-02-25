@@ -6,12 +6,14 @@ use App\Domain\CarList\Entities\Car;
 use App\Domain\CarList\Exceptions\CarNotFoundException;
 use App\Infrastructure\Eloquent\Opr\OprCars;
 use Illuminate\Support\Collection;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentCarRepository implements CarRepositoryInterface
+class EloquentCarRepository extends BaseRepository implements CarRepositoryInterface
 {
-    public function __construct(
-        private readonly OprCars $model
-    ) {}
+    public function __construct(OprCars $model)
+    {
+        parent::__construct($model);
+    }
 
     /**
      * @throws CarNotFoundException
@@ -22,7 +24,7 @@ class EloquentCarRepository implements CarRepositoryInterface
             ->where('series_id', $seriesId)
             ->get();
 
-        return $cars->map(fn($car) => $this->toEntity($car)); // 追加
+        return $cars->map(fn($car) => $this->toEntity($car));
     }
 
     private function toEntity(OprCars $model): Car

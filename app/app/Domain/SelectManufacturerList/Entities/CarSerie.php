@@ -2,20 +2,20 @@
 
 namespace App\Domain\SelectManufacturerList\Entities;
 
-class CarSerie
+final class CarSerie
 {
-    private int $seriesId;
-    private ?string $seriesName;
-    private int $manufacturerId;
+    private readonly int $seriesId;
+    private readonly ?string $seriesName;
+    private readonly int $manufacturerId;
 
     public function __construct(
-        int $seriesId,
+        int     $seriesId,
         ?string $seriesName,
-        int $manufacturerId,
+        int     $manufacturerId,
     ) {
-        $this->seriesId = $seriesId;
-        $this->seriesName = $seriesName;
-        $this->manufacturerId = $manufacturerId;
+        $this->seriesId         = $seriesId;
+        $this->seriesName       = $seriesName;
+        $this->manufacturerId   = $manufacturerId;
     }
 
     public function getSeriesId(): int
@@ -23,7 +23,7 @@ class CarSerie
         return $this->seriesId;
     }
 
-    public function getSeriesName(): string
+    public function getSeriesName(): ?string
     {
         return $this->seriesName;
     }
@@ -36,9 +36,9 @@ class CarSerie
     public function toArray(): array
     {
         return [
-            'seriesId' => $this->seriesId,
-            'seriesName' => $this->seriesName ?? '',
-            'manufacturerId' => $this->manufacturerId,
+            'seriesId'          => $this->seriesId,
+            'seriesName'        => $this->seriesName ?? '',
+            'manufacturerId'    => $this->manufacturerId,
         ];
     }
 

@@ -2,11 +2,11 @@
 
 namespace App\Domain\SelectBodyTypeList\Entities;
 
-class CarSerie
+final class CarSerie
 {
-    private int     $seriesId;
-    private ?string $seriesName;
-    private int     $manufacturerId;
+    private readonly int     $seriesId;
+    private readonly ?string $seriesName;
+    private readonly int     $manufacturerId;
 
     public function __construct(
         int     $seriesId,

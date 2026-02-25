@@ -26,11 +26,16 @@ class PriceListController extends Controller
         try {
             $outputData = $this->useCase->execute();
             return response()->json($outputData->toArray());
-        } catch (Exception $e) {
+        } catch (NotFoundHttpException $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 }

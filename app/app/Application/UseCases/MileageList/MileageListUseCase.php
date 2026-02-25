@@ -11,7 +11,7 @@ class MileageListUseCase
 
     public function __construct(MileageRepositoryInterface $mileageRepository)
     {
-        $this->MileageRepository = $mileageRepository;
+        $this->mileageRepository = $mileageRepository;
     }
 
     /**
@@ -23,8 +23,7 @@ class MileageListUseCase
     public function execute(): MileageListOutputData
     {
         try {
-            $mileages = $this->MileageRepository->findActive();
-            \Log::info($mileages);
+            $mileages = $this->mileageRepository->findActive();
             return new MileageListOutputData($mileages);
         } catch (Exception $e) {
             throw new Exception('価格一覧の取得に失敗しました: ' . $e->getMessage());

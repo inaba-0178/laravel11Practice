@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Application\UseCases\GetRegionList;
+namespace App\Application\UseCases\RegionList;
 
-use App\Domain\GetRegionList\Repositories\RegionRepositoryInterface;
+use App\Domain\RegionList\Repositories\RegionRepositoryInterface;
 use Exception;
 
-class GetRegionListUseCase
+class RegionListUseCase
 {
     private RegionRepositoryInterface $regionRepository;
 
@@ -17,14 +17,14 @@ class GetRegionListUseCase
     /**
      * 都道府県一覧を取得する
      * 
-     * @return GetRegionListOutputData
+     * @return RegionListOutputData
      * @throws Exception
      */
-    public function execute(): GetRegionListOutputData
+    public function execute(): RegionListOutputData
     {
         try {
             $regions = $this->regionRepository->findActive();
-            return new GetRegionListOutputData($regions);
+            return new RegionListOutputData($regions);
         } catch (Exception $e) {
             throw new Exception('都道府県一覧の取得に失敗しました: ' . $e->getMessage());
         }

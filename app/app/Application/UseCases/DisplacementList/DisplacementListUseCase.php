@@ -11,7 +11,7 @@ class DisplacementListUseCase
 
     public function __construct(DisplacementRepositoryInterface $displacementRepository)
     {
-        $this->DisplacementRepository = $displacementRepository;
+        $this->displacementRepository = $displacementRepository;
     }
 
     /**
@@ -23,11 +23,10 @@ class DisplacementListUseCase
     public function execute(): DisplacementListOutputData
     {
         try {
-            $displacements = $this->DisplacementRepository->findActive();
-            \Log::info($displacements);
+            $displacements = $this->displacementRepository->findActive();
             return new DisplacementListOutputData($displacements);
         } catch (Exception $e) {
-            throw new Exception('排気量一覧の取得に失敗しました: ' . $e->getMessage());
+            throw new Exception('排気量一覧の取得に失敗しました: ' . $e->getMessage(), 0, $e);
         }
     }
 }

@@ -4,9 +4,9 @@ namespace App\Domain\RidingCapacityList\Repositories;
 interface RidingCapacityRepositoryInterface
 {
     /**
-     * すべてのRidingCapacityを取得
+     * RidingCapacityを取得
      * 
      * @return RidingCapacity[]
      */
-    public function findAll(): array;
+    public function findActive(): array;
 }

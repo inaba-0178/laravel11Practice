@@ -8,5 +8,5 @@ interface MileageRepositoryInterface
      * 
      * @return Mileage[]
      */
-    public function findAll(): array;
+    public function findActive(): array;
 }

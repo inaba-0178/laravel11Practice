@@ -6,8 +6,8 @@ use App\Domain\FeaturedBodyTypeList\Entities\BodyTypeInfo;
 
 class FeaturedBodyTypeListOutputData
 {
-    private ?array $bodyTypeInfo;
-    private int $count;
+    private ?array  $bodyTypeInfo;
+    private int     $count;
 
     /**
      * @param BodyTypeInfo[] $bodyTypeInfo
@@ -17,7 +17,7 @@ class FeaturedBodyTypeListOutputData
     )
     {
         $this->bodyTypeInfo = $bodyTypeInfo;
-        $this->count = count($bodyTypeInfo);
+        $this->count        = count($bodyTypeInfo);
     }
 
     public function toArray(): array
@@ -25,8 +25,8 @@ class FeaturedBodyTypeListOutputData
         return [
             'success' => true,
             'data' => [
-                'BodyTypeInfo' => array_map( fn($item) => $item instanceof BodyTypeInfo ? $item->toArray() : $item, $this->bodyTypeInfo),
-                'count' => $this->count,
+                'BodyTypeInfo'  => array_map( fn($item) => $item instanceof BodyTypeInfo ? $item->toArray() : $item, $this->bodyTypeInfo),
+                'count'         => $this->count,
             ],
         ];
     }

@@ -21,11 +21,6 @@ class DisplacementListServiceProvider extends ServiceProvider
             EloquentDisplacementListRepository::class,
         );
 
-        $this->app->bind(DisplacementListUseCase::class, function ($app) {
-            return new DisplacementListUseCase(
-                $app->make(DisplacementRepositoryInterface::class)
-            );
-        });
     }
 
     /**

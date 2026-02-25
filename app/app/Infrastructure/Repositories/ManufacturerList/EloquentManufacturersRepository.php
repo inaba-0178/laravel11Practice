@@ -5,17 +5,20 @@ use App\Domain\ManufacturerList\Entities\Manufacturer;
 use App\Domain\ManufacturerList\Repositories\ManufacturerRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
 use Illuminate\Support\Collection;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
+class EloquentManufacturersRepository extends BaseRepository implements ManufacturerRepositoryInterface
 {
     public function __construct(
-        private readonly MstManufacturers $model
-    ) {}
+        MstManufacturers $model
+    ) {
+        parent::__construct($model);
+    }
 
     public function findAll(): array
     {
         $manufacturers = $this->model->get();
-        return $this->toEntities($manufacturers);
+        return $this->toEntities($manufacturers, fn($model) => $this->toEntity($model));
     }
 
     public function findById(int $id): ?Manufacturer
@@ -39,8 +42,7 @@ class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
             ->whereIn('id', $ids)
             ->orderBy('sort_order')
             ->get();
-            
-        return $this->toEntities($manufacturers);
+        return $this->toEntities($manufacturers, fn($model) => $this->toEntity($model));
     }
 
     /**
@@ -60,15 +62,5 @@ class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
             sortOrder: $model->sort_order,
             isActive: $model->is_active,
         );
-    }
-
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @return Manufacturer[]
-     */
-    private function toEntities(Collection $models): array
-    {
-        return $models->map(fn($model) => $this->toEntity($model))->all();
     }
 }

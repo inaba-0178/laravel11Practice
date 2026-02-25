@@ -2,16 +2,16 @@
 
 namespace App\Domain\SelectBodyTypeList\Entities;
 
-class BodyType
+final class BodyType
 {
-    private int     $id;
-    private ?string $name;
-    private ?string $nameKana;
-    private ?string $code;
-    private ?string $description;
-    private ?array  $availableCountries;
-    private int     $sortOrder;
-    private int     $isActive;
+    private readonly int     $id;
+    private readonly ?string $name;
+    private readonly ?string $nameKana;
+    private readonly ?string $code;
+    private readonly ?string $description;
+    private readonly ?array  $availableCountries;
+    private readonly int     $sortOrder;
+    private readonly int     $isActive;
 
     public function __construct(
         int     $id,

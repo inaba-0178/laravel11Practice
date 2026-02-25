@@ -4,42 +4,22 @@ namespace App\Infrastructure\Repositories\RidingCapacityList;
 use App\Domain\RidingCapacityList\Entities\RidingCapacity;
 use App\Domain\RidingCapacityList\Repositories\RidingCapacityRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstRidingCapacityLists;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentRidingCapacityListRepository implements RidingCapacityRepositoryInterface
+class EloquentRidingCapacityListRepository extends BaseRepository implements RidingCapacityRepositoryInterface
 {
-    private MstRidingCapacityLists $model;
 
     public function __construct(MstRidingCapacityLists $model)
     {
-        $this->model = $model;
-    }
-
-    public function findAll(): array
-    {
-        $ridingCapacityLists = $this->model
-            ->get();
-
-        return $this->toEntities($ridingCapacityLists);
+        parent::__construct($model);
     }
 
     public function findActive(): array
     {
         $ridingCapacities = $this->model
             ->get();
-
-        return $this->toEntities($ridingCapacities);
-    }
-
-    public function findById(int $id): ?RidingCapacity
-    {
-        $ridingCapacity = $this->model
-            ->find($id);
-
-        if (!$ridingCapacity) {
-            return null;
-        }
-
-        return $this->toEntity($ridingCapacity);
+        
+        return $this->toEntities($ridingCapacities, fn($model) => $this->toEntity($model));
     }
 
     /**
@@ -58,18 +38,4 @@ class EloquentRidingCapacityListRepository implements RidingCapacityRepositoryIn
         );
 
     }
-
-    /**
-     * Eloquentコレクションをエンティティ配列に変換
-     * 
-     * @param  $models
-     * @return array
-     */
-    private function toEntities($models): array
-    {
-        return $models->map(function ($model) {
-            return $this->toEntity($model);
-        })->all();
-    }
-
 }

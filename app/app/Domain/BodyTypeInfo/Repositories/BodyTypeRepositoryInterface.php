@@ -6,12 +6,6 @@ use App\Domain\BodyTypeInfo\Exceptions\BodyTypeNotFoundException;
 
 interface BodyTypeRepositoryInterface
 {
-    /**
-     * すべてのBodyTypeを取得
-     * 
-     * @return BodyType[]
-     */
-    public function findAll(): array;
 
     /**
      * コードでBodyTypeを取得

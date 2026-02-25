@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Presentation\Controllers\GetRegionList\GetRegionListController;
+use App\Presentation\Controllers\RegionList\RegionListController;
 use App\Presentation\Controllers\PriceList\PriceListController;
 use App\Presentation\Controllers\MileageList\MileageListController;
 use App\Presentation\Controllers\DisplacementList\DisplacementListController;
@@ -34,8 +34,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Region関連のルート
 Route::prefix('regions')->group(function () {
-    Route::get('/', GetRegionListController::class)->name('regions.list');
-    Route::get('/grouped', [GetRegionListController::class, 'groupedByArea'])->name('regions.grouped');
+    Route::get('/', RegionListController::class)->name('regions.list');
+    Route::get('/grouped', [RegionListController::class, 'groupedByArea'])->name('regions.grouped');
 });
 
 // Price関連のルート

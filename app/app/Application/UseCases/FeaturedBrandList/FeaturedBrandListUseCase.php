@@ -10,22 +10,22 @@ use Exception;
 
 class FeaturedBrandListUseCase
 {
-    private FeaturedBrandRepositoryInterface $featuredBrandRepository;
-    private ManufacturerRepositoryInterface $manufacturerRepository;
-    private ManufacturerImageRepositoryInterface $manufacturerImageRepository;
-    private ManufacturerInfoFactory $factory;
+    private FeaturedBrandRepositoryInterface        $featuredBrandRepository;
+    private ManufacturerRepositoryInterface         $manufacturerRepository;
+    private ManufacturerImageRepositoryInterface    $manufacturerImageRepository;
+    private ManufacturerInfoFactory                 $factory;
 
     public function __construct(
-        FeaturedBrandRepositoryInterface $featuredBrandRepository,
-        ManufacturerRepositoryInterface $manufacturerRepository,
-        ManufacturerImageRepositoryInterface $manufacturerImageRepository,
-        ManufacturerInfoFactory $factory
+        FeaturedBrandRepositoryInterface        $featuredBrandRepository,
+        ManufacturerRepositoryInterface         $manufacturerRepository,
+        ManufacturerImageRepositoryInterface    $manufacturerImageRepository,
+        ManufacturerInfoFactory                 $factory
     )
     {
-        $this->featuredBrandRepository = $featuredBrandRepository;
-        $this->manufacturerRepository = $manufacturerRepository;
-        $this->manufacturerImageRepository = $manufacturerImageRepository;
-        $this->factory = $factory;
+        $this->featuredBrandRepository      = $featuredBrandRepository;
+        $this->manufacturerRepository       = $manufacturerRepository;
+        $this->manufacturerImageRepository  = $manufacturerImageRepository;
+        $this->factory                      = $factory;
     }
 
     /**

@@ -4,11 +4,9 @@ namespace App\Domain\SelectManufacturerList\Repositories;
 interface CarSerieRepositoryInterface
 {
     /**
-     * すべてのCarSerieを取得
+     * manufacturerIdの対象のCarSerieを取得
      * 
      * @return CarSerie[]
      */
-    public function findAll(): array;
-
     public function findByManufacturerId(int $manufacturerId, array $conditions = []): array;
 }
