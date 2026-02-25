@@ -28,7 +28,7 @@ class SelectAreaCarListController extends Controller
         try {
             $seriesIdParam  = $request->get('seriesId');
             $regionIdsParam = $request->get('regionIds');
-            $offsetParam    = $request->get('offset');
+            $offSetParam    = $request->get('offset');
             $limitParam     = $request->get('limit');
 
             if (empty($seriesIdParam)) {
@@ -39,9 +39,9 @@ class SelectAreaCarListController extends Controller
             }
             
             $seriesId   = new SeriesId($seriesIdParam);
-            $regionIds  = new RegionIds($regionIdsParam);
-            $offset     = new OffSet($offsetParam);
-            $limit      = new Limit($limitParam);
+            $regionIds  = new RegionIds($regionIdsParam ?? []);
+            $offset     = new OffSet((int)($offSetParam ?? 0));
+            $limit      = new Limit((int)($limitParam ?? 0));
             $outputData = $this->useCase->execute($seriesId, $regionIds, $offset, $limit);
             
             return response()->json($outputData->toArray());
