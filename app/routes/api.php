@@ -15,7 +15,7 @@ use App\Presentation\Controllers\ManufacturerList\ManufacturerListController;
 use App\Presentation\Controllers\BodyTypeInfo\BodyTypeInfoController;
 use App\Presentation\Controllers\CarList\CarListController;
 use App\Presentation\Controllers\AreaCarList\AreaCarListController;
-
+use App\Presentation\Controllers\SelectAreaCarList\SelectAreaCarListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,4 +96,9 @@ Route::prefix('CarList')->group(function () {
 // AreaCarList関連のルート
 Route::prefix('AreaCarList')->group(function () {
     Route::get('/', AreaCarListController::class)->name('AreaCarList.list');
+});
+
+// SelectAreaCarList関連のルート
+Route::prefix('SelectAreaCarList')->group(function () {
+    Route::get('/', SelectAreaCarListController::class)->name('SelectAreaCarList.list');
 });
