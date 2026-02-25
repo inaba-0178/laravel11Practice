@@ -27,6 +27,15 @@ class DisplacementListController extends Controller
         try {
             $outputData = $this->useCase->execute();
             return response()->json($outputData->toArray());
+        } catch (NotFoundHttpException $e) {
+            Log::error('DisplacementList error:', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 404);
         } catch (Exception $e) {
             Log::error('DisplacementList error:', [
                 'message' => $e->getMessage(),
