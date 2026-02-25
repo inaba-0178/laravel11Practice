@@ -5,12 +5,15 @@ use App\Domain\SelectAreaCarList\Repositories\CarRepositoryInterface;
 use App\Domain\SelectAreaCarList\Entities\Car;
 use App\Domain\SelectAreaCarList\Exceptions\SelectAreaCarNotFoundException;
 use App\Infrastructure\Eloquent\Opr\OprCars;
+use App\Infrastructure\Repositories\BaseRepository;
 
-class EloquentCarRepository implements CarRepositoryInterface
+class EloquentCarRepository extends BaseRepository implements CarRepositoryInterface
 {
     public function __construct(
-        private readonly OprCars $model
-    ) {}
+        OprCars $model
+    ) {
+        parent::__construct($model);
+    }
 
     /**
      * @throws SelectAreaCarNotFoundException
