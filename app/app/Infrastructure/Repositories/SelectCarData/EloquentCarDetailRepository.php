@@ -24,7 +24,7 @@ class EloquentCarDetailRepository extends BaseRepository implements CarDetailRep
             ->first();
 
         if ($carDetail === null) {
-            throw new CarNotFoundException($carDetail);
+            throw new CarNotFoundException($carId);
         }
         
         return $this->toEntity($carDetail);

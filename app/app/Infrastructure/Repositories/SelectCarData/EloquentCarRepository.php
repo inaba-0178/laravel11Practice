@@ -24,7 +24,7 @@ class EloquentCarRepository extends BaseRepository implements CarRepositoryInter
             ->first();
         
         if ($car === null) {
-            throw new CarNotFoundException($car);
+            throw new CarNotFoundException($carId);
         }
         
         return $this->toEntity($car);
