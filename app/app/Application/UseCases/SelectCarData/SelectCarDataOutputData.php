@@ -21,10 +21,10 @@ class SelectCarDataOutputData
     {
         return [
             'success'       => true,
-            'carData'       => $this->car,
-            'carDetailData' => $this->carDetail,
-            'carImages'     => $this->carImages,
-            'carOptions'    => $this->carOptions,
+            'carData'       => $this->car->toArray(),
+            'carDetailData' => $this->carDetail->toArray(),
+            'carImages'     => array_map(fn($image) => $image->toArray(), $this->carImages),
+            'carOptions'    => array_map(fn($option) => $option->toArray(), $this->carOptions),
         ];
     }
 
