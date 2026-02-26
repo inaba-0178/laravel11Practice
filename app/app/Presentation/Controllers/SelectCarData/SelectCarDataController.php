@@ -27,7 +27,7 @@ class SelectCarDataController extends Controller
             if (empty($carIdParam)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'seriesIdパラメータが必要です',
+                    'message' => 'carIdパラメータが必要です',
                 ], 400);
             }
             
