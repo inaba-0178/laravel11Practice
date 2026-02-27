@@ -33,14 +33,14 @@ class RegionListUseCase
     /**
      * 地方ごとに都道府県一覧を取得する
      * 
-     * @return GetAreaListOutputData
+     * @return AreaListOutputData
      * @throws Exception
      */
-    public function executeGroupedByArea(): GetAreaListOutputData
+    public function executeGroupedByArea(): AreaListOutputData
     {
         try {
             $areas = $this->regionRepository->findAllGroupedByArea();
-            return new GetAreaListOutputData($areas);
+            return new AreaListOutputData($areas);
         } catch (Exception $e) {
             throw new Exception('地方別Region一覧の取得に失敗しました: ' . $e->getMessage());
         }

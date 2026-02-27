@@ -132,6 +132,27 @@ return [
             ]) : [],
         ],
 
+        'user' => [
+            'driver' => 'mysql',
+            'host' => env('DB_USER_HOST', 'user-db'),
+            'port' => env('DB_USER_PORT', '3306'),
+            'database' => env('USER_DATABASE', 'user_db'),
+            'username' => env('USER_USER', 'admin'),
+            'password' => env('USER_PASSWORD', 'user_pass'),
+            'unix_socket' => env('USER_DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::ATTR_PERSISTENT => true,     // ← 永続的接続
+                PDO::ATTR_TIMEOUT => 5,           // ← タイムアウト5秒
+                PDO::ATTR_EMULATE_PREPARES => true, // ← プリペアドステートメントの高速化
+            ]) : [],
+        ],
+
     ],
 
     /*
