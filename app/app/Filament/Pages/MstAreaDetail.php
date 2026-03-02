@@ -9,20 +9,31 @@ use Illuminate\Http\Request;
 use Filament\Infolists\Components\Section;
 use App\Filament\Resources\MstAreasResource;
 use App\Infrastructure\Eloquent\Mst\MstAreas;
+use App\Infrastructure\Eloquent\Mst\MstRegions;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\Action;
 
-class MstAreaDetail extends Page
+class MstAreaDetail extends Page implements HasTable
 {
+    use InteractsWithTable;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.mst-area-detail';
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $title = '';
 
-    public ?string $id = '';
+    public ?int $id;
+    public ?MstAreas $mstArea = null;
 
     public function mount(Request $request)
     {
-        $this->id = $request->input('id');
+        $this->id       = $request->input('id');
+        $this->mstArea  = MstAreas::query()
+            ->where('id', $this->id)
+            ->first();
     }
 
     public function getBreadcrumbs(): array
@@ -35,28 +46,18 @@ class MstAreaDetail extends Page
 
     public function getTitle(): string
     {
-        $mstArea = $this->getQuery();
-        return 'エリアID : [' . $mstArea->id . ']';
-    }
-
-    public function getQuery()
-    {
-        return MstAreas::query()
-            ->where('id', $this->id)
-            ->first();
+        return 'エリアID : [' . $this->mstArea->id . ']';
     }
 
     public function infoList(): Infolist
     {
-        $mstArea = $this->getQuery();
-
         $data = [
-            'id'            => $mstArea->id,
-            'name'          => $mstArea->name,
-            'query_param'   => $mstArea->query_param,
-            'sort_order'    => $mstArea->sort_order,
-            'created_at'    => $mstArea->created_at,
-            'updated_at'    => $mstArea->updated_at,
+            'id'            => $this->mstArea->id,
+            'name'          => $this->mstArea->name,
+            'query_param'   => $this->mstArea->query_param,
+            'sort_order'    => $this->mstArea->sort_order,
+            'created_at'    => $this->mstArea->created_at,
+            'updated_at'    => $this->mstArea->updated_at,
         ];
 
         return Infolist::make()
@@ -75,4 +76,20 @@ class MstAreaDetail extends Page
             ]);
     }
 
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                MstRegions::query()->where('area_code', $this->id)
+            )
+            ->columns([
+                TextColumn::make('id')->label('ID'),
+                TextColumn::make('name')->label('県名'),
+            ])
+            ->actions([
+                Action::make('detail')
+                    ->label('詳細'),
+                    //ここはあとで修正 ->url(fn(MstRegions $record) => MstRegionDetail::getUrl(['id' => $record->id])),
+            ]);
+    }
 }
