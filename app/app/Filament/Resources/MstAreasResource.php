@@ -63,15 +63,13 @@ class MstAreasResource extends Resource
                         return $query->where('name', 'like', "%{$data['name']}%");
                     }),
             ], FiltersLayout::AboveContent)
-            ->actions([
-            ])
             ->deferFilters()
             ->hiddenFilterIndicators()
             ->filtersApplyAction(
                 fn(Action $action) => $action
                     ->label('適用')
             )
-            ->Actions([
+            ->actions([
                 Action::make('detail')
                     ->label('詳細')
                     ->action('detail')

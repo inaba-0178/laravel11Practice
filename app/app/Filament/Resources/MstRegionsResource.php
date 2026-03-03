@@ -85,7 +85,7 @@ class MstRegionsResource extends Resource
                 fn(Action $action) => $action
                     ->label('適用')
             )
-            ->Actions([
+            ->actions([
                 Action::make('detail')
                     ->label('詳細')
                     ->action('detail')

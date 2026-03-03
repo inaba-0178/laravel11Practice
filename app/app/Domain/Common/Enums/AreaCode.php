@@ -12,8 +12,8 @@ enum AreaCode: int {
     case HOKURIKU   = 6;     // 北陸・甲信越
     case TOUKAI     = 7;     // 東海
     case TYUUGOKU   = 8;     // 中国
-    case KYOUUSYU   = 9;     // 九州
-    case OKINAHA    = 10;    // 沖縄
+    case KYUUSYU    = 9;     // 九州
+    case OKINAWA    = 10;    // 沖縄
 
     public function label(): string {
         return match($this) {
@@ -25,7 +25,7 @@ enum AreaCode: int {
             self::HOKURIKU  => '北陸・甲信越',
             self::TOUKAI    => '東海',
             self::TYUUGOKU  => '中国',
-            self::KYUUSYU  => '九州',
+            self::KYUUSYU   => '九州',
             self::OKINAWA   => '沖縄',
         };
     }

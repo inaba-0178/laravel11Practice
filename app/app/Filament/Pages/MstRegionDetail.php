@@ -75,7 +75,7 @@ class MstRegionDetail extends Page implements HasTable
                         TextEntry::make('id')->label('ID'),
                         TextEntry::make('area_code')->label('エリア'),
                         TextEntry::make('name')->label('地方名'),
-                        TextEntry::make('URL')->label('URL'),
+                        TextEntry::make('url')->label('URL'),
                         TextEntry::make('query_param')->label('地方URL'),
                         TextEntry::make('sort_order')->label('表示順'),
                         TextEntry::make('created_at')->label('作成日時'),
