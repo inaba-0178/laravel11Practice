@@ -8,4 +8,5 @@ enum NavigationSort :int
     case MST_REGION                 = 2;
     case MST_PRICE_LIST             = 3;
     case MST_RIDING_CAPACITY_LIST   = 4;
+    case MST_MILEAGE_LIST           = 5;
 }
