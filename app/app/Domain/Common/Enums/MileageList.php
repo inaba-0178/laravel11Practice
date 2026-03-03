@@ -8,9 +8,9 @@ enum MileageList: int {
     case OVER_10K       = 10000;    // 1万km以上（下限値）
     case RANGE_1_3M     = 29999;    // 1〜3万km（上限値）
     case RANGE_3_5M     = 49999;    // 3〜5万km（上限値）
-    case RANGE_5_10M    = 99999;   // 5〜10万km（上限値）
+    case RANGE_5_10M    = 99999;    // 5〜10万km（上限値）
     case RANGE_10_15M   = 149999;   // 10〜15万km（上限値）
-    case OVER_15M       = 150000;   // 15万km（上限値）
+    case OVER_15M       = 150000;   // 15万km（下限値）
 
     public function label(): string {
         return match($this) {

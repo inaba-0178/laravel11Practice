@@ -65,6 +65,9 @@ class MstMileageListDetail extends Page
                         TextEntry::make('min_amount')->label('最低走行距離'),
                         TextEntry::make('max_amount')->label('最大走行距離'),
                         TextEntry::make('is_unlimited')->label('上限なし')
+                            ->badge()
+                            ->formatStateUsing(fn ($state) => $state ? 'あり' : 'なし')
+                            ->color(fn ($state) => $state ? 'success' : 'gray')
                             ->columnSpan(2),
                         TextEntry::make('created_at')->label('作成日時'),
                         TextEntry::make('updated_at')->label('更新日時'),
