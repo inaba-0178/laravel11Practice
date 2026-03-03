@@ -7,7 +7,7 @@ use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Http\Request;
 use Filament\Infolists\Components\Section;
-use App\Filament\Resources\MstAreasResource;
+use App\Filament\Resources\MstRegionsResource;
 use App\Infrastructure\Eloquent\Mst\MstAreas;
 use App\Infrastructure\Eloquent\Mst\MstRegions;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -15,49 +15,54 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
+use App\Domain\Common\Enums\AreaCode;
 
-class MstAreaDetail extends Page implements HasTable
+class MstRegionDetail extends Page implements HasTable
 {
     use InteractsWithTable;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.mst-area-detail';
+    protected static string $view = 'filament.pages.mst-region-detail';
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $title = '';
 
     public ?int $id;
-    public ?MstAreas $mstArea = null;
+    public ?MstRegions $mstRegion = null;
+    public ?int $areaCode;
 
     public function mount(Request $request)
     {
-        $this->id       = $request->input('id');
-        $this->mstArea  = MstAreas::query()
+        $this->id           = $request->input('id');
+        $this->mstRegion    = MstRegions::query()
             ->where('id', $this->id)
             ->first();
+        $this->areaCode     = $this->mstRegion->area_code;
     }
 
     public function getBreadcrumbs(): array
     {
         return [
-            MstAreasResource::getUrl() => 'エリア一覧',
-            MstAreaDetail::getUrl(['id' => $this->id]) => '詳細ページ',
+            MstRegionsResource::getUrl() => '都道府県一覧',
+            MstRegionDetail::getUrl(['id' => $this->id]) => '詳細ページ',
         ];
     }
 
     public function getTitle(): string
     {
-        return 'エリアID : [' . $this->mstArea->id . ']';
+        return '都道府県ID : [' . $this->mstRegion->id . ']';
     }
 
     public function infoList(): Infolist
     {
         $data = [
-            'id'            => $this->mstArea->id,
-            'name'          => $this->mstArea->name,
-            'query_param'   => $this->mstArea->query_param,
-            'sort_order'    => $this->mstArea->sort_order,
-            'created_at'    => $this->mstArea->created_at,
-            'updated_at'    => $this->mstArea->updated_at,
+            'id'            => $this->mstRegion->id,
+            'area_code'     => AreaCode::tryFrom($this->mstRegion->area_code)->label() ?? '',
+            'name'          => $this->mstRegion->name,
+            'url'           => $this->mstRegion->url,
+            'query_param'   => $this->mstRegion->query_param,
+            'sort_order'    => $this->mstRegion->sort_order,
+            'created_at'    => $this->mstRegion->created_at,
+            'updated_at'    => $this->mstRegion->updated_at,
         ];
 
         return Infolist::make()
@@ -67,7 +72,9 @@ class MstAreaDetail extends Page implements HasTable
                     ->columns(2)
                     ->schema([
                         TextEntry::make('id')->label('ID'),
+                        TextEntry::make('area_code')->label('エリア'),
                         TextEntry::make('name')->label('地方名'),
+                        TextEntry::make('URL')->label('URL'),
                         TextEntry::make('query_param')->label('地方URL'),
                         TextEntry::make('sort_order')->label('表示順'),
                         TextEntry::make('created_at')->label('作成日時'),
@@ -80,16 +87,16 @@ class MstAreaDetail extends Page implements HasTable
     {
         return $table
             ->query(
-                MstRegions::query()->where('area_code', $this->id)
+                MstAreas::query()->where('id', $this->areaCode)
             )
             ->columns([
                 TextColumn::make('id')->label('ID'),
-                TextColumn::make('name')->label('県名'),
+                TextColumn::make('name')->label('エリア'),
             ])
             ->actions([
                 Action::make('detail')
                     ->label('詳細')
-                    ->url(fn(MstRegions $record) => MstRegionDetail::getUrl(['id' => $record->id])),
+                    ->url(fn(MstAreas $record) => MstAreaDetail::getUrl(['id' => $record->id])),
             ]);
     }
 }
