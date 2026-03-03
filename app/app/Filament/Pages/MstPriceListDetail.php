@@ -62,7 +62,10 @@ class MstPriceListDetail extends Page
                         TextEntry::make('id')->label('ID'),
                         TextEntry::make('name')->label('価格帯名'),
                         TextEntry::make('max_amount')->label('価格'),
-                        TextEntry::make('is_unlimited')->label('最大価格フラグ'),
+                        TextEntry::make('is_unlimited')->label('上限なし')
+                            ->badge()
+                            ->formatStateUsing(fn ($state) => $state ? 'あり' : 'なし')
+                            ->color(fn ($state) => $state ? 'success' : 'gray'),
                         TextEntry::make('created_at')->label('作成日時'),
                         TextEntry::make('updated_at')->label('更新日時'),
                     ])

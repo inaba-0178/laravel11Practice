@@ -63,7 +63,10 @@ class MstRidingCapacityListDetail extends Page
                         TextEntry::make('id')->label('ID'),
                         TextEntry::make('name')->label('乗車定員'),
                         TextEntry::make('max_amount')->label('最大数'),
-                        TextEntry::make('is_unlimited')->label('最大乗車定員数フラグ'),
+                        TextEntry::make('is_unlimited')->label('上限なし')
+                            ->badge()
+                            ->formatStateUsing(fn ($state) => $state ? 'あり' : 'なし')
+                            ->color(fn ($state) => $state ? 'success' : 'gray'),
                         TextEntry::make('created_at')->label('作成日時'),
                         TextEntry::make('updated_at')->label('更新日時'),
                     ])
