@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MstAreasResource\Pages;
-use App\Infrastructure\Eloquent\Mst\MstAreas;
+use App\Filament\Resources\MstRegionsResource\Pages;
+use App\Infrastructure\Eloquent\Mst\MstRegions;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Resource;
@@ -13,17 +13,19 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Actions\Action;
-use App\Filament\Pages\MstAreaDetail;
+use App\Filament\Pages\MstRegionDetail;
 use App\Constants\NavigationSort;
+use App\Domain\Common\Enums\AreaCode;
+use Filament\Tables\Filters\SelectFilter;
 
-class MstAreasResource extends Resource
+class MstRegionsResource extends Resource
 {
-    protected static ?string $model = MstAreas::class;
+    protected static ?string $model = MstRegions::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'マスタ参照';
-    protected static ?int $navigationSort = NavigationSort::MST_AREA->value;
-    protected static ?string $pluralModelLabel = 'エリア一覧';
+    protected static ?int $navigationSort = NavigationSort::MST_REGION->value;
+    protected static ?string $pluralModelLabel = '都道府県一覧';
 
     public static function table(Table $table): Table
     {
@@ -32,6 +34,12 @@ class MstAreasResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->label('地方名'),
+                TextColumn::make('area_code')
+                    ->label('エリアコード')
+                    ->getStateUsing(function ($record) {
+                        return AreaCode::tryFrom($record->area_code)?->label() ?? '';
+                    })
+                    ->sortable(),
                 TextColumn::make('sort_order')
                     ->label('表示順')
                     ->sortable(),
@@ -62,6 +70,14 @@ class MstAreasResource extends Resource
                         }
                         return $query->where('name', 'like', "%{$data['name']}%");
                     }),
+                selectFilter::make('area_code')
+                    ->options(AreaCode::labels()->toArray())
+                    ->query(function (Builder $query, array $data) {
+                        if (blank($data['value'])) {
+                            return $query;
+                        }
+                        return $query->where('area_code',$data['value']);
+                    }),
             ], FiltersLayout::AboveContent)
             ->deferFilters()
             ->hiddenFilterIndicators()
@@ -73,8 +89,8 @@ class MstAreasResource extends Resource
                 Action::make('detail')
                     ->label('詳細')
                     ->action('detail')
-                    ->url(function (MstAreas $mstArea) {
-                        return MstAreaDetail::getUrl([
+                    ->url(function (MstRegions $mstArea) {
+                        return MstRegionDetail::getUrl([
                             'id' => $mstArea->id
                         ]);
                     }),
@@ -91,7 +107,7 @@ class MstAreasResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMstAreas::route('/'),
+            'index' => Pages\ListMstRegions::route('/'),
         ];
     }
 }
