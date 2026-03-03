@@ -16,6 +16,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
 use App\Domain\Common\Enums\AreaCode;
+use App\Filament\Pages\MstAreaDetail;
 
 class MstRegionDetail extends Page implements HasTable
 {
@@ -35,7 +36,7 @@ class MstRegionDetail extends Page implements HasTable
         $this->id           = $request->input('id');
         $this->mstRegion    = MstRegions::query()
             ->where('id', $this->id)
-            ->first();
+            ->firstOrFail();
         $this->areaCode     = $this->mstRegion->area_code;
     }
 
@@ -56,7 +57,7 @@ class MstRegionDetail extends Page implements HasTable
     {
         $data = [
             'id'            => $this->mstRegion->id,
-            'area_code'     => AreaCode::tryFrom($this->mstRegion->area_code)->label() ?? '',
+            'area_code'     => AreaCode::tryFrom($this->mstRegion->area_code)?->label() ?? '',
             'name'          => $this->mstRegion->name,
             'url'           => $this->mstRegion->url,
             'query_param'   => $this->mstRegion->query_param,

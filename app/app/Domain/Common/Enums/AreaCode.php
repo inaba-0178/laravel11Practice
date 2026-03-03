@@ -25,8 +25,8 @@ enum AreaCode: int {
             self::HOKURIKU  => '北陸・甲信越',
             self::TOUKAI    => '東海',
             self::TYUUGOKU  => '中国',
-            self::KYOUUSYU  => '九州',
-            self::OKINAHA   => '沖縄',
+            self::KYUUSYU  => '九州',
+            self::OKINAWA   => '沖縄',
         };
     }
 

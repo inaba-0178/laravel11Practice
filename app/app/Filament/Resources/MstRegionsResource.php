@@ -24,7 +24,7 @@ class MstRegionsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'マスタ参照';
-    protected static ?int $navigationSort = NavigationSort::MST_AREA->value;
+    protected static ?int $navigationSort = NavigationSort::MST_REGION->value;
     protected static ?string $pluralModelLabel = '都道府県一覧';
 
     public static function table(Table $table): Table
@@ -37,7 +37,7 @@ class MstRegionsResource extends Resource
                 TextColumn::make('area_code')
                     ->label('エリアコード')
                     ->getStateUsing(function ($record) {
-                        return AreaCode::tryFrom($record->area_code)->label() ?? '';
+                        return AreaCode::tryFrom($record->area_code)?->label() ?? '';
                     })
                     ->sortable(),
                 TextColumn::make('sort_order')
@@ -76,11 +76,9 @@ class MstRegionsResource extends Resource
                         if (blank($data['value'])) {
                             return $query;
                         }
-                        return $query->where('area_code',$data);
+                        return $query->where('area_code',$data['value']);
                     }),
             ], FiltersLayout::AboveContent)
-            ->actions([
-            ])
             ->deferFilters()
             ->hiddenFilterIndicators()
             ->filtersApplyAction(

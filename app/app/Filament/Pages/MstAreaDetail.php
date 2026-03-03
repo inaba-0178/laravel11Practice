@@ -15,6 +15,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
+use App\Filament\Pages\MstRegionDetail;
 
 class MstAreaDetail extends Page implements HasTable
 {
