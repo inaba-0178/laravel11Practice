@@ -22,7 +22,7 @@ class MstRidingCapacityListsResource extends Resource
 
     protected static ?string    $navigationIcon     = 'heroicon-o-rectangle-stack';
     protected static ?string    $navigationGroup    = 'マスタ参照';
-    protected static ?int       $navigationSort     = NavigationSort::MST_PRICE_LIST->value;
+    protected static ?int       $navigationSort     = NavigationSort::MST_RIDING_CAPACITY_LIST->value;
     protected static ?string    $pluralModelLabel   = '乗車定員一覧';
 
     public static function table(Table $table): Table
