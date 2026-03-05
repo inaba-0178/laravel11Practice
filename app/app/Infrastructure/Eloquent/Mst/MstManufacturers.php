@@ -24,5 +24,9 @@ class MstManufacturers extends Model
         'is_active',
     ];
 
+    public function image()
+    {
+        return $this->hasOne(MstManufacturerImages::class, 'manufacturer_id');
+    }
 
 }

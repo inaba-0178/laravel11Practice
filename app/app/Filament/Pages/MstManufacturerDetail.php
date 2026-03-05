@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Filament\Infolists\Components\Section;
 use App\Filament\Resources\MstManufacturersResource;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
+use Filament\Infolists\Components\ImageEntry;
 
 class MstManufacturerDetail extends Page
 {
@@ -26,6 +27,7 @@ class MstManufacturerDetail extends Page
         $this->id = $request->input('id');
         $this->mstManufacturer = MstManufacturers::query()
             ->where('id', $this->id)
+            ->with('image')
             ->firstOrFail();
     }
 
@@ -45,18 +47,27 @@ class MstManufacturerDetail extends Page
     public function infoList(): Infolist
     {
         $data = [
-            'id'            => $this->mstManufacturer->id,
-            'name'          => $this->mstManufacturer->name,
-            'name_kana'     => $this->mstManufacturer->name_kana,
-            'display_name'  => $this->mstManufacturer->display_name,
-            'code'          => $this->mstManufacturer->code,
-            'url'           => $this->mstManufacturer->url,
-            'description'   => $this->mstManufacturer->description,
-            'country_code'  => $this->mstManufacturer->country_code,
-            'sort_order'    => $this->mstManufacturer->sort_order,
-            'is_active'     => $this->mstManufacturer->is_active,
-            'created_at'    => $this->mstManufacturer->created_at,
-            'updated_at'    => $this->mstManufacturer->updated_at,
+            'id'                => $this->mstManufacturer->id,
+            'name'              => $this->mstManufacturer->name,
+            'name_kana'         => $this->mstManufacturer->name_kana,
+            'display_name'      => $this->mstManufacturer->display_name,
+            'code'              => $this->mstManufacturer->code,
+            'url'               => $this->mstManufacturer->url,
+            'description'       => $this->mstManufacturer->description,
+            'country_code'      => $this->mstManufacturer->country_code,
+            'sort_order'        => $this->mstManufacturer->sort_order,
+            'is_active'         => $this->mstManufacturer->is_active,
+            'created_at'        => $this->mstManufacturer->created_at,
+            'updated_at'        => $this->mstManufacturer->updated_at,
+            //ここからmstManufacturerImageのテーブルデータ
+            'image_type'        => $this->mstManufacturer->image?->image_type,
+            'file_path'         => $this->mstManufacturer->image?->file_path,
+            'image_sort_order'  => $this->mstManufacturer->image?->sort_order,
+            'alt_text'          => $this->mstManufacturer->image?->alt_text,
+            'is_main'           => $this->mstManufacturer->image?->is_main,
+            'image_is_active'   => $this->mstManufacturer->image?->is_active,
+            'image_created_at'  => $this->mstManufacturer->image?->created_at,
+            'image_updated_at'  => $this->mstManufacturer->image?->updated_at,
         ];
 
         return Infolist::make()
@@ -80,11 +91,32 @@ class MstManufacturerDetail extends Page
                             ->columnSpan(2),
                         TextEntry::make('description')->label('説明')
                             ->columnSpan(2),
-                        
-                        
                         TextEntry::make('created_at')->label('作成日時'),
                         TextEntry::make('updated_at')->label('更新日時'),
-                    ])
+                    ]),
+                    Section::make('画像情報')
+                        ->columns(2)
+                        ->schema([
+                            TextEntry::make('image_type')->label('画像種別'),
+                            TextEntry::make('alt_text')->label('テキスト名'),
+                            TextEntry::make('is_main')->label('メイン画像')
+                                ->badge()
+                                ->formatStateUsing(fn ($state) => $state ? 'メイン' : 'その他')
+                                ->color(fn ($state) => $state ? 'success' : 'gray'),
+                            TextEntry::make('image_is_active')->label('利用可否')
+                                ->badge()
+                                ->formatStateUsing(fn ($state) => $state ? '利用可能' : '利用不可')
+                                ->color(fn ($state) => $state ? 'success' : 'gray'),
+                            TextEntry::make('image_sort_order')->label('表示順')
+                                ->columnSpan(2),
+                            TextEntry::make('image_created_at')->label('作成日時'),
+                            TextEntry::make('image_updated_at')->label('更新日時'),
+                            ImageEntry::make('file_path')
+                                ->label('画像')
+                                ->disk('public')
+                                ->columnSpan(2),
+                            
+                        ]),
             ]);
     }
 
