@@ -34,14 +34,14 @@ class MstBodyTypeDetail extends Page
     public function getBreadcrumbs(): array
     {
         return [
-            MstBodyTypesResource::getUrl() => 'メーカー一覧',
+            MstBodyTypesResource::getUrl() => 'ボディタイプ一覧',
             MstBodyTypeDetail::getUrl(['id' => $this->id]) => '詳細ページ',
         ];
     }
 
     public function getTitle(): string
     {
-        return 'メーカーID : [' . $this->mstBodyType->id . '] ' . $this->mstBodyType->name;
+        return 'ボディタイプID : [' . $this->mstBodyType->id . '] ' . $this->mstBodyType->name;
     }
 
     public function infoList(): Infolist
@@ -74,9 +74,9 @@ class MstBodyTypeDetail extends Page
                     ->columns(2)
                     ->schema([
                         TextEntry::make('id')->label('ID'),
-                        TextEntry::make('name')->label('メーカー名'),
-                        TextEntry::make('name_kana')->label('メーカー名カナ'),
-                        TextEntry::make('code')->label('メーカーコード'),
+                        TextEntry::make('name')->label('ボディタイプ名'),
+                        TextEntry::make('name_kana')->label('ボディタイプ名カナ'),
+                        TextEntry::make('code')->label('ボディタイプコード'),
                         TextEntry::make('sort_order')->label('表示順'),
                         TextEntry::make('is_active')->label('利用可否')
                             ->badge()

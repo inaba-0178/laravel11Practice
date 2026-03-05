@@ -47,7 +47,7 @@ class MstBodyTypesResource extends Resource
             ])
             ->filters([
                     selectFilter::make('id')
-                    ->label('メーカー')
+                    ->label('ボディタイプ名')
                     ->options(
                         MstBodyTypes::query()->orderBy('sort_order')->pluck('name', 'id')->toArray()
                 ),
