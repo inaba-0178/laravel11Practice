@@ -70,14 +70,18 @@ class MstManufacturerDetail extends Page
                         TextEntry::make('name_kana')->label('メーカー名カナ'),
                         TextEntry::make('display_name')->label('表示名'),
                         TextEntry::make('code')->label('メーカーコード'),
-                        TextEntry::make('url')->label('URL'),
-                        TextEntry::make('description')->label('説明'),
                         TextEntry::make('country_code')->label('国コード'),
                         TextEntry::make('sort_order')->label('表示順'),
                         TextEntry::make('is_active')->label('利用可否')
                             ->badge()
                             ->formatStateUsing(fn ($state) => $state ? '利用可能' : '利用不可')
                             ->color(fn ($state) => $state ? 'success' : 'gray'),
+                        TextEntry::make('url')->label('URL')
+                            ->columnSpan(2),
+                        TextEntry::make('description')->label('説明')
+                            ->columnSpan(2),
+                        
+                        
                         TextEntry::make('created_at')->label('作成日時'),
                         TextEntry::make('updated_at')->label('更新日時'),
                     ])

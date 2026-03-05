@@ -34,12 +34,15 @@ class MstManufacturersResource extends Resource
                 TextColumn::make('display_name')
                     ->label('表示名')
                     ->sortable(),
+                TextColumn::make('sort_order')
+                    ->label('表示順')
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->label('作成日時')
                     ->sortable(),
             ])
             ->filters([
-                    selectFilter::make('maker_id')
+                    selectFilter::make('id')
                     ->label('メーカー')
                     ->options(
                         MstManufacturers::query()->orderBy('sort_order')->pluck('display_name', 'id')->toArray()
