@@ -13,6 +13,7 @@ use Filament\Tables\Actions\Action;
 use App\Filament\Pages\MstManufacturerDetail;
 use App\Constants\NavigationSort;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Columns\ImageColumn;
 
 class MstManufacturersResource extends Resource
 {
@@ -27,6 +28,9 @@ class MstManufacturersResource extends Resource
     {
         return $table
             ->searchable(false)
+            ->query(
+                MstManufacturers::query()->with('image')
+            )
             ->columns([
                 TextColumn::make('name')
                     ->label('メーカー名')
@@ -34,6 +38,9 @@ class MstManufacturersResource extends Resource
                 TextColumn::make('display_name')
                     ->label('表示名')
                     ->sortable(),
+                ImageColumn::make('image.file_path')
+                    ->label('画像')
+                    ->disk('public'),
                 TextColumn::make('sort_order')
                     ->label('表示順')
                     ->sortable(),
