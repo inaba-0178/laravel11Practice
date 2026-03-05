@@ -26,4 +26,10 @@ class MstBodyTypes extends Model
     protected $casts = [
         'available_countries' => 'array',
     ];
+
+    public function image()
+    {
+        return $this->hasOne(MstBodyTypeImages::class, 'body_type_id');
+    }
+
 }
