@@ -20,4 +20,8 @@ class MstCarSeriesBodyTypes extends Model
 	    'sort_order',
     ];
 
+    public function mstBodyType()
+    {
+        return $this->hasOne(MstBodyTypes::class, 'id', 'body_type_id');
+    }
 }

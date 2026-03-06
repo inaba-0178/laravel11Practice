@@ -11,4 +11,5 @@ enum NavigationSort :int
     case MST_MILEAGE_LIST           = 5;
     case MST_MANUFACTURER           = 6;
     case MST_BODY_TYPE              = 7;
+    case MST_CAR_SERIES             = 8;
 }
