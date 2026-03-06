@@ -50,8 +50,7 @@ class MstCarSeriesDetail extends Page
     {
         $mstManufacturer    = $this->mstCarSeries->mstManufacturer;
         $bodyTypes          = $this->mstCarSeries->mstCarSeriesBodyTypes
-                                ->map(fn ($item) => $item->mstBodyType)
-                                ->pluck('name')
+                                ->pluck('mstBodyType.name')
                                 ->join(', ');
 
         $data = [

@@ -96,10 +96,8 @@ class MstCarSeriesResource extends Resource
                     ->query(fn (Builder $query, array $data) => 
                         $query->when(
                             $data['value'],
-                            fn ($query) => $query->whereHas('mstCarSeriesBodyTypes', function ($mstCarSeriesBodyType) use ($data) {
-                                $mstCarSeriesBodyType->whereHas('mstBodyType', function ($mstBodyType) use ($data) {
-                                    $mstBodyType->where('id', $data['value']);
-                                });
+                            fn ($query) => $query->whereHas('mstCarSeriesBodyTypes', function ($q) use ($data) {
+                                $q->where('body_type_id', $data['value']);
                             })
                         )
                     ),
