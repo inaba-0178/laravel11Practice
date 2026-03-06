@@ -46,7 +46,7 @@ return [
          'mysql' => [
             'driver' => 'mysql',
             'host' => env('DB_USER_HOST', 'user-db'),        # user-dbコンテナ
-            'port' => env('DB_USER_PORT', '3308'),           # ホストポート3308
+            'port' => env('DB_USER_PORT', '3306'),           # ホストポート3306
             'database' => env('USER_DATABASE', 'user_db'),
             'username' => env('USER_USER', 'user_user'),
             'password' => env('USER_PASSWORD', 'user_pass'),
@@ -137,7 +137,7 @@ return [
             'host' => env('DB_USER_HOST', 'user-db'),
             'port' => env('DB_USER_PORT', '3306'),
             'database' => env('USER_DATABASE', 'user_db'),
-            'username' => env('USER_USER', 'admin'),
+            'username' => env('USER_USER', 'user_user'),
             'password' => env('USER_PASSWORD', 'user_pass'),
             'unix_socket' => env('USER_DB_SOCKET', ''),
             'charset' => 'utf8mb4',

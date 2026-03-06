@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('mst_car_series', function (Blueprint $table) {
-            $table->id('series_id');
+            $table->unsignedBigInteger('series_id')->primary();
             $table->string('series_name', 255);
             $table->unsignedBigInteger('manufacturer_id');
             $table->timestamps();
