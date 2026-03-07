@@ -19,6 +19,7 @@ use App\Presentation\Controllers\SelectAreaCarList\SelectAreaCarListController;
 use App\Presentation\Controllers\SelectCarData\SelectCarDataController;
 use App\Presentation\Controllers\Room\RoomController;
 use App\Presentation\Controllers\Message\MessageController;
+use App\Presentation\Controllers\Auth\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+
     Route::get('/rooms', [RoomController::class, 'index']);
     Route::post('/rooms', [RoomController::class, 'store']);
     Route::get('/rooms/{roomId}', [RoomController::class, 'show']);
@@ -122,3 +125,4 @@ Route::prefix('SelectCarData')->group(function () {
     Route::get('/', SelectCarDataController::class)->name('SelectCarData.list');
 });
 
+Route::post('/login', [AuthController::class, 'login']);
