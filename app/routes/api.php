@@ -122,3 +122,22 @@ Route::prefix('SelectCarData')->group(function () {
     Route::get('/', SelectCarDataController::class)->name('SelectCarData.list');
 });
 
+
+Route::post('/login', function (\Illuminate\Http\Request $request) {
+    $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required',
+    ]);
+
+    if (!\Illuminate\Support\Facades\Auth::attempt($request->only('email', 'password'))) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+
+    $user  = $request->user();
+    $token = $user->createToken('chat-token')->plainTextToken;
+
+    return response()->json([
+        'token' => $token,
+        'user'  => $user,
+    ]);
+});
