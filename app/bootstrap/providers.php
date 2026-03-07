@@ -18,4 +18,6 @@ return [
     App\Providers\SelectBodyTypeListServiceProvider::class,
     App\Providers\SelectCarDataServiceProvider::class,
     App\Providers\SelectManufacturerListServiceProvider::class,
+    App\Providers\RoomServiceProvider::class,
+    App\Providers\MessageServiceProvider::class,
 ];

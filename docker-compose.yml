@@ -1,6 +1,8 @@
 version: '3.8'
 services:
   php:
+    ports:
+      - "8085:8085"
     container_name: php
     build: 
       context: .               # ← Laravel自動生成Dockerfile

@@ -17,6 +17,8 @@ use App\Presentation\Controllers\CarList\CarListController;
 use App\Presentation\Controllers\AreaCarList\AreaCarListController;
 use App\Presentation\Controllers\SelectAreaCarList\SelectAreaCarListController;
 use App\Presentation\Controllers\SelectCarData\SelectCarDataController;
+use App\Presentation\Controllers\Room\RoomController;
+use App\Presentation\Controllers\Message\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +33,17 @@ use App\Presentation\Controllers\SelectCarData\SelectCarDataController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/rooms', [RoomController::class, 'index']);
+    Route::post('/rooms', [RoomController::class, 'store']);
+    Route::get('/rooms/{roomId}', [RoomController::class, 'show']);
+
+    Route::get('/rooms/{roomId}/messages', [MessageController::class, 'index']);
+    Route::post('/rooms/{roomId}/messages', [MessageController::class, 'store']);
+    Route::post('/rooms/{roomId}/messages/read', [MessageController::class, 'read']);
+    Route::post('/rooms/{roomId}/typing', [MessageController::class, 'typing']);
 });
 
 // Region関連のルート
@@ -108,3 +121,4 @@ Route::prefix('SelectAreaCarList')->group(function () {
 Route::prefix('SelectCarData')->group(function () {
     Route::get('/', SelectCarDataController::class)->name('SelectCarData.list');
 });
+

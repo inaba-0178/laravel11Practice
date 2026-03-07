@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) pdo_mysql mysqli gd zip bcmath intl \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs \
+    && docker-php-ext-install -j$(nproc) pdo_mysql mysqli gd zip bcmath intl pcntl
 
 # 🔥 entrypointスクリプトをコピー＆実行権限付与
 COPY entrypoint.sh /entrypoint.sh
