@@ -2,7 +2,7 @@
 set -e
 
 if [ ! -f /var/www/artisan ]; then
-    echo "🚀 Initializing Laravel environment..."
+    echo "Initializing Laravel environment..."
     
     composer create-project laravel/laravel /var/www --prefer-dist --no-interaction
     cd /var/www
@@ -12,12 +12,15 @@ if [ ! -f /var/www/artisan ]; then
     
     mkdir -p database
     touch database/database.sqlite
-    chown -R www-data:www-data storage bootstrap/cache database database.sqlite
-    chmod -R 775 storage bootstrap/cache database
     chmod 664 database/database.sqlite
     
-    echo "✁ELaravel setup completed!"
+    echo "Laravel setup completed!"
 fi
 
-# php-fpm起勁E
+# 毎回起動時に権限設定
+echo "Setting permissions..."
+chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
+# php-fpm起動
 exec "$@"
