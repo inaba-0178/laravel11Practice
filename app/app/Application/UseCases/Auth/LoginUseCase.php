@@ -6,8 +6,6 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginUseCase
 {
-    public function __construct() {}
-
     /**
      * ログイン
      * 
@@ -26,7 +24,7 @@ class LoginUseCase
         $user  = Auth::user();
         $token = $user->createToken('chat-token')->plainTextToken;
 
-        return new LoginOutputData($user, $token);
+        return new LoginOutputData(user: $user, token: $token);
 
     }
 }
