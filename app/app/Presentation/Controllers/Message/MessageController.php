@@ -7,7 +7,9 @@ use App\Application\UseCases\Message\SendMessageUseCase;
 use App\Application\UseCases\Message\ReadMessagesUseCase;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Events\UserTyping;
+use App\Infrastructure\Events\UserTyping;
+use App\Infrastructure\Events\MessageSent;
+use App\Infrastructure\Events\MessageRead;
 
 class MessageController extends Controller
 {
@@ -35,6 +37,15 @@ class MessageController extends Controller
             $request->message
         );
 
+        broadcast(new MessageSent(
+            roomId:    $roomId,
+            userId:    $request->user()->id,
+            id:        $message->id,
+            message:   $request->message,
+            createdAt: $message->created_at->toISOString(),
+            userModel: $request->user(),
+        ));
+
         return response()->json($message, 201);
     }
 
@@ -61,6 +72,12 @@ class MessageController extends Controller
             $request->message_ids,
             $request->user()->id
         );
+
+        broadcast(new MessageRead(
+            roomId:     $roomId,
+            userId:     $request->user()->id,
+            messageIds: $request->message_ids,
+        ));
 
         return response()->json(['status' => 'ok']);
     }
