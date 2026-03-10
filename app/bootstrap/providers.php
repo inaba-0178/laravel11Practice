@@ -20,4 +20,5 @@ return [
     App\Providers\SelectManufacturerListServiceProvider::class,
     App\Providers\RoomServiceProvider::class,
     App\Providers\MessageServiceProvider::class,
+    App\Providers\PasswordServiceProvider::class,
 ];

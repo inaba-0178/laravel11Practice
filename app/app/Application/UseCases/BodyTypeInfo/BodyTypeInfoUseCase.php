@@ -4,6 +4,7 @@ namespace App\Application\UseCases\BodyTypeInfo;
 use App\Domain\BodyTypeInfo\Repositories\BodyTypeRepositoryInterface;
 use App\Domain\BodyTypeInfo\ValueObjects\BodyTypeName;
 use App\Domain\BodyTypeInfo\Exceptions\BodyTypeNotFoundException;
+use App\Domain\Shared\Constants\PasswordPolicy;
 
 class BodyTypeInfoUseCase
 {
