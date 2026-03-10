@@ -11,4 +11,11 @@ class EloquentUserRepository implements UserRepositoryInterface
     {
         return User::where('email', $email)->first();
     }
+
+    public function updatePassword(string $email, string $password): void
+    {
+        User::where('email', $email)->update([
+            'password' => $password,
+        ]);
+    }
 }

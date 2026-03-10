@@ -8,7 +8,7 @@ use App\Infrastructure\Repositories\Password\EloquentPasswordResetTokenRepositor
 use App\Infrastructure\Repositories\User\EloquentUserRepository;
 use Illuminate\Support\ServiceProvider;
 
-class PasswardServiceProvider extends ServiceProvider
+class PasswordServiceProvider extends ServiceProvider
 {
     /**
      * Register services.

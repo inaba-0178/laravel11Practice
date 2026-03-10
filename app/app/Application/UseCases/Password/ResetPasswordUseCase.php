@@ -4,13 +4,14 @@ namespace App\Application\UseCases\Password;
 
 use App\Domain\Password\Repositories\PasswordResetTokenRepositoryInterface;
 use App\Domain\Password\ValueObjects\ResetPasswordRequest;
-use App\Models\User;
+use App\Domain\User\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 
 class ResetPasswordUseCase
 {
     public function __construct(
         private readonly PasswordResetTokenRepositoryInterface $passwordResetTokenRepository,
+        private readonly UserRepositoryInterface               $userRepository,
     ) {}
 
     public function execute(ResetPasswordRequest $request): void
@@ -29,9 +30,7 @@ class ResetPasswordUseCase
             throw new \RuntimeException('トークンの有効期限が切れています');
         }
 
-        User::where('email', $request->email)->update([
-            'password' => Hash::make($request->password),
-        ]);
+        $this->userRepository->updatePassword($request->email, Hash::make($request->password));
 
         $this->passwordResetTokenRepository->deleteByEmail($request->email);
     }
