@@ -20,6 +20,7 @@ use App\Presentation\Controllers\SelectCarData\SelectCarDataController;
 use App\Presentation\Controllers\Room\RoomController;
 use App\Presentation\Controllers\Message\MessageController;
 use App\Presentation\Controllers\Auth\AuthController;
+use App\Presentation\Controllers\Password\PasswordResetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,3 +127,9 @@ Route::prefix('SelectCarData')->group(function () {
 });
 
 Route::post('/login', [AuthController::class, 'login']);
+
+
+Route::prefix('Password')->group(function () {
+    Route::post('/forgot', [PasswordResetController::class, 'forgot']);
+    Route::post('/reset',  [PasswordResetController::class, 'reset']);
+});
