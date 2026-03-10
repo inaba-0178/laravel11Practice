@@ -6,6 +6,8 @@ use App\Domain\Password\Repositories\PasswordResetTokenRepositoryInterface;
 use App\Domain\Password\ValueObjects\ResetPasswordRequest;
 use App\Domain\User\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
+use App\Domain\Shared\Constants\PasswordPolicy;
 
 class ResetPasswordUseCase
 {
@@ -22,11 +24,11 @@ class ResetPasswordUseCase
             throw new \RuntimeException('無効なトークンです');
         }
 
-        if (!hash_equals($record->token, hash('sha256', $request->token))) {
+        if (!hash_equals($record->token, hash(PasswordPolicy::HASH_ALGORITHM, $request->token))) {
             throw new \RuntimeException('無効なトークンです');
         }
 
-        if (now()->diffInMinutes($record->created_at) > 30) {
+        if (now()->gt(Carbon::parse($record->created_at)->addMinutes(PasswordPolicy::RESET_TOKEN_EXPIRE_MINUTES))) {
             throw new \RuntimeException('トークンの有効期限が切れています');
         }
 

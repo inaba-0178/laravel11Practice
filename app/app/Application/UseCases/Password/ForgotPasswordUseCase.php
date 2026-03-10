@@ -8,6 +8,7 @@ use App\Domain\Password\ValueObjects\ForgotPasswordEmail;
 use App\Infrastructure\Notifications\Mail\PasswordResetMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use App\Domain\Shared\Constants\PasswordPolicy;
 
 class ForgotPasswordUseCase
 {
@@ -24,7 +25,7 @@ class ForgotPasswordUseCase
             return;
         }
 
-        $token = Str::random(64);
+        $token = Str::random(PasswordPolicy::RESET_TOKEN_LENGTH);
 
         $this->passwordResetTokenRepository->upsert($email->email, $token);
 
