@@ -4,6 +4,7 @@ namespace App\Infrastructure\Repositories\Password;
 
 use App\Domain\Password\Repositories\PasswordResetTokenRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use App\Domain\Shared\Constants\PasswordPolicy;
 
 class EloquentPasswordResetTokenRepository implements PasswordResetTokenRepositoryInterface
 {
@@ -12,7 +13,7 @@ class EloquentPasswordResetTokenRepository implements PasswordResetTokenReposito
         DB::connection('user')->table('password_reset_tokens')->updateOrInsert(
             ['email' => $email],
             [
-                'token'      => hash('sha256', $token),
+                'token'      => hash(PasswordPolicy::HASH_ALGORITHM, $token),
                 'created_at' => now(),
             ]
         );
