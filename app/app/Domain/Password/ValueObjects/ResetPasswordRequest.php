@@ -3,6 +3,7 @@
 namespace App\Domain\Password\ValueObjects;
 
 use App\Domain\Shared\Constants\PasswordPolicy;
+use App\Domain\Shared\ValueObjects\XssValidator;
 
 final class ResetPasswordRequest
 {
@@ -21,6 +22,10 @@ final class ResetPasswordRequest
 
         if (empty($token)) {
             throw new \InvalidArgumentException('トークンが無効です');
+        }
+
+        if (XssValidator::check($password)) {
+            throw new \InvalidArgumentException('使用できない文字が含まれています');
         }
     }
 }
