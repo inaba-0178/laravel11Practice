@@ -21,4 +21,5 @@ return [
     App\Providers\RoomServiceProvider::class,
     App\Providers\MessageServiceProvider::class,
     App\Providers\PasswordServiceProvider::class,
+    App\Providers\MemberServiceProvider::class,
 ];
