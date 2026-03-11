@@ -22,6 +22,8 @@ use App\Presentation\Controllers\Message\MessageController;
 use App\Presentation\Controllers\Auth\AuthController;
 use App\Presentation\Controllers\Password\PasswordResetController;
 use App\Presentation\Controllers\Member\MemberRegistrationController;
+use App\Presentation\Controllers\EditMember\EditMemberProfileController;
+use App\Presentation\Controllers\MemberAuth\MemberAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +51,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/rooms/{roomId}/messages', [MessageController::class, 'store']);
     Route::post('/rooms/{roomId}/messages/read', [MessageController::class, 'read']);
     Route::post('/rooms/{roomId}/typing', [MessageController::class, 'typing']);
+
+    Route::prefix('EditMembers')->group(function () {
+        Route::get('/Profile',  [EditMemberProfileController::class, 'show']);
+        Route::put('/Profile',  [EditMemberProfileController::class, 'update']);
+    });
 });
 
 // Region関連のルート
@@ -134,7 +141,16 @@ Route::prefix('Password')->group(function () {
     Route::post('/reset',  [PasswordResetController::class, 'reset']);
 });
 
+//　会員仮登録、本登録API
 Route::prefix('Members')->group(function () {
     Route::post('/provisional', [MemberRegistrationController::class, 'provisional']);
     Route::post('/register',    [MemberRegistrationController::class, 'register']);
+});
+
+//　サイトのユーザーログイン
+Route::prefix('MemberAuth')->group(function () {
+    Route::post('/login',  [MemberAuthController::class, 'login']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [MemberAuthController::class, 'logout']);
+    });
 });

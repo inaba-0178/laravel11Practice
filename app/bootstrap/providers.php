@@ -22,4 +22,6 @@ return [
     App\Providers\MessageServiceProvider::class,
     App\Providers\PasswordServiceProvider::class,
     App\Providers\MemberServiceProvider::class,
+    App\Providers\EditMemberServiceProvider::class,
+    App\Providers\MemberAuthServiceProvider::class,
 ];
