@@ -22,8 +22,10 @@ class EloquentEditMemberRepository implements EditMemberRepositoryInterface
     public function update(string $id, array $data): Member
     {
         $eloquentMember = EloquentMember::find($id);
+        if (!$eloquentMember) {
+            throw new \RuntimeException('ユーザーが見つかりません');
+        }
         $eloquentMember->update($data);
-
         return $this->toEntity($eloquentMember->fresh());
     }
 

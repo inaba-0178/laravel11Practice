@@ -2,6 +2,8 @@
 
 namespace App\Domain\Shared\ValueObjects;
 
+use App\Domain\Shared\ValueObjects\XssValidator;
+
 final class MemberProfileValidator
 {
     public static function validate(
