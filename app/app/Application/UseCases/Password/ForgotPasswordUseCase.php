@@ -25,7 +25,7 @@ class ForgotPasswordUseCase
             return;
         }
 
-        $token = Str::random(PasswordPolicy::RESET_TOKEN_LENGTH);
+        $token = Str::random(PasswordPolicy::TOKEN_LENGTH);
 
         $this->passwordResetTokenRepository->upsert($email->email, $token);
 

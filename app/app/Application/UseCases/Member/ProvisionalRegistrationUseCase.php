@@ -25,7 +25,7 @@ class ProvisionalRegistrationUseCase
             throw new \RuntimeException('このメールアドレスは既に登録されています');
         }
 
-        $token = Str::random(PasswordPolicy::RESET_TOKEN_LENGTH);
+        $token = Str::random(PasswordPolicy::TOKEN_LENGTH);
 
         $this->provisionalRegistrationRepository->upsert($email->email, $token);
 

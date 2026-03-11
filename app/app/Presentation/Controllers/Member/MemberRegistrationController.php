@@ -57,11 +57,35 @@ class MemberRegistrationController extends Controller
             $this->registerUseCase->execute($registerRequest);
             return response()->json(['message' => '会員登録が完了しました']);
         } catch (\InvalidArgumentException $e) {
-            return response()->json(['message' => $e->getMessage()], 422);
+            return response()->json([
+                'field'   => $this->resolveField($e->getMessage()),
+                'message' => $e->getMessage(),
+            ], 422);
         } catch (\RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         } catch (\Exception $e) {
             return response()->json(['message' => 'エラーが発生しました'], 500);
         }
+    }
+
+    private function resolveField(string $message): string
+    {
+        return match(true) {
+            str_contains($message, '苗字')     => 'sei',
+            str_contains($message, '名前')     => 'mei',
+            str_contains($message, '苗字カナ') => 'sei_kana',
+            str_contains($message, '名前カナ') => 'mei_kana',
+            str_contains($message, '生年月日') => 'birth_date',
+            str_contains($message, '郵便番号') => 'post_code',
+            str_contains($message, '都道府県') => 'prefecture',
+            str_contains($message, '市区町村') => 'city',
+            str_contains($message, '番地')     => 'address_line1',
+            str_contains($message, '建物名')   => 'address_line2',
+            str_contains($message, '電話番号') => 'phone_number',
+            str_contains($message, '性別')     => 'gender',
+            str_contains($message, 'パスワード') => 'password',
+            str_contains($message, 'メールアドレス') => 'email',
+            default                            => 'global',
+        };
     }
 }

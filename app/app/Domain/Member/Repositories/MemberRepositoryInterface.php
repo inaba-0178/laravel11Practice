@@ -2,7 +2,7 @@
 
 namespace App\Domain\Member\Repositories;
 
-use App\Infrastructure\Eloquent\User\Member;
+use App\Domain\Member\Entities\Member;
 
 interface MemberRepositoryInterface
 {
