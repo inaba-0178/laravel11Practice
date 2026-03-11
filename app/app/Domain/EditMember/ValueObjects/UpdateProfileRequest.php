@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Domain\Member\ValueObjects;
+namespace App\Domain\EditMember\ValueObjects;
 
-use App\Domain\Shared\Constants\PasswordPolicy;
 use App\Domain\Shared\ValueObjects\MemberProfileValidator;
-use App\Domain\Shared\ValueObjects\XssValidator;
 
-final class RegisterRequest
+final class UpdateProfileRequest
 {
     public function __construct(
         public readonly string  $sei,
@@ -21,9 +19,6 @@ final class RegisterRequest
         public readonly ?string $address_line2,
         public readonly string  $phone_number,
         public readonly int     $gender,
-        public readonly string  $email,
-        public readonly string  $token,
-        public readonly string  $password,
     ) {
         MemberProfileValidator::validate(
             sei:           $sei,
@@ -39,21 +34,5 @@ final class RegisterRequest
             phone_number:  $phone_number,
             gender:        $gender,
         );
-
-        if (empty($email)) {
-            throw new \InvalidArgumentException('メールアドレスは必須です');
-        }
-        if (empty($token)) {
-            throw new \InvalidArgumentException('トークンが無効です');
-        }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('メールアドレスの形式が正しくありません');
-        }
-        if (strlen($password) < PasswordPolicy::MIN_LENGTH) {
-            throw new \InvalidArgumentException('パスワードは' . PasswordPolicy::MIN_LENGTH . '文字以上で入力してください');
-        }
-        if (XssValidator::check($password)) {
-            throw new \InvalidArgumentException('使用できない文字が含まれています');
-        }
     }
 }
