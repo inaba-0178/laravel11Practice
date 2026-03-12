@@ -19,8 +19,8 @@ class EditMemberProfileController extends Controller
     public function show(Request $request): JsonResponse
     {
         try {
-            $member = $this->getProfileUseCase->execute($request->user()->id);
-            return response()->json($member->toArray());
+            $output = $this->getProfileUseCase->execute($request->user()->id);
+            return response()->json($output->toArray());
         } catch (\RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         } catch (\Exception $e) {
