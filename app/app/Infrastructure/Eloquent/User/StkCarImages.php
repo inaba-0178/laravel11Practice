@@ -9,18 +9,23 @@ class StkCarImages extends Model
 {
     use HasFactory;
 
-    protected $connection = 'user'; 
+    protected $connection = 'user';
     protected $table = 'stk_car_images';
 
     protected $fillable = [
-            'id',
-            'car_id',
-            'image_url', 
-            'image_type',
-            'display_order',
-            'is_main',
-            'created_at',
-            'updated_at'
-        ];
+        'car_id',
+        'image_url',
+        'image_type',
+        'display_order',
+        'is_main',
+    ];
 
+    protected $casts = [
+        'is_main' => 'boolean',
+    ];
+
+    public function car()
+    {
+        return $this->belongsTo(StkCar::class, 'car_id');
+    }
 }

@@ -12,17 +12,17 @@ final class ResetPasswordRequest
         public readonly string $email,
         public readonly string $password,
     ) {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('メールアドレスの形式が正しくありません');
-        }
-
-        PasswordPolicy::validate($password);
-
         if (empty($token)) {
             throw new \InvalidArgumentException('トークンが無効です');
         }
 
-        if (XssValidator::check($password)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException('メールアドレスの形式が正しくありません');
+        }
+
+        PasswordPolicy::validate($this->password);
+
+        if (XssValidator::check($this->password)) {
             throw new \InvalidArgumentException('使用できない文字が含まれています');
         }
     }

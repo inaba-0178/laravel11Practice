@@ -4,19 +4,16 @@ namespace App\Providers;
 
 use App\Domain\Password\Repositories\PasswordResetTokenRepositoryInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Domain\MemberPassword\Repositories\MemberPasswordRepositoryInterface;
 use App\Infrastructure\Repositories\Password\EloquentPasswordResetTokenRepository;
 use App\Infrastructure\Repositories\User\EloquentUserRepository;
+use App\Infrastructure\Repositories\MemberPassword\EloquentMemberPasswordRepository;
 use Illuminate\Support\ServiceProvider;
 
 class PasswordServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
     public function register(): void
     {
-        
-        // Repository の登録
         $this->app->bind(
             PasswordResetTokenRepositoryInterface::class,
             EloquentPasswordResetTokenRepository::class,
@@ -26,11 +23,13 @@ class PasswordServiceProvider extends ServiceProvider
             UserRepositoryInterface::class,
             EloquentUserRepository::class,
         );
+
+        $this->app->bind(
+            MemberPasswordRepositoryInterface::class,
+            EloquentMemberPasswordRepository::class,
+        );
     }
 
-    /**
-     * Bootstrap services.
-     */
     public function boot(): void
     {
         //

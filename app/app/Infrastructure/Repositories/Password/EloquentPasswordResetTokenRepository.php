@@ -4,13 +4,14 @@ namespace App\Infrastructure\Repositories\Password;
 
 use App\Domain\Password\Repositories\PasswordResetTokenRepositoryInterface;
 use App\Domain\Shared\Constants\PasswordPolicy;
-use App\Infrastructure\Eloquent\User\PasswordResetToken;
+use App\Domain\Password\Entities\PasswordResetToken;
+use App\Infrastructure\Eloquent\User\PasswordResetToken as PasswordResetTokenModel;
 
 class EloquentPasswordResetTokenRepository implements PasswordResetTokenRepositoryInterface
 {
     public function upsert(string $email, string $token): void
     {
-        PasswordResetToken::updateOrInsert(
+        PasswordResetTokenModel::updateOrInsert(
             ['email' => $email],
             [
                 'token'      => hash(PasswordPolicy::HASH_ALGORITHM, $token),
@@ -19,13 +20,23 @@ class EloquentPasswordResetTokenRepository implements PasswordResetTokenReposito
         );
     }
 
-    public function findByEmail(string $email): ?object
+    public function findByEmail(string $email): ?PasswordResetToken
     {
-        return PasswordResetToken::where('email', $email)->first();
+        $record = PasswordResetTokenModel::where('email', $email)->first();
+
+        if (!$record) {
+            return null;
+        }
+
+        return new PasswordResetToken(
+            email:     $record->email,
+            token:     $record->token,
+            createdAt: $record->created_at,
+        );
     }
 
     public function deleteByEmail(string $email): void
     {
-        PasswordResetToken::where('email', $email)->delete();
+        PasswordResetTokenModel::where('email', $email)->delete();
     }
 }
