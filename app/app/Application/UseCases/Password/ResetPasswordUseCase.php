@@ -2,9 +2,9 @@
 
 namespace App\Application\UseCases\Password;
 
+use App\Domain\MemberPassword\Repositories\MemberPasswordRepositoryInterface;
 use App\Domain\Password\Repositories\PasswordResetTokenRepositoryInterface;
 use App\Domain\Password\ValueObjects\ResetPasswordRequest;
-use App\Domain\User\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Domain\Shared\Constants\PasswordPolicy;
@@ -13,7 +13,7 @@ class ResetPasswordUseCase
 {
     public function __construct(
         private readonly PasswordResetTokenRepositoryInterface $passwordResetTokenRepository,
-        private readonly UserRepositoryInterface               $userRepository,
+        private readonly MemberPasswordRepositoryInterface     $memberPasswordRepository,
     ) {}
 
     public function execute(ResetPasswordRequest $request): void
@@ -28,11 +28,11 @@ class ResetPasswordUseCase
             throw new \RuntimeException('無効なトークンです');
         }
 
-        if (now()->gt(Carbon::parse($record->created_at)->addMinutes(PasswordPolicy::RESET_TOKEN_EXPIRE_MINUTES))) {
+        if (now()->gt(Carbon::parse($record->createdAt)->addMinutes(PasswordPolicy::RESET_TOKEN_EXPIRE_MINUTES))) {
             throw new \RuntimeException('トークンの有効期限が切れています');
         }
 
-        $this->userRepository->updatePassword($request->email, Hash::make($request->password));
+        $this->memberPasswordRepository->updatePassword($request->email, Hash::make($request->password));
 
         $this->passwordResetTokenRepository->deleteByEmail($request->email);
     }
