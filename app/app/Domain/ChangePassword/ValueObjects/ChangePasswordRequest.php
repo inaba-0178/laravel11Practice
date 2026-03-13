@@ -15,6 +15,14 @@ final class ChangePasswordRequest
             throw new \InvalidArgumentException('現在のパスワードを入力してください');
         }
 
+        if (empty($this->newPassword)) {
+            throw new \InvalidArgumentException('新しいパスワードを入力してください');
+        }
+
+        if (empty($this->newPasswordConfirmation)) {
+            throw new \InvalidArgumentException('確認用パスワードを入力してください');
+        }
+
         PasswordPolicy::validate($this->newPassword);
 
         if ($this->newPassword !== $this->newPasswordConfirmation) {
