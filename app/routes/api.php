@@ -25,6 +25,7 @@ use App\Presentation\Controllers\Member\MemberRegistrationController;
 use App\Presentation\Controllers\EditMember\EditMemberProfileController;
 use App\Presentation\Controllers\MemberAuth\MemberAuthController;
 use App\Presentation\Controllers\EmailChange\EmailChangeController;
+use App\Presentation\Controllers\ChangePassword\ChangePasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // メールアドレス変更
     Route::post('/EmailChange', [EmailChangeController::class, 'update']);
+
+    Route::post('/ChangePassword', ChangePasswordController::class);
 });
 
 // Region関連のルート

@@ -25,4 +25,5 @@ return [
     App\Providers\EditMemberServiceProvider::class,
     App\Providers\MemberAuthServiceProvider::class,
     App\Providers\EmailChangeServiceProvider::class,
+    App\Providers\ChangePasswordServiceProvider::class,
 ];
