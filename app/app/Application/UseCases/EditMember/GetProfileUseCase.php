@@ -3,7 +3,6 @@
 namespace App\Application\UseCases\EditMember;
 
 use App\Domain\EditMember\Repositories\EditMemberRepositoryInterface;
-use App\Domain\Member\Entities\Member;
 
 class GetProfileUseCase
 {
@@ -11,7 +10,7 @@ class GetProfileUseCase
         private readonly EditMemberRepositoryInterface $editMemberRepository,
     ) {}
 
-    public function execute(string $id): Member
+    public function execute(string $id): GetProfileOutputData
     {
         $member = $this->editMemberRepository->findById($id);
 
@@ -19,6 +18,6 @@ class GetProfileUseCase
             throw new \RuntimeException('ユーザーが見つかりません');
         }
 
-        return $member;
+        return new GetProfileOutputData($member);
     }
 }
