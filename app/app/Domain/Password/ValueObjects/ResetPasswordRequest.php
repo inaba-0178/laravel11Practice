@@ -16,9 +16,7 @@ final class ResetPasswordRequest
             throw new \InvalidArgumentException('メールアドレスの形式が正しくありません');
         }
 
-        if (strlen($password) < PasswordPolicy::MIN_LENGTH) {
-            throw new \InvalidArgumentException('パスワードは' . PasswordPolicy::MIN_LENGTH . '文字以上で入力してください');
-        }
+        PasswordPolicy::validate($password);
 
         if (empty($token)) {
             throw new \InvalidArgumentException('トークンが無効です');
