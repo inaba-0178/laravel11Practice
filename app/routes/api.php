@@ -26,6 +26,7 @@ use App\Presentation\Controllers\EditMember\EditMemberProfileController;
 use App\Presentation\Controllers\MemberAuth\MemberAuthController;
 use App\Presentation\Controllers\EmailChange\EmailChangeController;
 use App\Presentation\Controllers\ChangePassword\ChangePasswordController;
+use App\Presentation\Controllers\SeriesStkCount\SeriesStkCountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -161,3 +162,5 @@ Route::prefix('MemberAuth')->group(function () {
         Route::post('/logout', [MemberAuthController::class, 'logout']);
     });
 });
+
+Route::get('/SeriesStkCount', SeriesStkCountController::class);
