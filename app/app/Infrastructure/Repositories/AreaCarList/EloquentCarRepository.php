@@ -4,12 +4,12 @@ namespace App\Infrastructure\Repositories\AreaCarList;
 use App\Domain\AreaCarList\Repositories\CarRepositoryInterface;
 use App\Domain\AreaCarList\Entities\Car;
 use App\Domain\AreaCarList\Exceptions\AreaCarNotFoundException;
-use App\Infrastructure\Eloquent\Opr\OprCars;
+use App\Infrastructure\Eloquent\User\StkCar;
 
 class EloquentCarRepository implements CarRepositoryInterface
 {
     public function __construct(
-        private readonly OprCars $model
+        private readonly StkCar $model
     ) {}
 
     /**
@@ -24,7 +24,7 @@ class EloquentCarRepository implements CarRepositoryInterface
         return $cars->map(fn($car) => $this->toEntity($car))->all();
     }
 
-    private function toEntity(OprCars $model): Car
+    private function toEntity(StkCar $model): Car
     {
         return new Car(
             id                : $model->id,

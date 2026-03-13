@@ -4,12 +4,12 @@ namespace App\Infrastructure\Repositories\SelectCarData;
 use App\Domain\SelectCarData\Repositories\CarImageRepositoryInterface;
 use App\Domain\SelectCarData\Entities\CarImage;
 use App\Domain\SelectCarData\Exceptions\CarNotFoundException;
-use App\Infrastructure\Eloquent\Opr\OprCarImages;
+use App\Infrastructure\Eloquent\User\StkCarImages;
 use App\Infrastructure\Repositories\BaseRepository;
 
 class EloquentCarImageRepository extends BaseRepository implements CarImageRepositoryInterface
 {
-    public function __construct(OprCarImages $model)
+    public function __construct(StkCarImages $model)
     {
         parent::__construct($model);
     }
@@ -26,7 +26,7 @@ class EloquentCarImageRepository extends BaseRepository implements CarImageRepos
         return $this->toEntities($carImages, fn($model) => $this->toEntity($model));
     }
 
-    private function toEntity(OprCarImages $model): CarImage
+    private function toEntity(StkCarImages $model): CarImage
     {
         return new CarImage(
             id              : $model->id,
