@@ -26,4 +26,5 @@ return [
     App\Providers\MemberAuthServiceProvider::class,
     App\Providers\EmailChangeServiceProvider::class,
     App\Providers\ChangePasswordServiceProvider::class,
+    App\Providers\SeriesStkCountServiceProvider::class,
 ];

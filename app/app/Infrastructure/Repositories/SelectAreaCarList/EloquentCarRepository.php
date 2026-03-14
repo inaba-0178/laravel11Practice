@@ -30,6 +30,16 @@ class EloquentCarRepository extends BaseRepository implements CarRepositoryInter
         return $this->toEntities($cars, fn($car) => $this->toEntity($car));
     }
 
+    public function findByTotalCount(int $seriesId, array $regionIds): int
+    {
+        $totalCount = $this->model
+            ->where('series_id', $seriesId)
+            ->whereIn('region_id', $regionIds)
+            ->count();
+
+        return $totalCount;
+    }
+
     private function toEntity(StkCar $model): Car
     {
         return new Car(

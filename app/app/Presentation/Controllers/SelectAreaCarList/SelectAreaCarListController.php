@@ -26,16 +26,23 @@ class SelectAreaCarListController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            $seriesIdParam  = $request->get('seriesId');
-            $regionIdsParam = $request->get('regionIds');
-            $offSetParam    = $request->get('offset');
-            $limitParam     = $request->get('limit');
+            $seriesIdParam  = $request->query('seriesId');
+            $regionIdsParam = $request->query('regionIds');
+            $offSetParam    = $request->query('offset');
+            $limitParam     = $request->query('limit');
 
             if (empty($seriesIdParam)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'seriesIdパラメータが必要です',
                 ], 400);
+            }
+
+            // 文字列の場合は配列に変換
+            if (is_string($regionIdsParam)) {
+                $regionIdsParam = explode(',', $regionIdsParam);
+            } elseif (is_null($regionIdsParam)) {
+                $regionIdsParam = [];
             }
             
             $seriesId   = new SeriesId($seriesIdParam);

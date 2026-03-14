@@ -16,4 +16,5 @@ interface CarRepositoryInterface
      * @throws SelectAreaCarNotFoundException
      */
     public function findBySeriesId(int $seriesId, array $regionIds, int $offset, int $limit): array;
+    public function findByTotalCount(int $seriesId, array $regionIds): int;
 }
