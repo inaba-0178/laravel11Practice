@@ -13,13 +13,15 @@ final class RegionIds
             throw new InvalidArgumentException('RegionIdsは空にできません。');
         }
 
+        $intValues = [];
         foreach ($values as $value) {
-            if (!is_int($value)) {
+            if (!is_numeric($value)) {
                 throw new InvalidArgumentException('RegionIdsは整数である必要があります。');
             }
+            $intValues[] = (int)$value;
         }
 
-        $this->values = $values;
+        $this->values = $intValues;
     }
 
     public function getValue(): array

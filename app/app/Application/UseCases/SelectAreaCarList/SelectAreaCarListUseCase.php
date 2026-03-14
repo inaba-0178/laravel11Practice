@@ -20,9 +20,11 @@ class SelectAreaCarListUseCase
      * @return SelectAreaCarListOutputData
      * @throws SelectAreaCarNotFoundException
      */
-    public function execute(SeriesId $seriesId, RegionIds $regionIds, Offset $offSet, Limit $limit): SelectAreaCarListOutputData
+    public function execute(SeriesId $seriesId, RegionIds $regionIds, Offset $offset, Limit $limit): SelectAreaCarListOutputData
     {
-        $cars = $this->carRepository->findBySeriesId($seriesId->getValue(), $regionIds->getValue(), $offSet->getValue(), $limit->getValue()); 
-        return new SelectAreaCarListOutputData($cars);
+        \Log::info($regionIds->getValue());
+        $cars           = $this->carRepository->findBySeriesId($seriesId->getValue(), $regionIds->getValue(), $offset->getValue(), $limit->getValue());
+        $totalCount     = $this->carRepository->findByTotalCount($seriesId->getValue(), $regionIds->getValue());
+        return new SelectAreaCarListOutputData($cars, $totalCount);
     }
 }
