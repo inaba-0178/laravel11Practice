@@ -15,13 +15,14 @@ use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Actions\Action;
 use App\Filament\Pages\MstAreaDetail;
 use App\Constants\NavigationSort;
+use App\Constants\NavigationGroup;
 
 class MstAreasResource extends Resource
 {
     protected static ?string $model = MstAreas::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'マスタ参照';
+    protected static ?string $navigationGroup = NavigationGroup::MST_GROUP->value;
     protected static ?int $navigationSort = NavigationSort::MST_AREA->value;
     protected static ?string $pluralModelLabel = 'エリア一覧';
 
