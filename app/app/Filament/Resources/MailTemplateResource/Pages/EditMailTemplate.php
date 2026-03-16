@@ -13,7 +13,11 @@ class EditMailTemplate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make()->label('削除'),
+            DeleteAction::make()
+                ->label('削除')
+                ->modalHeading(fn() => 'メールテンプレートID:' . $this->record->id . ' 削除')
+                ->modalDescription(fn() => 'メールテンプレートID:' . $this->record->id . 'を削除します。この操作は取り消せません。')
+                ->modalSubmitActionLabel('削除'),
         ];
     }
 

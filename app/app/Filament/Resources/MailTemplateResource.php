@@ -89,7 +89,11 @@ class MailTemplateResource extends Resource
             ->actions([
                 ViewAction::make()->label('詳細'),
                 EditAction::make()->label('編集'),
-                DeleteAction::make()->label('削除'),
+                DeleteAction::make()
+                    ->label('削除')
+                    ->modalHeading(fn(OprMailTemplate $record) => 'メールテンプレートID:' . $record->id . ' 削除')
+                    ->modalDescription(fn(OprMailTemplate $record) => 'メールテンプレートID:' . $record->id . 'を削除します。この操作は取り消せません。')
+                    ->modalSubmitActionLabel('削除'),
             ]);
     }
 
