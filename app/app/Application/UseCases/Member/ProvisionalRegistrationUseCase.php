@@ -5,16 +5,17 @@ namespace App\Application\UseCases\Member;
 use App\Domain\Member\Repositories\MemberProvisionalRegistrationRepositoryInterface;
 use App\Domain\Member\Repositories\MemberRepositoryInterface;
 use App\Domain\Member\ValueObjects\RegisterEmail;
-use App\Infrastructure\Notifications\Mail\ProvisionalRegistrationMail;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Domain\Shared\Constants\PasswordPolicy;
+use App\Application\Services\MailService;
+use App\Domain\Shared\Constants\MailTemplateId;
 
 class ProvisionalRegistrationUseCase
 {
     public function __construct(
-        private readonly MemberRepositoryInterface                    $memberRepository,
-        private readonly MemberProvisionalRegistrationRepositoryInterface $provisionalRegistrationRepository,
+        private readonly MemberRepositoryInterface                          $memberRepository,
+        private readonly MemberProvisionalRegistrationRepositoryInterface   $provisionalRegistrationRepository,
+        private readonly MailService                                        $mailService,
     ) {}
 
     public function execute(RegisterEmail $email): void
@@ -29,6 +30,14 @@ class ProvisionalRegistrationUseCase
 
         $this->provisionalRegistrationRepository->upsert($email->email, $token);
 
-        Mail::to($email->email)->send(new ProvisionalRegistrationMail($token, $email->email));
+        $this->mailService->send(
+            templateId:   MailTemplateId::PROVISIONAL_REGISTRATION,
+            toEmail:      $email->email,
+            placeholders: [
+                'url'   => config('app.frontend_url') . '/register-form?token=' . $token . '&email=' . urlencode($email->email),
+                'token' => $token,
+                'email' => $email->email,
+            ],
+        );
     }
 }

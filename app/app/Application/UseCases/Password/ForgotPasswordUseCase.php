@@ -5,16 +5,17 @@ namespace App\Application\UseCases\Password;
 use App\Domain\MemberPassword\Repositories\MemberPasswordRepositoryInterface;
 use App\Domain\Password\Repositories\PasswordResetTokenRepositoryInterface;
 use App\Domain\Password\ValueObjects\ForgotPasswordEmail;
-use App\Infrastructure\Notifications\Mail\PasswordResetMail;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Domain\Shared\Constants\PasswordPolicy;
+use App\Application\Services\MailService;
+use App\Domain\Shared\Constants\MailTemplateId;
 
 class ForgotPasswordUseCase
 {
     public function __construct(
         private readonly MemberPasswordRepositoryInterface     $memberPasswordRepository,
         private readonly PasswordResetTokenRepositoryInterface $passwordResetTokenRepository,
+        private readonly MailService                           $mailService,
     ) {}
 
     public function execute(ForgotPasswordEmail $email): void
@@ -29,6 +30,14 @@ class ForgotPasswordUseCase
 
         $this->passwordResetTokenRepository->upsert($email->email, $token);
 
-        Mail::to($email->email)->send(new PasswordResetMail($token, $email->email));
+        $this->mailService->send(
+            templateId:   MailTemplateId::PASSWORD_RESET,
+            toEmail:      $email->email,
+            placeholders: [
+                'url'   => config('app.frontend_url') . '/reset-password?token=' . $token . '&email=' . urlencode($email->email),
+                'token' => $token,
+                'email' => $email->email,
+            ],
+        );
     }
 }

@@ -15,6 +15,17 @@
             padding: 40px;
             border-radius: 8px;
         }
+        h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 16px;
+        }
+        p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
         .button {
             display: inline-block;
             background: #4a90e2;
@@ -23,6 +34,7 @@
             border-radius: 4px;
             text-decoration: none;
             margin-top: 24px;
+            font-size: 14px;
         }
         .expire {
             color: #888;
@@ -33,13 +45,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>パスワードリセットのご案内</h2>
-        <p>以下のボタンからパスワードの再設定を行ってください。</p>
-        <a href="{{ config('app.frontend_url') }}/reset-password?token={{ $token }}&email={{ urlencode($email) }}" class="button">
-            パスワードを再設定する
-        </a>
-        <p class="expire">このリンクは30分間有効です。</p>
-        <p class="expire">心当たりがない場合は無視してください。</p>
+        {!! $body !!}
     </div>
 </body>
 </html>
