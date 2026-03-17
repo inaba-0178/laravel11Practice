@@ -29,4 +29,5 @@ return [
     App\Providers\SeriesStkCountServiceProvider::class,
     App\Providers\MailServiceProvider::class,
     App\Providers\ColorOptionServiceProvider::class,
+    App\Providers\BasicOptionServiceProvider::class,
 ];

@@ -28,6 +28,7 @@ use App\Presentation\Controllers\EmailChange\EmailChangeController;
 use App\Presentation\Controllers\ChangePassword\ChangePasswordController;
 use App\Presentation\Controllers\SeriesStkCount\SeriesStkCountController;
 use App\Presentation\Controllers\ColorOption\ColorOptionController;
+use App\Presentation\Controllers\BasicOption\BasicOptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -170,5 +171,7 @@ Route::get('/SeriesStkCount', SeriesStkCountController::class);
 Route::prefix('SearchOptions')->group(function () {
     // 検索条件の色の取得
     Route::get('ColorOptions', [ColorOptionController::class, 'index']);
+    // 検索条件の基本オプションの取得
+    Route::get('BasicOptions', [BasicOptionController::class, 'index']);
 });
  
