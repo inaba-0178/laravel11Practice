@@ -6,6 +6,14 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use  Database\Seeders\Mst\MailTemplateSeeder;
+use Database\Seeders\Mst\MstColorOptionSeeder;
+use Database\Seeders\Mst\MstBasicOptionSeeder;
+use Database\Seeders\Mst\MstDetailOptionSeeder;
+use Database\Seeders\Mst\MstEquipmentBasicSeeder;
+use Database\Seeders\Mst\MstEquipmentSafetySeeder;
+use Database\Seeders\Mst\MstEquipmentEnvSeeder;
+use Database\Seeders\Mst\MstEquipmentDressupSeeder;
+use Database\Seeders\Mst\MstSeatOptionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,7 +32,15 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            MailTemplateSeeder::class,
+            //MailTemplateSeeder::class,
+            MstColorOptionSeeder::class,
+            MstBasicOptionSeeder::class,
+            MstDetailOptionSeeder::class,
+            MstEquipmentBasicSeeder::class,
+            MstEquipmentSafetySeeder::class,
+            MstEquipmentEnvSeeder::class,
+            MstEquipmentDressupSeeder::class,
+            MstSeatOptionSeeder::class,
         ]);
     }
 }
