@@ -28,4 +28,5 @@ return [
     App\Providers\ChangePasswordServiceProvider::class,
     App\Providers\SeriesStkCountServiceProvider::class,
     App\Providers\MailServiceProvider::class,
+    App\Providers\ColorOptionServiceProvider::class,
 ];
