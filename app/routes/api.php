@@ -29,6 +29,7 @@ use App\Presentation\Controllers\ChangePassword\ChangePasswordController;
 use App\Presentation\Controllers\SeriesStkCount\SeriesStkCountController;
 use App\Presentation\Controllers\ColorOption\ColorOptionController;
 use App\Presentation\Controllers\BasicOption\BasicOptionController;
+use App\Presentation\Controllers\DetailOption\DetailOptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -173,5 +174,7 @@ Route::prefix('SearchOptions')->group(function () {
     Route::get('ColorOptions', [ColorOptionController::class, 'index']);
     // 検索条件の基本オプションの取得
     Route::get('BasicOptions', [BasicOptionController::class, 'index']);
+    // 検索条件の詳細オプションの取得
+    Route::get('DetailOptions', [DetailOptionController::class, 'index']);
 });
  

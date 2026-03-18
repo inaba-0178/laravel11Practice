@@ -30,4 +30,5 @@ return [
     App\Providers\MailServiceProvider::class,
     App\Providers\ColorOptionServiceProvider::class,
     App\Providers\BasicOptionServiceProvider::class,
+    App\Providers\DetailOptionServiceProvider::class,
 ];
