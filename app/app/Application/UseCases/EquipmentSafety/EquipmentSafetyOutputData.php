@@ -7,11 +7,11 @@ use App\Domain\EquipmentSafety\Entities\EquipmentSafety;
 class EquipmentSafetyOutputData
 {
     public function __construct(
-        public readonly Collection $equipmentSafetys,
+        public readonly Collection $equipmentSafeties,
     ) {}
     public function toArray(): array
     {
-        return $this->equipmentSafetys
+        return $this->equipmentSafeties
             ->map(fn(EquipmentSafety $entity) => $entity->toArray())
             ->values()
             ->toArray();
