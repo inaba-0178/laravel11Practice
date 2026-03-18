@@ -38,4 +38,5 @@ return [
     App\Providers\SeatOptionServiceProvider::class,
     App\Providers\LoanMonthlyOptionServiceProvider::class,
     App\Providers\LoanDownOptionServiceProvider::class,
+    App\Providers\CarTypeOptionServiceProvider::class,
 ];
