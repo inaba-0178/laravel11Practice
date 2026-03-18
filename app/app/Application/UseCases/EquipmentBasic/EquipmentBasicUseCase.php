@@ -10,7 +10,7 @@ class EquipmentBasicUseCase
     ) {}
     public function handle(): EquipmentBasicOutputData
     {
-        $EquipmentBasic = $this->repository->getAll();
-        return new EquipmentBasicOutputData($EquipmentBasic);
+        $equipmentBasic = $this->repository->getAll();
+        return new EquipmentBasicOutputData($equipmentBasic);
     }
 }
