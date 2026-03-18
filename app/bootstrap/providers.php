@@ -36,4 +36,5 @@ return [
     App\Providers\EquipmentEnvServiceProvider::class,
     App\Providers\EquipmentDressupServiceProvider::class,
     App\Providers\SeatOptionServiceProvider::class,
+    App\Providers\LoanMonthlyOptionServiceProvider::class,
 ];
