@@ -8,7 +8,7 @@ final class BasicOption
         public readonly int     $id,
         public readonly string  $value,
         public readonly string  $label,
-        public readonly int     $isHighlight,
+        public readonly bool    $isHighlight,
         public readonly int     $sortOrder,
         public readonly bool    $isActive,
     ) {}
@@ -28,7 +28,7 @@ final class BasicOption
         return $this->label;
     }
 
-    public function getIsHighlight(): ?string
+    public function getIsHighlight(): bool
     {
         return $this->isHighlight;
     }

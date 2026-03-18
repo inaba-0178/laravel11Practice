@@ -12,13 +12,14 @@ class MstBasicOptions extends Model
     protected $fillable = [
         'value',
         'label',
-        'is_highlights',
+        'is_highlight',
         'sort_order',
         'is_active',
     ];
 
     protected $casts = [
-        'sort_order' => 'integer',
-        'is_active'  => 'boolean',
+        'is_highlight'  => 'boolean',
+        'sort_order'    => 'integer',
+        'is_active'     => 'boolean',
     ];
 }
