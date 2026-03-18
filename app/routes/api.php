@@ -35,6 +35,7 @@ use App\Presentation\Controllers\EquipmentSafety\EquipmentSafetyController;
 use App\Presentation\Controllers\EquipmentEnv\EquipmentEnvController;
 use App\Presentation\Controllers\EquipmentDressup\EquipmentDressupController;
 use App\Presentation\Controllers\SeatOption\SeatOptionController;
+use App\Presentation\Controllers\LoanMonthlyOption\LoanMonthlyOptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -192,5 +193,7 @@ Route::prefix('SearchOptions')->group(function () {
     Route::get('EquipmentDressup', [EquipmentDressupController::class, 'index']);
     // 検索条件のシートオプションの取得
     Route::get('SeatOption', [SeatOptionController::class, 'index']);
+    // 検索条件のローン月々支払いの取得
+    Route::get('LoanMonthlyOption', [LoanMonthlyOptionController::class, 'index']);
 });
  
