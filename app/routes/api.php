@@ -196,7 +196,7 @@ Route::prefix('SearchOptions')->group(function () {
     Route::get('SeatOption', [SeatOptionController::class, 'index']);
     // 検索条件のローン月々支払いの取得
     Route::get('LoanMonthlyOption', [LoanMonthlyOptionController::class, 'index']);
-    // 検索条件のローン月々支払いの取得
+    //  検索条件のローン頭金の取得
     Route::get('LoanDownOption', [LoanDownOptionController::class, 'index']);
 });
  
