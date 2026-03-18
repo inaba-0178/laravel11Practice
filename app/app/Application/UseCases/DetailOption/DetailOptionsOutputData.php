@@ -8,12 +8,12 @@ use App\Domain\DetailOption\Entities\DetailOption;
 class DetailOptionsOutputData
 {
     public function __construct(
-        public readonly Collection $DetailOptions,
+        public readonly Collection $detailOptions,
     ) {}
 
     public function toArray(): array
     {
-        return $this->DetailOptions
+        return $this->detailOptions
             ->map(fn(DetailOption $entity) => $entity->toArray())
             ->values()
             ->toArray();

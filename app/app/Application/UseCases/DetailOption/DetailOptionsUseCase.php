@@ -12,8 +12,8 @@ class DetailOptionsUseCase
 
     public function handle(): DetailOptionsOutputData
     {
-        $DetailOptions = $this->repository->getAll();
+        $detailOptions = $this->repository->getAll();
 
-        return new DetailOptionsOutputData($DetailOptions);
+        return new DetailOptionsOutputData($detailOptions);
     }
 }
