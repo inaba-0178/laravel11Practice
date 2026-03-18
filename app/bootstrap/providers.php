@@ -35,4 +35,5 @@ return [
     App\Providers\EquipmentSafetyServiceProvider::class,
     App\Providers\EquipmentEnvServiceProvider::class,
     App\Providers\EquipmentDressupServiceProvider::class,
+    App\Providers\SeatOptionServiceProvider::class,
 ];
