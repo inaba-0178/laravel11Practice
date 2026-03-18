@@ -7,11 +7,11 @@ use App\Domain\SeatOption\Entities\SeatOption;
 class SeatOptionOutputData
 {
     public function __construct(
-        public readonly Collection $equipmentSafeties,
+        public readonly Collection $seatOptions,
     ) {}
     public function toArray(): array
     {
-        return $this->equipmentSafeties
+        return $this->seatOptions
             ->map(fn(SeatOption $entity) => $entity->toArray())
             ->values()
             ->toArray();

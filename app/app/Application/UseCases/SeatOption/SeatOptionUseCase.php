@@ -11,7 +11,7 @@ class SeatOptionUseCase
 
     public function handle(): SeatOptionOutputData
     {
-        $SeatOption = $this->repository->getAll();
-        return new SeatOptionOutputData($SeatOption);
+        $seatOption = $this->repository->getAll();
+        return new SeatOptionOutputData($seatOption);
     }
 }
