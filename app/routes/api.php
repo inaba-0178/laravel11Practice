@@ -31,6 +31,7 @@ use App\Presentation\Controllers\ColorOption\ColorOptionController;
 use App\Presentation\Controllers\BasicOption\BasicOptionController;
 use App\Presentation\Controllers\DetailOption\DetailOptionController;
 use App\Presentation\Controllers\EquipmentBasic\EquipmentBasicController;
+use App\Presentation\Controllers\EquipmentSafety\EquipmentSafetyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -179,5 +180,7 @@ Route::prefix('SearchOptions')->group(function () {
     Route::get('DetailOptions', [DetailOptionController::class, 'index']);
     // 検索条件の基本装備の取得
     Route::get('EquipmentBasic', [EquipmentBasicController::class, 'index']);
+    // 検索条件の安全装備の取得
+    Route::get('EquipmentSafety', [EquipmentSafetyController::class, 'index']);
 });
  

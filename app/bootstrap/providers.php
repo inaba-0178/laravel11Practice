@@ -32,4 +32,5 @@ return [
     App\Providers\BasicOptionServiceProvider::class,
     App\Providers\DetailOptionServiceProvider::class,
     App\Providers\EquipmentBasicServiceProvider::class,
+    App\Providers\EquipmentSafetyServiceProvider::class,
 ];
