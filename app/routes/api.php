@@ -33,6 +33,7 @@ use App\Presentation\Controllers\DetailOption\DetailOptionController;
 use App\Presentation\Controllers\EquipmentBasic\EquipmentBasicController;
 use App\Presentation\Controllers\EquipmentSafety\EquipmentSafetyController;
 use App\Presentation\Controllers\EquipmentEnv\EquipmentEnvController;
+use App\Presentation\Controllers\EquipmentDressup\EquipmentDressupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -185,5 +186,7 @@ Route::prefix('SearchOptions')->group(function () {
     Route::get('EquipmentSafety', [EquipmentSafetyController::class, 'index']);
     // 検索条件の環境装備の取得
     Route::get('EquipmentEnv', [EquipmentEnvController::class, 'index']);
+    // 検索条件のドレスアップ装備の取得
+    Route::get('EquipmentDressup', [EquipmentDressupController::class, 'index']);
 });
  
