@@ -37,6 +37,7 @@ use App\Presentation\Controllers\EquipmentDressup\EquipmentDressupController;
 use App\Presentation\Controllers\SeatOption\SeatOptionController;
 use App\Presentation\Controllers\LoanMonthlyOption\LoanMonthlyOptionController;
 use App\Presentation\Controllers\LoanDownOption\LoanDownOptionController;
+use App\Presentation\Controllers\CarTypeOption\CarTypeOptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -198,5 +199,7 @@ Route::prefix('SearchOptions')->group(function () {
     Route::get('LoanMonthlyOption', [LoanMonthlyOptionController::class, 'index']);
     //  検索条件のローン頭金の取得
     Route::get('LoanDownOption', [LoanDownOptionController::class, 'index']);
+    //  検索条件の車のタイプの取得
+    Route::get('CarTypeOption', [CarTypeOptionController::class, 'index']);
 });
  
