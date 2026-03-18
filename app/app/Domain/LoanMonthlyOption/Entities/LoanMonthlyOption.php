@@ -6,7 +6,7 @@ final class LoanMonthlyOption
 {
     public function __construct(
         public readonly int     $id,
-        public readonly string  $value,
+        public readonly int     $value,
         public readonly string  $label,
         public readonly int     $sortOrder,
         public readonly bool    $isActive,
@@ -17,7 +17,7 @@ final class LoanMonthlyOption
         return $this->id;
     }
 
-    public function getValue(): string
+    public function getValue(): int
     {
         return $this->value;
     }
