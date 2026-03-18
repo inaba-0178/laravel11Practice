@@ -31,4 +31,5 @@ return [
     App\Providers\ColorOptionServiceProvider::class,
     App\Providers\BasicOptionServiceProvider::class,
     App\Providers\DetailOptionServiceProvider::class,
+    App\Providers\EquipmentBasicServiceProvider::class,
 ];
