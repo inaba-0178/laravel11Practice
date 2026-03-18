@@ -177,7 +177,7 @@ Route::prefix('SearchOptions')->group(function () {
     Route::get('BasicOptions', [BasicOptionController::class, 'index']);
     // 検索条件の詳細オプションの取得
     Route::get('DetailOptions', [DetailOptionController::class, 'index']);
-    // 検索条件の詳細オプションの取得
+    // 検索条件の基本装備の取得
     Route::get('EquipmentBasic', [EquipmentBasicController::class, 'index']);
 });
  
