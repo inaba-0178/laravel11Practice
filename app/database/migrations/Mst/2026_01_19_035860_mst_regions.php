@@ -12,15 +12,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mst_regions', function (Blueprint $table) {
-            $table->id();
-            $table->integer('area_code')->nullable();
-            $table->string('name');
-            $table->string('url')->nullable();
-            $table->string('query_param')->nullable();
-            $table->integer('sort_order')->default(0);
-            $table->timestamps();
-        });
+        if (!Schema::connection('mst')->hasTable('mst_regions')) {
+            Schema::create('mst_regions', function (Blueprint $table) {
+                $table->id();
+                $table->integer('area_code')->nullable();
+                $table->string('name');
+                $table->string('url')->nullable();
+                $table->string('query_param')->nullable();
+                $table->integer('sort_order')->default(0);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

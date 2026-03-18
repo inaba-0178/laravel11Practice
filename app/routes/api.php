@@ -174,6 +174,7 @@ Route::prefix('MemberAuth')->group(function () {
 // 車両データ数
 Route::get('/SeriesStkCount', SeriesStkCountController::class);
 
+// 検索条件取得
 Route::prefix('SearchOptions')->group(function () {
     // 検索条件の色の取得
     Route::get('ColorOptions', [ColorOptionController::class, 'index']);
