@@ -33,4 +33,5 @@ return [
     App\Providers\DetailOptionServiceProvider::class,
     App\Providers\EquipmentBasicServiceProvider::class,
     App\Providers\EquipmentSafetyServiceProvider::class,
+    App\Providers\EquipmentEnvServiceProvider::class,
 ];
