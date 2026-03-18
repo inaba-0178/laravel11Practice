@@ -34,6 +34,7 @@ use App\Presentation\Controllers\EquipmentBasic\EquipmentBasicController;
 use App\Presentation\Controllers\EquipmentSafety\EquipmentSafetyController;
 use App\Presentation\Controllers\EquipmentEnv\EquipmentEnvController;
 use App\Presentation\Controllers\EquipmentDressup\EquipmentDressupController;
+use App\Presentation\Controllers\SeatOption\SeatOptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -188,5 +189,7 @@ Route::prefix('SearchOptions')->group(function () {
     Route::get('EquipmentEnv', [EquipmentEnvController::class, 'index']);
     // 検索条件のドレスアップ装備の取得
     Route::get('EquipmentDressup', [EquipmentDressupController::class, 'index']);
+    // 検索条件のシートオプションの取得
+    Route::get('SeatOption', [SeatOptionController::class, 'index']);
 });
  
