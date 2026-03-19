@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Presentation\Controllers\SelectAreaCarList;
 
 use App\Application\UseCases\SelectAreaCarList\SelectAreaCarListUseCase;
@@ -17,7 +18,7 @@ use Exception;
 class SelectAreaCarListController extends Controller
 {
     public function __construct(
-       private readonly SelectAreaCarListUseCase $useCase
+        private readonly SelectAreaCarListUseCase $useCase
     ) {}
 
     /**
@@ -30,6 +31,8 @@ class SelectAreaCarListController extends Controller
             $regionIdsParam = $request->query('regionIds');
             $offSetParam    = $request->query('offset');
             $limitParam     = $request->query('limit');
+            $sortKey        = $request->query('sortKey', '');
+            $sortOrder      = $request->query('sortOrder', '');
 
             if (empty($seriesIdParam)) {
                 return response()->json([
@@ -38,39 +41,71 @@ class SelectAreaCarListController extends Controller
                 ], 400);
             }
 
-            // 文字列の場合は配列に変換
             if (is_string($regionIdsParam)) {
                 $regionIdsParam = explode(',', $regionIdsParam);
             } elseif (is_null($regionIdsParam)) {
                 $regionIdsParam = [];
             }
-            
+
+            // 検索条件をまとめて配列で受け取る
+            $searchParams = $request->only([
+                'priceFrom',
+                'priceTo',
+                'yearFrom',
+                'yearTo',
+                'mileageFrom',
+                'mileageTo',
+                'transmission',
+                'engineType',
+                'colors',
+                'options',
+                'carTypes',
+                'engineFrom',
+                'engineTo',
+                'driveType',
+                'handle',
+                'doorCount',
+                'slideDoor',
+                'passengerCount',
+                'inspectionRemaining',
+                'freeWord',
+                'equipment',
+            ]);
+
             $seriesId   = new SeriesId($seriesIdParam);
             $regionIds  = new RegionIds($regionIdsParam ?? []);
             $offset     = new OffSet((int)($offSetParam ?? 0));
-            $limit      = new Limit((int)($limitParam ?? 0));
-            $outputData = $this->useCase->execute($seriesId, $regionIds, $offset, $limit);
-            
+            $limit      = new Limit((int)($limitParam ?? 10));
+            $outputData = $this->useCase->execute(
+                $seriesId,
+                $regionIds,
+                $offset,
+                $limit,
+                $searchParams,
+                $sortKey,
+                $sortOrder,
+            );
+
             return response()->json($outputData->toArray());
-            
+
         } catch (InvalidArgumentException $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 422);
-            
+
         } catch (SelectAreaCarNotFoundException $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 404);
-            
+
         } catch (Exception $e) {
             Log::error('CarList error:', [
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace'   => $e->getTraceAsString(),
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'サーバーエラーが発生しました。',

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Application\UseCases\SelectAreaCarList;
 
 use App\Domain\SelectAreaCarList\Repositories\CarRepositoryInterface;
@@ -16,15 +17,34 @@ class SelectAreaCarListUseCase
 
     /**
      * 対象車両の中古車を取得する
-     * 
-     * @return SelectAreaCarListOutputData
+     *
      * @throws SelectAreaCarNotFoundException
      */
-    public function execute(SeriesId $seriesId, RegionIds $regionIds, Offset $offset, Limit $limit): SelectAreaCarListOutputData
-    {
-        \Log::info($regionIds->getValue());
-        $cars           = $this->carRepository->findBySeriesId($seriesId->getValue(), $regionIds->getValue(), $offset->getValue(), $limit->getValue());
-        $totalCount     = $this->carRepository->findByTotalCount($seriesId->getValue(), $regionIds->getValue());
+    public function execute(
+        SeriesId $seriesId,
+        RegionIds $regionIds,
+        Offset $offset,
+        Limit $limit,
+        array $searchParams = [],
+        string $sortKey = '',
+        string $sortOrder = '',
+    ): SelectAreaCarListOutputData {
+        $cars = $this->carRepository->findBySeriesId(
+            $seriesId->getValue(),
+            $regionIds->getValue(),
+            $offset->getValue(),
+            $limit->getValue(),
+            $searchParams,
+            $sortKey,
+            $sortOrder,
+        );
+
+        $totalCount = $this->carRepository->findByTotalCount(
+            $seriesId->getValue(),
+            $regionIds->getValue(),
+            $searchParams,
+        );
+
         return new SelectAreaCarListOutputData($cars, $totalCount);
     }
 }
