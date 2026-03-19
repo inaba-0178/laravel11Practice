@@ -23,7 +23,7 @@ class SelectCarDataController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            $carIdParam = $request->get('carId');
+            $carIdParam = $request->query('carId');
             if (empty($carIdParam)) {
                 return response()->json([
                     'success' => false,
