@@ -38,6 +38,7 @@ use App\Presentation\Controllers\SeatOption\SeatOptionController;
 use App\Presentation\Controllers\LoanMonthlyOption\LoanMonthlyOptionController;
 use App\Presentation\Controllers\LoanDownOption\LoanDownOptionController;
 use App\Presentation\Controllers\CarTypeOption\CarTypeOptionController;
+use App\Presentation\Controllers\SelectDealerData\SelectDealerDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -203,3 +204,4 @@ Route::prefix('SearchOptions')->group(function () {
     Route::get('CarTypeOption', [CarTypeOptionController::class, 'index']);
 });
  
+Route::get('SelectDealerData', SelectDealerDataController::class);
