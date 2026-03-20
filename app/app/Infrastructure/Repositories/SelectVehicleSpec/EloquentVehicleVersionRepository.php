@@ -5,13 +5,15 @@ namespace App\Infrastructure\Repositories\SelectVehicleSpec;
 use App\Domain\SelectVehicleSpec\Repositories\VehicleVersionRepositoryInterface;
 use App\Domain\SelectVehicleSpec\Entities\VehicleVersion;
 use App\Infrastructure\Eloquent\Mst\MstVehicleYearVersions;
+use App\Infrastructure\Repositories\BaseRepository;
 use RuntimeException;
 
-class EloquentVehicleVersionRepository implements VehicleVersionRepositoryInterface
+class EloquentVehicleVersionRepository extends BaseRepository implements VehicleVersionRepositoryInterface
 {
-    public function __construct(
-        private readonly MstVehicleYearVersions $model,
-    ) {}
+    public function __construct(MstVehicleYearVersions $model)
+    {
+        parent::__construct($model);
+    }
 
     public function findByVehicleId(int $vehicleId): VehicleVersion
     {
