@@ -16,11 +16,9 @@ class MstVehicles extends Model
         'series_id',
         'manufacturer_id',
         'name',
-        'model_codse',
+        'model_code',
         'body_type',
         'country_code',
         'status',
     ];
-
-
 }

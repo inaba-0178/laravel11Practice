@@ -41,4 +41,5 @@ return [
     App\Providers\CarTypeOptionServiceProvider::class,
     App\Providers\SelectDealerDataServiceProvider::class,
     App\Providers\SelectDealerReviewServiceProvider::class,
+    App\Providers\SelectVehicleSpecServiceProvider::class,
 ];
