@@ -42,6 +42,7 @@ use App\Presentation\Controllers\SelectDealerData\SelectDealerDataController;
 use App\Presentation\Controllers\SelectDealerReview\SelectDealerReviewController;
 use App\Presentation\Controllers\SelectVehicleSpec\SelectVehicleSpecController;
 use App\Presentation\Controllers\SelectReservationType\SelectReservationTypeController;
+use App\Presentation\Controllers\SelectDealerSchedule\SelectDealerScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -211,3 +212,4 @@ Route::get('SelectDealerData', SelectDealerDataController::class);
 Route::get('SelectDealerReview', SelectDealerReviewController::class);
 Route::get('SelectVehicleSpec', SelectVehicleSpecController::class);
 Route::get('ReservationTypes', SelectReservationTypeController::class);
+Route::get('DealerSchedules', SelectDealerScheduleController::class);

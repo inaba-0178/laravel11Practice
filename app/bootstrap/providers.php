@@ -43,4 +43,5 @@ return [
     App\Providers\SelectDealerReviewServiceProvider::class,
     App\Providers\SelectVehicleSpecServiceProvider::class,
     App\Providers\SelectReservationTypeServiceProvider::class,
+    App\Providers\SelectDealerScheduleServiceProvider::class,
 ];
