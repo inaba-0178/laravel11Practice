@@ -43,6 +43,7 @@ use App\Presentation\Controllers\SelectDealerReview\SelectDealerReviewController
 use App\Presentation\Controllers\SelectVehicleSpec\SelectVehicleSpecController;
 use App\Presentation\Controllers\SelectReservationType\SelectReservationTypeController;
 use App\Presentation\Controllers\SelectDealerSchedule\SelectDealerScheduleController;
+use App\Presentation\Controllers\CreateReservation\CreateReservationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -211,5 +212,7 @@ Route::prefix('SearchOptions')->group(function () {
 Route::get('SelectDealerData', SelectDealerDataController::class);
 Route::get('SelectDealerReview', SelectDealerReviewController::class);
 Route::get('SelectVehicleSpec', SelectVehicleSpecController::class);
+
 Route::get('ReservationTypes', SelectReservationTypeController::class);
 Route::get('DealerSchedules', SelectDealerScheduleController::class);
+Route::post('Reservations', CreateReservationController::class);
