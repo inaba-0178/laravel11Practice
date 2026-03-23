@@ -2,6 +2,7 @@
 namespace App\Filament\Resources\ReservationResource\Pages;
 
 use App\Filament\Resources\ReservationResource;
+use App\Constants\ReservationStatus;
 use App\Infrastructure\Eloquent\User\StkReservation;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
@@ -77,22 +78,14 @@ class ViewReservation extends ViewRecord
                         TextEntry::make('status')
                             ->label('ステータス')
                             ->badge()
-                            ->color(fn(string $state): string => match ($state) {
-                                'pending'   => 'warning',
-                                'confirmed' => 'success',
-                                'completed' => 'info',
-                                'no_show'   => 'danger',
-                                'cancelled' => 'gray',
-                                default     => 'gray',
-                            })
-                            ->formatStateUsing(fn(string $state): string => match ($state) {
-                                'pending'   => '仮予約',
-                                'confirmed' => '承認済み',
-                                'completed' => '対応完了',
-                                'no_show'   => '未来店',
-                                'cancelled' => 'キャンセル',
-                                default     => $state,
-                            }),
+                            ->color(
+                                fn(string $state): string =>
+                                    ReservationStatus::colorFromValue($state)
+                            )
+                            ->formatStateUsing(
+                                fn(string $state): string => 
+                                    ReservationStatus::labelFromValue($state)
+                            ),
                     ])->columns(1),
 
                 Section::make('お客様情報')
@@ -202,7 +195,12 @@ class ViewReservation extends ViewRecord
                                     // TODO: 否認メール送信
                                     Notification::make()->title('予約を否認しました')->success()->send();
                                 })
-                        ->modalWidth('lg'),
+                        ->modalWidth('lg')
+                        ->visible(fn($record) => 
+                            $record->status === 'pending' &&
+                            $record->schedule &&
+                            \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
+                        ),
 
                     InfolistAction::make('approve_bottom')
                         ->label('承認')
@@ -258,9 +256,14 @@ class ViewReservation extends ViewRecord
                                 }
                             }
 
-                                Notification::make()->title('予約を承認しました')->success()->send();
-                            })
-                            ->modalWidth('lg'),
+                            Notification::make()->title('予約を承認しました')->success()->send();
+                        })
+                        ->modalWidth('lg')
+                        ->visible(fn($record) => 
+                            $record->status === 'pending' &&
+                            $record->schedule &&
+                            \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
+                        ),
 
                     InfolistAction::make('cancel_bottom')
                         ->label('キャンセル')
@@ -282,7 +285,12 @@ class ViewReservation extends ViewRecord
                             // TODO: キャンセルメール送信
                             Notification::make()->title('予約をキャンセルしました')->success()->send();
                         })
-                        ->modalWidth('lg'),
+                        ->modalWidth('lg')
+                        ->visible(fn($record) => 
+                            $record->status === 'confirmed' &&
+                            $record->schedule &&
+                            \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
+                        ),
                 ]),
                         
             ]);

@@ -3,6 +3,7 @@ namespace App\Filament\Resources;
 
 use App\Constants\NavigationGroup;
 use App\Constants\NavigationSort;
+use App\Constants\ReservationStatus;
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Infrastructure\Eloquent\User\StkReservation;
 use Filament\Forms\Form;
@@ -13,6 +14,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Enums\FiltersLayout;
 
 class ReservationResource extends Resource
 {
@@ -43,6 +46,7 @@ class ReservationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchable(false)
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
@@ -64,23 +68,14 @@ class ReservationResource extends Resource
                 TextColumn::make('status')
                     ->label('ステータス')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'pending'   => 'warning',
-                        'confirmed' => 'success',
-                        'completed' => 'info',
-                        'no_show'   => 'danger',
-                        'cancelled' => 'gray',
-                        default     => 'gray',
-                    })
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'pending'   => '仮予約',
-                        'confirmed' => '承認済み',
-                        'completed' => '対応完了',
-                        'no_show'   => '未来店',
-                        'cancelled' => 'キャンセル',
-                        default     => $state,
-                    }),
-
+                    ->color(
+                        fn(string $state): string =>
+                            ReservationStatus::colorFromValue($state)
+                    )
+                    ->formatStateUsing(
+                        fn(string $state): string => 
+                            ReservationStatus::labelFromValue($state)
+                    ),
                 TextColumn::make('guest_name')
                     ->label('お名前')
                     ->formatStateUsing(function ($state, $record) {
@@ -114,14 +109,14 @@ class ReservationResource extends Resource
             ->filters([
                 SelectFilter::make('status')
                     ->label('ステータス')
-                    ->options([
-                        'pending'   => '仮予約',
-                        'confirmed' => '承認済み',
-                        'completed' => '対応完了',
-                        'no_show'   => '未来店',
-                        'cancelled' => 'キャンセル',
-                    ]),
-            ])
+                    ->options(ReservationStatus::options()),
+            ], FiltersLayout::AboveContent)
+            ->deferFilters()
+            ->hiddenFilterIndicators()
+            ->filtersApplyAction(
+                fn(Action $action) => $action
+                    ->label('適用')
+            )
             ->actions([
                 ViewAction::make()->label('詳細'),
             ])
