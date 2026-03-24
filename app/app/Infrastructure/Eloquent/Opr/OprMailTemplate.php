@@ -28,6 +28,7 @@ class OprMailTemplate extends Model
     protected $table = 'opr_mail_templates';
 
     protected $fillable = [
+        'template_key',
         'template_name',
         'subject',
         'body',

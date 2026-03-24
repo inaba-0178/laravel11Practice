@@ -9,8 +9,8 @@ use App\Infrastructure\Eloquent\Opr\OprMailTemplate;
 
 final class EloquentMailTemplateRepository implements MailTemplateRepositoryInterface
 {
-    public function findById(int $id): ?OprMailTemplate
+    public function findByKey(string $key): ?OprMailTemplate
     {
-        return OprMailTemplate::find($id);
+        return OprMailTemplate::where('template_key', $key)->first();
     }
 }

@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource;
 use App\Constants\ReservationStatus;
 use App\Infrastructure\Eloquent\User\StkReservation;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -188,11 +187,18 @@ class ViewReservation extends ViewRecord
                         ->modalSubmitActionLabel('否認する')
                             ->action(function ($record) {
                                 $record->update([
-                                    'status'     => 'cancelled',
+                                    'status'     => ReservationStatus::DENIAL->value,
                                     'handled_by' => Auth::id(),
                                     'handled_at' => now(),
                                 ]);
-                                    // TODO: 否認メール送信
+                                    $email = $this->getEmailAddress($record);
+                                    if ($email) {
+                                        app(\App\Application\Services\MailService::class)->send(
+                                            templateKey:  \App\Domain\Shared\Constants\MailTemplateKey::RESERVATION_DENIAL,
+                                            toEmail:      $email,
+                                            placeholders: $this->getPlaceholders($record),
+                                        );
+                                    }
                                     Notification::make()->title('予約を否認しました')->success()->send();
                                 })
                         ->modalWidth('lg')
@@ -241,18 +247,34 @@ class ViewReservation extends ViewRecord
                             foreach ($allReservations as $reservation) {
                                 if ($reservation->id === $selectedId) {
                                     $reservation->update([
-                                        'status'     => 'confirmed',
+                                        'status'     => ReservationStatus::CONFIRMED->value,
                                         'handled_by' => Auth::id(),
                                         'handled_at' => now(),
                                     ]);
                                     // TODO: 承認メール送信
+                                    $email = $this->getEmailAddress($reservation);
+                                    if ($email) {
+                                        app(\App\Application\Services\MailService::class)->send(
+                                            templateKey:  \App\Domain\Shared\Constants\MailTemplateKey::RESERVATION_CONFIRMED,
+                                            toEmail:      $email,
+                                            placeholders: $this->getPlaceholders($reservation),
+                                        );
+                                    }
                                 } else {
                                     $reservation->update([
-                                        'status'     => 'cancelled',
+                                        'status'     => ReservationStatus::CANCELLED_BY_SYSTEM->value,
                                         'handled_by' => Auth::id(),
                                         'handled_at' => now(),
                                     ]);
                                     // TODO: キャンセルメール送信
+                                    $email = $this->getEmailAddress($reservation);
+                                    if ($email) {
+                                        app(\App\Application\Services\MailService::class)->send(
+                                            templateKey:  \App\Domain\Shared\Constants\MailTemplateKey::RESERVATION_CANCELLED_CUSTOMER,
+                                            toEmail:      $email,
+                                            placeholders: $this->getPlaceholders($reservation),
+                                        );
+                                    }
                                 }
                             }
 
@@ -265,24 +287,30 @@ class ViewReservation extends ViewRecord
                             \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
                         ),
 
-                    InfolistAction::make('cancel_bottom')
-                        ->label('キャンセル')
+                    InfolistAction::make('dealer_trouble')
+                        ->label('ディーラー都合キャンセル')
                         ->color('warning')
                         ->icon('heroicon-o-x-mark')
                         ->size('lg')
-                        ->requiresConfirmation()
-                        ->extraAttributes(['style' => 'padding: 1rem 3rem; font-size: 1.3rem;'])
                         ->visible(fn($record) => $record->status === 'confirmed')
-                        ->modalHeading('予約をキャンセルしますか？')
-                        ->modalDescription('この予約をキャンセルします。よろしいですか？')
-                        ->modalSubmitActionLabel('予約キャンセル')
+                        ->modalHeading('ディーラー都合でキャンセルしますか？')
+                        ->modalDescription('お客様にディーラー都合のキャンセルメールが送信されます。よろしいですか？')
+                        ->modalSubmitActionLabel('ディーラー都合でキャンセル')
                         ->action(function ($record) {
                             $record->update([
-                                'status'     => 'cancelled',
+                                'status'     => ReservationStatus::CANCELLED_DEALER_TROUBLE->value,
                                 'handled_by' => Auth::id(),
                                 'handled_at' => now(),
                             ]);
                             // TODO: キャンセルメール送信
+                            $email = $this->getEmailAddress($record);
+                            if ($email) {
+                                app(\App\Application\Services\MailService::class)->send(
+                                    templateKey:  \App\Domain\Shared\Constants\MailTemplateKey::RESERVATION_CANCELLED_DEALER_TROUBLE,
+                                    toEmail:      $email,
+                                    placeholders: $this->getPlaceholders($record),
+                                );
+                            }
                             Notification::make()->title('予約をキャンセルしました')->success()->send();
                         })
                         ->modalWidth('lg')
@@ -291,8 +319,111 @@ class ViewReservation extends ViewRecord
                             $record->schedule &&
                             \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
                         ),
+                    InfolistAction::make('dealer_car_sold')
+                        ->label('車両成約によるキャンセル')
+                        ->color('danger')
+                        ->icon('heroicon-o-x-circle')
+                        ->size('lg')
+                        ->visible(fn($record) =>
+                            $record->status === 'confirmed' &&
+                            $record->schedule &&
+                            \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
+                        )
+                        ->requiresConfirmation()
+                        ->modalHeading('問い合わせいただいた車両がすでにご成約が決まったためキャンセルしますか？')
+                        ->modalDescription('お客様に問い合わせ車両成約のキャンセルメールが送信されます。よろしいですか？')
+                        ->modalIcon('heroicon-o-exclamation-triangle')
+                        ->modalIconColor('danger')
+                        ->modalSubmitActionLabel('キャンセルする')
+                        ->action(function ($record) {
+                            $record->update([
+                                'status'      => ReservationStatus::CANCELLED_DEALER_CAR_SOLD->value,
+                                'cancel_type' => 'dealer',
+                                'handled_by'  => Auth::id(),
+                                'handled_at'  => now(),
+                            ]);
+                            // TODO: 車両成約キャンセルメール送信
+                            $email = $this->getEmailAddress($record);
+                            if ($email) {
+                                app(\App\Application\Services\MailService::class)->send(
+                                    templateKey:  \App\Domain\Shared\Constants\MailTemplateKey::RESERVATION_CANCELLED_DEALER,
+                                    toEmail:      $email,
+                                    placeholders: $this->getPlaceholders($record),
+                                );
+                            }
+                            Notification::make()->title('キャンセルしました')->success()->send();
+                        }),
+
+                    // お客様都合キャンセル（confirmedのみ）
+                    InfolistAction::make('customer')
+                        ->label('お客様都合でキャンセル')
+                        ->color('warning')
+                        ->icon('heroicon-o-x-mark')
+                        ->size('lg')
+                        ->visible(fn($record) =>
+                            $record->status === 'confirmed' &&
+                            $record->schedule &&
+                            \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
+                        )
+                        ->requiresConfirmation()
+                        ->modalHeading('お客様都合でキャンセルしますか？')
+                        ->modalDescription('お客様にキャンセル受付メールが送信されます。よろしいですか？')
+                        ->modalSubmitActionLabel('キャンセルする')
+                        ->action(function ($record) {
+                            $record->update([
+                                'status'      => ReservationStatus::CANCELLED_CUSTOMER->value,
+                                'cancel_type' => 'customer',
+                                'handled_by'  => Auth::id(),
+                                'handled_at'  => now(),
+                            ]);
+                            // TODO: お客様都合キャンセルメール送信
+                            $email = $this->getEmailAddress($record);
+                            if ($email) {
+                                app(\App\Application\Services\MailService::class)->send(
+                                    templateKey:  \App\Domain\Shared\Constants\MailTemplateKey::RESERVATION_CANCELLED_CUSTOMER,
+                                    toEmail:      $email,
+                                    placeholders: $this->getPlaceholders($record),
+                                );
+                            }
+                            Notification::make()->title('キャンセルしました')->success()->send();
+                        }),
                 ]),
                         
             ]);
+    }
+
+    private function getEmailAddress($record): ?string
+    {
+        if ($record->member) {
+            return $record->member->email;
+        }
+        return $record->guest_email ?? null;
+    }
+
+    private function getPlaceholders($record): array
+    {
+        $dealer      = $record->dealer;
+        $handledUser = $record->handled_by
+            ? \App\Models\User::find($record->handled_by)
+            : null;
+
+        return [
+            'guest_name'       => $record->member
+                ? $record->member->full_name
+                : ($record->guest_name ?? 'お客様'),
+            'dealer_name'      => $dealer?->name ?? '',
+            'staff_name'       => $handledUser?->name ?? '',
+            'reservation_date' => $record->schedule
+                ? $record->schedule->date . ' ' . $record->schedule->time_from . ' ～ ' . $record->schedule->time_to
+                : '',
+            'reservation_type' => $record->reservationType?->name ?? '',
+            'car_name'         => $record->car
+                ? (\App\Infrastructure\Eloquent\Mst\MstCarSeries::find($record->car->series_id)?->series_name ?? '')
+                : '',
+            'dealer_address'   => ($dealer?->city ?? '') . ($dealer?->address_detail ?? ''),
+            'dealer_phone'     => $dealer?->phone ?? '',
+            'dealer_email'     => $dealer?->email ?? '',
+            'dealer_hours'     => $dealer?->business_hours ?? '',
+        ];
     }
 }

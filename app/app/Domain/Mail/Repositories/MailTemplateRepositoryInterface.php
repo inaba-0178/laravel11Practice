@@ -8,8 +8,5 @@ use App\Infrastructure\Eloquent\Opr\OprMailTemplate;
 
 interface MailTemplateRepositoryInterface
 {
-    /**
-     * IDでメールテンプレートを取得する
-     */
-    public function findById(int $id): ?OprMailTemplate;
+    public function findByKey(string $key): ?OprMailTemplate;
 }

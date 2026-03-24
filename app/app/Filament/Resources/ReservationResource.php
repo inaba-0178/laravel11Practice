@@ -35,7 +35,7 @@ class ReservationResource extends Resource
             $query->where('stk_reservations.dealer_id', $user->dealer_id);
         }
 
-        return $query->with(['schedule', 'car', 'member']);
+        return $query->with(['schedule', 'car', 'member', 'dealer']);
     }
 
     public static function form(Form $form): Form
