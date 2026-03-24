@@ -24,7 +24,7 @@ return new class extends Migration
                 'cancelled_dealer_car_sold',
                 'cancelled_dealer_trouble',
                 'cancelled_customer',
-                'cancelled_by_system',
+                'cancelled_by_system'
             ) NOT NULL DEFAULT 'pending'
         ");
     }
