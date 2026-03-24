@@ -8,7 +8,7 @@ use App\Domain\Password\ValueObjects\ForgotPasswordEmail;
 use Illuminate\Support\Str;
 use App\Domain\Shared\Constants\PasswordPolicy;
 use App\Application\Services\MailService;
-use App\Domain\Shared\Constants\MailTemplateId;
+use App\Domain\Shared\Constants\MailTemplateKey;
 
 class ForgotPasswordUseCase
 {
@@ -31,7 +31,7 @@ class ForgotPasswordUseCase
         $this->passwordResetTokenRepository->upsert($email->email, $token);
 
         $this->mailService->send(
-            templateId:   MailTemplateId::PASSWORD_RESET,
+            templateKey:  MailTemplateKey::PASSWORD_RESET,
             toEmail:      $email->email,
             placeholders: [
                 'url'   => config('app.frontend_url') . '/reset-password?token=' . $token . '&email=' . urlencode($email->email),

@@ -15,9 +15,9 @@ final class MailService
         private readonly MailTemplateRepositoryInterface $mailTemplateRepository,
     ) {}
 
-    public function send(int $templateId, string $toEmail, array $placeholders = []): void
+    public function send(string $templateKey, string $toEmail, array $placeholders = []): void
     {
-        $template = $this->mailTemplateRepository->findById($templateId);
+        $template = $this->mailTemplateRepository->findByKey($templateKey);
 
         if (!$template) {
             throw new RuntimeException('メールテンプレートが見つかりません。');

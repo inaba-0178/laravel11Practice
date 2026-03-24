@@ -15,4 +15,8 @@ enum NavigationSort :int
 
     //opr系
     case OPR_MAIL_TEMPLATE          = 1;
+
+    // ディーラー管理系
+    case DEALER_RESERVATION_LIST    = 1;
+    case DEALER_RESERVATION_TODAY   = 2;
 }

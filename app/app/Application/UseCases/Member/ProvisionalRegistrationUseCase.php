@@ -8,7 +8,7 @@ use App\Domain\Member\ValueObjects\RegisterEmail;
 use Illuminate\Support\Str;
 use App\Domain\Shared\Constants\PasswordPolicy;
 use App\Application\Services\MailService;
-use App\Domain\Shared\Constants\MailTemplateId;
+use App\Domain\Shared\Constants\MailTemplateKey;
 
 class ProvisionalRegistrationUseCase
 {
@@ -31,7 +31,7 @@ class ProvisionalRegistrationUseCase
         $this->provisionalRegistrationRepository->upsert($email->email, $token);
 
         $this->mailService->send(
-            templateId:   MailTemplateId::PROVISIONAL_REGISTRATION,
+            templateKey:  MailTemplateKey::PROVISIONAL_REGISTRATION,
             toEmail:      $email->email,
             placeholders: [
                 'url'   => config('app.frontend_url') . '/register-form?token=' . $token . '&email=' . urlencode($email->email),

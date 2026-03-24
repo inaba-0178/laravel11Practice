@@ -1,0 +1,5 @@
+@import '/vendor/filament/filament/resources/css/admin/theme.css';
+
+.bg-danger-100 {
+    background-color: rgb(254 226 226) !important;
+}
