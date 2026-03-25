@@ -66,4 +66,9 @@ class StkReservation extends Model
     {
         return $this->belongsTo(User::class, 'handled_by');
     }
+
+    public function response()
+    {
+        return $this->hasOne(StkReservationResponse::class, 'reservation_id');
+    }
 }
