@@ -16,6 +16,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Forms\Components\Grid;
 
 class TodayReservationResource extends Resource
 {
@@ -50,6 +52,7 @@ class TodayReservationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchable(false)
             ->columns([
                 TextColumn::make('schedule.time_from')
                     ->label('開始時間')
@@ -96,16 +99,36 @@ class TodayReservationResource extends Resource
                     ->label('在庫番号'),
             ])
             ->filters([
+                //TODO なんか使いづらいので後で修正するかも
                 Filter::make('time_from')
                     ->label('開始時間')
                     ->form([
-                        TimePicker::make('time_from')
-                            ->label('開始時間')
-                            ->seconds(false),
+                        Grid::make(1)  // ★1列に変更
+                            ->schema([
+                                Grid::make(2)  // ★中身を2列Gridで横並び
+                                    ->schema([
+                                        TimePicker::make('time_from_start')
+                                            ->label('開始時間（から）')
+                                            ->seconds(false)
+                                            ->minutesStep(10),
+                                        TimePicker::make('time_from_end')
+                                            ->label('開始時間（まで）')
+                                            ->seconds(false)
+                                            ->minutesStep(10)
+                                    ]),
+                            ]),
                     ])
+                    ->columnSpanFull()
                     ->query(function (Builder $query, array $data) {
-                        if (!empty($data['time_from'])) {
-                            $query->where('stk_dealer_schedules.time_from', $data['time_from']);
+                        if (!empty($data['time_from_start'])) {
+                            $query->whereHas('schedule', function (Builder $q) use ($data) {
+                                $q->where('time_from', '>=', $data['time_from_start']);
+                            });
+                        }
+                        if (!empty($data['time_from_end'])) {
+                            $query->whereHas('schedule', function (Builder $q) use ($data) {
+                                $q->where('time_from', '<=', $data['time_from_end']);
+                            });
                         }
                     }),
 
@@ -129,7 +152,9 @@ class TodayReservationResource extends Resource
                             });
                         }
                     }),
-            ])
+            ], FiltersLayout::AboveContent)
+            ->deferFilters()
+            ->hiddenFilterIndicators()
             ->actions([
                 ViewAction::make()->label('詳細'),
             ]);
