@@ -46,4 +46,5 @@ return [
     App\Providers\SelectDealerScheduleServiceProvider::class,
     App\Providers\CreateReservationServiceProvider::class,
     App\Providers\TransactionServiceProvider::class,
+    App\Providers\UploadCarImageServiceProvider::class,
 ];

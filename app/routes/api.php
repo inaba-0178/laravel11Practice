@@ -44,6 +44,7 @@ use App\Presentation\Controllers\SelectVehicleSpec\SelectVehicleSpecController;
 use App\Presentation\Controllers\SelectReservationType\SelectReservationTypeController;
 use App\Presentation\Controllers\SelectDealerSchedule\SelectDealerScheduleController;
 use App\Presentation\Controllers\CreateReservation\CreateReservationController;
+use App\Presentation\Controllers\CarImage\UploadCarImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -216,3 +217,8 @@ Route::get('SelectVehicleSpec', SelectVehicleSpecController::class);
 Route::get('ReservationTypes', SelectReservationTypeController::class);
 Route::get('DealerSchedules', SelectDealerScheduleController::class);
 Route::post('Reservations', CreateReservationController::class);
+
+// 認証済みディーラーのみアクセス可能
+//Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/CarImages/upload', UploadCarImageController::class);
+//});

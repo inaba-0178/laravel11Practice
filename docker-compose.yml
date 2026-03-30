@@ -96,10 +96,49 @@ services:
       networks:
         - app-network
 
+ # ===== MinIO（S3互換ローカルストレージ） =====
+  minio:
+    container_name: minio
+    image: minio/minio
+    ports:
+      - "9000:9000"   # API（Laravelからの接続先）
+      - "9001:9001"   # 管理画面（ブラウザで確認）
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+ 
+  # ===== MinIOバケット自動作成 =====
+  minio-init:
+    container_name: minio-init
+    image: minio/mc
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      mc mb --ignore-existing local/car-images;
+      mc anonymous set public local/car-images;
+      exit 0;
+      "
+    networks:
+      - app-network
+ 
 networks:
   app-network:
     driver: bridge
-
+ 
 volumes:
-  mst-db-data:  # ← 名前付きボリューム定義
-  user-db-data:  # ← 名前付きボリューム定義
+  mst-db-data:
+  user-db-data:
+  minio-data:
