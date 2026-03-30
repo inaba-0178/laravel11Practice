@@ -5,6 +5,9 @@ namespace App\Infrastructure\Eloquent\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Infrastructure\Eloquent\Mst\MstCarSeries;
+use App\Infrastructure\Eloquent\Mst\MstVehicles;
+use App\Infrastructure\Eloquent\Mst\MstManufacturers;
 
 class StkCar extends Model
 {
@@ -15,8 +18,10 @@ class StkCar extends Model
 
     protected $fillable = [
         'dealer_id',
+        'manufacturer_id',
         'series_id',
         'vehicle_id',
+        'year_version_id',
         'stock_number',
         'status',
         'price',
@@ -32,6 +37,7 @@ class StkCar extends Model
         'main_image_url',
         'published_at',
         'sold_at',
+        'rejection_reason',
     ];
 
     protected $casts = [
@@ -63,5 +69,20 @@ class StkCar extends Model
     public function stats()
     {
         return $this->hasOne(StkCarStats::class, 'car_id');
+    }
+
+    public function series()
+    {
+        return $this->belongsTo(MstCarSeries::class, 'series_id', 'series_id');
+    }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(MstVehicles::class, 'vehicle_id');
+    }
+
+    public function manufacturer()
+    {
+        return $this->belongsTo(MstManufacturers::class, 'manufacturer_id');
     }
 }

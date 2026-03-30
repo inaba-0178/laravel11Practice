@@ -21,7 +21,7 @@ class StkCarImages extends Model
     ];
 
     protected $casts = [
-        'is_main' => 'boolean',
+        'is_main' => 'integer',
     ];
 
     public function car()
