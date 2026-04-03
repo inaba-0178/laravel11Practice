@@ -14,7 +14,7 @@ class CarOptionCategory
     const LABELS = [
         self::AUDIO        => 'オーディオ',
         self::NAVIGATION   => 'ナビ',
-        self::SPECIAL_TYPE => 'スペシャルタイプ',
+        self::SPECIAL_TYPE => 'スペシャル',
         self::OTHER        => 'その他',
     ];
 }

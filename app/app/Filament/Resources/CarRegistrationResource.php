@@ -50,6 +50,7 @@ use App\Constants\DriveSystem;
 use App\Constants\InspectionStatus;
 use App\Constants\Transmission;
 use App\Constants\SteeringWheel;
+use Filament\Forms\Components\Grid;
 
 class CarRegistrationResource extends Resource
 {
@@ -59,7 +60,8 @@ class CarRegistrationResource extends Resource
     protected static ?string    $navigationGroup    = NavigationGroup::DEALER_GROUP->value;
     protected static ?int       $navigationSort     = NavigationSort::CAR_REGISTRATION->value;
     protected static ?string    $pluralModelLabel   = '車両登録';
-
+    protected static ?string    $modelLabel         = '車両登録';
+    
     // dealer/dealer_staffのみアクセス可能
     public static function canAccess(): bool
     {
@@ -92,7 +94,10 @@ class CarRegistrationResource extends Resource
                         ->label('車体名')
                         ->options(function (Get $get) {
                             $manufacturerId = $get('manufacturer_id');
-                            if (!$manufacturerId) return [];
+                            if (!$manufacturerId)
+                            {
+                                return [];
+                            }
                             return MstCarSeries::where('manufacturer_id', $manufacturerId)
                                 ->orderBy('series_name')
                                 ->pluck('series_name', 'series_id');
@@ -109,7 +114,10 @@ class CarRegistrationResource extends Resource
                         ->label('年式・グレード')
                         ->options(function (Get $get) {
                             $seriesId = $get('series_id');
-                            if (!$seriesId) return [];
+                            if (!$seriesId)
+                            {
+                                return [];
+                            }
                             return MstVehicles::where('series_id', $seriesId)
                                 ->orderBy('name')
                                 ->pluck('name', 'id');
@@ -122,30 +130,38 @@ class CarRegistrationResource extends Resource
                         })
                         ->disabled(fn (Get $get) => !$get('series_id')),
 
-                    Select::make('year_version_id')
+                    Select::make('model_year')
                         ->label('年式')
                         ->options(function (Get $get) {
-                            $vehicleId = $get('vehicle_id');
-                            if (!$vehicleId) return [];
-                            return MstVehicleYearVersions::where('vehicle_id', $vehicleId)
-                                ->orderByDesc('year_model')
-                                ->get()
-                                ->pluck('year_model', 'id');
+                            $versionId = $get('year_version_id');
+                            if (!$versionId) return [];
+
+                            $version = MstVehicleYearVersions::find($versionId);
+                            if (!$version) return [];
+
+                            return collect(range($version->year_from, $version->year_to))
+                                ->mapWithKeys(fn ($year) => [$year => "{$year}年"])
+                                ->toArray();
                         })
                         ->required()
                         ->live()
+                        ->disabled(fn (Get $get) => !$get('year_version_id'))
                         ->afterStateUpdated(function (Get $get, Set $set) {
                             // カタログスペック自動補完
                             $versionId = $get('year_version_id');
-                            if (!$versionId) return;
+                            if (!$versionId)
+                            {
+                                return;
+                            }
                             $version = MstVehicleYearVersions::find($versionId);
-                            if (!$version) return;
-                            $set('model_year', $version->year_model);
+                            if (!$version)
+                            {
+                                return;
+                            }
                             $set('displacement', $version->displacement_cc);
                             $set('drive_system', $version->drive_type);
                             $set('transmission', $version->transmission_type);
-                        })
-                        ->disabled(fn (Get $get) => !$get('vehicle_id')),
+                        }),
                 ])
                 ->columns(2),
 
@@ -307,6 +323,141 @@ class CarRegistrationResource extends Resource
                 ])
                 ->columns(2),
 
+// CarRegistrationResource.php のフォームで
+// ローンセクションを以下のように表示制御してください
+
+// ===== ローン・諸費用設定セクションをディーラー権限で制御 =====
+
+Section::make('ローン・諸費用設定')
+    ->description(function () {
+        $dealer = \App\Infrastructure\Eloquent\User\StkCarDealer::where('id', auth()->user()->dealer_id)->first();
+
+        if (!$dealer) return 'ローン設定は利用できません';
+
+        if ($dealer->loan_setting_enabled) {
+            return 'ローンプランを設定できます（設定内容はディーラー責任となります）';
+        }
+
+        if ($dealer->isLoanSettingPending()) {
+            return '⏳ ローン設定の申請中です。管理者の承認をお待ちください。';
+        }
+
+        return 'ローン設定を利用するには管理者への申請が必要です。';
+    })
+    ->collapsible()
+    ->collapsed()
+    ->schema(function () {
+        $dealer = \App\Infrastructure\Eloquent\User\StkCarDealer::where('id', auth()->user()->dealer_id)->first();
+
+        // 権限なしの場合は申請ボタンのみ表示
+        if (!$dealer || !$dealer->loan_setting_enabled) {
+            return [
+                \Filament\Forms\Components\Placeholder::make('loan_request_info')
+                    ->label('')
+                    ->content(function () use ($dealer) {
+                        if ($dealer?->isLoanSettingPending()) {
+                            return '申請中です。管理者の承認後にローン設定が可能になります。';
+                        }
+                        if (!empty($dealer?->loan_setting_rejected_reason)) {
+                            return "前回の申請は拒否されました。理由：{$dealer->loan_setting_rejected_reason}";
+                        }
+                        return 'ローン設定を利用するには申請が必要です。';
+                    }),
+            ];
+        }
+
+        // 権限ありの場合はRepeaterを表示
+        return [
+            \Filament\Forms\Components\Repeater::make('loans')
+                ->label('ローンプラン')
+                ->relationship('loans')
+                ->columns(2)
+                ->schema([
+                    \Filament\Forms\Components\Select::make('loan_type')
+                        ->label('ローンタイプ')
+                        ->options(\App\Infrastructure\Eloquent\User\StkCarLoan::TYPE_LABELS)
+                        ->default(\App\Infrastructure\Eloquent\User\StkCarLoan::TYPE_STANDARD)
+                        ->required()
+                        ->live()
+                        ->columnSpanFull(),
+
+                    \Filament\Forms\Components\TextInput::make('interest_rate')
+                        ->label('金利（%）')
+                        ->numeric()
+                        ->step(0.1)
+                        ->placeholder('例：3.9')
+                        ->suffix('%'),
+
+                    \Filament\Forms\Components\TextInput::make('loan_months')
+                        ->label('ローン期間（月）')
+                        ->numeric()
+                        ->placeholder('例：60')
+                        ->suffix('ヶ月'),
+
+                    \Filament\Forms\Components\TextInput::make('down_payment')
+                        ->label('頭金（円）')
+                        ->numeric()
+                        ->placeholder('例：300000'),
+
+                    \Filament\Forms\Components\TextInput::make('misc_fee')
+                        ->label('諸費用（円）')
+                        ->numeric()
+                        ->placeholder('未入力でシステム概算'),
+
+                    \Filament\Forms\Components\TextInput::make('residual_value')
+                        ->label('残価（円）')
+                        ->numeric()
+                        ->placeholder('残価設定ローンのみ')
+                        ->visible(fn (\Filament\Forms\Get $get) => $get('loan_type') === 'residual'),
+
+                    \Filament\Forms\Components\Textarea::make('note')
+                        ->label('備考')
+                        ->rows(2)
+                        ->columnSpanFull(),
+                ])
+                ->addActionLabel('ローンプランを追加')
+                ->maxItems(3),
+        ];
+    }),
+
+
+// ===== ディーラー側のローン設定申請Action =====
+// ListCarRegistrations.php または専用ページに以下のActionを追加
+
+// \Filament\Actions\Action::make('request_loan_setting')
+//     ->label('ローン設定を申請する')
+//     ->color('warning')
+//     ->icon('heroicon-o-banknotes')
+//     ->visible(function () {
+//         $dealer = \App\Infrastructure\Eloquent\User\StkCarDealer::where('id', auth()->user()->dealer_id)->first();
+//         return $dealer && !$dealer->loan_setting_enabled && !$dealer->isLoanSettingPending();
+//     })
+//     ->form([
+//         \Filament\Forms\Components\Textarea::make('reason')
+//             ->label('申請理由')
+//             ->required()
+//             ->rows(4)
+//             ->placeholder('ローン設定を希望する理由を入力してください'),
+//     ])
+//     ->modalHeading('ローン設定の申請')
+//     ->modalDescription('管理者が内容を確認後に許可/拒否をお知らせします。')
+//     ->modalSubmitActionLabel('申請する')
+//     ->modalCancelActionLabel('キャンセル')
+//     ->action(function (array $data) {
+//         $dealer = \App\Infrastructure\Eloquent\User\StkCarDealer::where('id', auth()->user()->dealer_id)->first();
+//         if (!$dealer) return;
+
+//         $dealer->update([
+//             'loan_setting_requested_by' => auth()->id(),
+//             'loan_setting_reason'       => $data['reason'],
+//             'loan_setting_requested_at' => now(),
+//         ]);
+
+//         \Filament\Notifications\Notification::make()
+//             ->title('ローン設定の申請を送信しました。管理者の承認をお待ちください。')
+//             ->success()
+//             ->send();
+//     }),
             // ===== ④装備仕様（マスタから取得） =====
             Section::make('装備仕様')
                 ->schema([

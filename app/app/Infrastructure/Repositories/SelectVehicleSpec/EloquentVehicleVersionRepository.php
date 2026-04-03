@@ -20,7 +20,7 @@ class EloquentVehicleVersionRepository extends BaseRepository implements Vehicle
         $result = $this->model
             ->where('vehicle_id', $vehicleId)
             ->whereNull('deleted_at')
-            ->orderBy('year_model', 'desc')
+            ->orderBy('year_from', 'desc')
             ->first();
 
         if ($result === null) {
@@ -35,7 +35,7 @@ class EloquentVehicleVersionRepository extends BaseRepository implements Vehicle
         return new VehicleVersion(
             id                 : $model->id,
             vehicleId          : $model->vehicle_id,
-            yearModel          : $model->year_model,
+            yearModel          : $model->year_from,
             displacementCc     : $model->displacement_cc,
             driveType          : $model->drive_type,
             fuelEfficiencyFrom : $model->fuel_efficiency_from ? (float)$model->fuel_efficiency_from : null,
