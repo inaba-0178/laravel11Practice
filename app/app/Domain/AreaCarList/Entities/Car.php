@@ -1,5 +1,6 @@
 <?php
 namespace App\Domain\AreaCarList\Entities;
+use DateTimeImmutable;
 
 final class Car
 {

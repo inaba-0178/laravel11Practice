@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Infrastructure\Eloquent\Mst\MstCarSeries;
 use App\Infrastructure\Eloquent\Mst\MstVehicles;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
+use App\Infrastructure\Eloquent\User\StkCarLoan;
 
 class StkCar extends Model
 {
@@ -44,6 +45,7 @@ class StkCar extends Model
         'price' => 'decimal:0',
         'published_at' => 'datetime',
         'sold_at' => 'datetime',
+        'rejection_reason' => 'array',
     ];
 
     public function dealer()
@@ -84,5 +86,10 @@ class StkCar extends Model
     public function manufacturer()
     {
         return $this->belongsTo(MstManufacturers::class, 'manufacturer_id');
+    }
+
+    public function loans()
+    {
+        return $this->hasMany(StkCarLoan::class, 'car_id');
     }
 }

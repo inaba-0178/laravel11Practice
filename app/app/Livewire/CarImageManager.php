@@ -24,27 +24,33 @@ class CarImageManager extends Component
     public string $carSubLabel = '';
 
     // アップロードフォーム
-    public array  $uploadFiles  = [];
-    public string $imageType    = ImageType::EXTERIOR;
+    public string $imageType = ImageType::EXTERIOR;
 
     // 登録済み画像
-    public array $images        = [];
+    public array $images = [];
 
     // チェックボックス選択
-    public array $selectedIds   = [];
+    public array $selectedIds = [];
 
     // 拡大表示
-    public ?string $previewUrl  = null;
+    public ?string $previewUrl = null;
 
     // 確認モーダル
     public bool $showDeleteConfirm    = false;
     public bool $showDeleteAllConfirm = false;
+
+    // 差し戻し対応
+    public array $pendingResponses = [];
+
+    // 表示モード: 'grid'=通常画像一覧 | 'pending'=差し戻し対応入力
+    public string $viewMode = 'grid';
 
     public function mount(int $carId): void
     {
         $this->carId = $carId;
         $this->loadCarInfo();
         $this->loadImages();
+        $this->loadPendingResponses();
     }
 
     private function loadCarInfo(): void
@@ -76,47 +82,112 @@ class CarImageManager extends Component
 
     private function loadImages(): void
     {
+        $car           = StkCar::find($this->carId);
+        $flaggedImages = collect($car->rejection_reason['flagged_images'] ?? [])->keyBy('id');
+
+        $replacementIds = collect($car->rejection_reason['flagged_images'] ?? [])
+            ->pluck('replacement_image_id')
+            ->filter()
+            ->toArray();
+
         $this->images = StkCarImages::where('car_id', $this->carId)
             ->orderBy('display_order')
             ->get()
             ->map(fn ($img) => [
-                'id'       => $img->id,
-                'url'      => Storage::disk('s3')->url($img->image_url),
-                'type'     => $img->image_type,
-                'type_label' => ImageType::LABELS[$img->image_type] ?? $img->image_type,
-                'is_main'  => $img->is_main,
+                'id'             => $img->id,
+                'url'            => Storage::disk('s3')->url($img->image_url),
+                'type'           => $img->image_type,
+                'type_label'     => ImageType::LABELS[$img->image_type] ?? $img->image_type,
+                'is_main'        => $img->is_main,
+                'is_flagged'     => $flaggedImages->has($img->id),
+                'flag_reason'    => $flaggedImages->get($img->id)['reason'] ?? '',
+                'is_replacement' => in_array($img->id, $replacementIds),
             ])
             ->toArray();
     }
 
-    // ===== アップロード処理 =====
-    // CarImageManager.php は単一ファイルのままでOK
-    public $uploadFile = null;
-
-    public function upload(): void
+    private function loadPendingResponses(): void
     {
-        $this->validate([
-            'uploadFile' => 'required|image|max:10240',
-            'imageType'  => 'required|in:exterior,interior,engine,other',
+        $car           = StkCar::find($this->carId);
+        $rejReason     = $car->rejection_reason ?? [];
+        $flaggedImages = $rejReason['flagged_images'] ?? [];
+        $existingIds   = StkCarImages::where('car_id', $this->carId)->pluck('id')->toArray();
+
+        $pending = collect($flaggedImages)
+            ->filter(fn ($img) =>
+                !in_array($img['id'], $existingIds) &&
+                empty($img['dealer_response'] ?? '') &&
+                !($img['resolved'] ?? false)
+            )
+            ->map(fn ($img) => [
+                'image_id'             => $img['id'],
+                'reason'               => $img['reason'] ?? '',
+                'response'             => '',
+                'replacement_image_id' => $img['replacement_image_id'] ?? null,
+            ])
+            ->values()
+            ->toArray();
+
+        $this->pendingResponses = $pending;
+
+        if (count($pending) > 0) {
+            $this->viewMode = 'pending';
+        }
+    }
+
+    // ===== 差し戻し対応完了（fetch APIでアップロード後にこちらを呼ぶ） =====
+    public function completeResponse(int $index, ?int $newImageId = null): void
+    {
+        \Log::info('completeResponse called', [
+            'index'      => $index,
+            'newImageId' => $newImageId,
+            'pending'    => $this->pendingResponses[$index] ?? null,
         ]);
 
-        $maxOrder = StkCarImages::where('car_id', $this->carId)->max('display_order') ?? 0;
+        $pending = $this->pendingResponses[$index] ?? null;
+        if (!$pending) return;
 
-        $path = $this->uploadFile->store("car-images/{$this->carId}", 's3');
+        if (empty(trim($pending['response']))) {
+            $this->dispatch('notify', type: 'error', message: '対応内容を入力してください');
+            return;
+        }
 
-        StkCarImages::create([
-            'car_id'        => $this->carId,
-            'image_url'     => $path,
-            'image_type'    => $this->imageType,
-            'display_order' => ++$maxOrder,
-            'is_main'       => 0,
-        ]);
+        $car       = StkCar::find($this->carId);
+        $rejReason = $car->rejection_reason ?? [];
 
-        $this->uploadFile = null;
+        $rejReason['flagged_images'] = collect($rejReason['flagged_images'] ?? [])
+            ->map(function ($img) use ($pending, $newImageId) {
+                if ((string) $img['id'] === (string) $pending['image_id']) {
+                    $img['dealer_response']      = $pending['response'];
+                    $img['replacement_image_id'] = $newImageId;
+                }
+                return $img;
+            })
+            ->toArray();
+
+        $car->update(['rejection_reason' => $rejReason]);
+
+        array_splice($this->pendingResponses, $index, 1);
+
+        if (count($this->pendingResponses) === 0) {
+            $this->viewMode = 'grid';
+        }
+
         $this->loadImages();
-        $this->selectedIds = [];
+        $this->dispatch('notify', type: 'success', message: '対応内容を保存しました');
+    }
 
-        $this->dispatch('notify', type: 'success', message: '画像をアップロードしました');
+    // ===== 画像並び替え =====
+    public function reorder(array $orderedIds): void
+    {
+        foreach ($orderedIds as $order => $id) {
+            StkCarImages::where('id', $id)
+                ->where('car_id', $this->carId)
+                ->update(['display_order' => $order + 1]);
+        }
+
+        $this->loadImages();
+        $this->dispatch('notify', type: 'success', message: '並び順を保存しました');
     }
 
     // ===== メイン画像設定 =====
@@ -145,10 +216,9 @@ class CarImageManager extends Component
         $this->previewUrl = null;
     }
 
-    // ===== 選択削除確認 =====
+    // ===== 選択削除 =====
     public function confirmDelete(): void
     {
-         \Log::info('confirmDelete called', ['selectedIds' => $this->selectedIds]);
         if (empty($this->selectedIds)) return;
         $this->showDeleteConfirm = true;
     }
@@ -167,10 +237,11 @@ class CarImageManager extends Component
         $this->selectedIds       = [];
         $this->showDeleteConfirm = false;
         $this->loadImages();
+        $this->loadPendingResponses();
         $this->dispatch('notify', type: 'success', message: '選択した画像を削除しました');
     }
 
-    // ===== 全件削除確認 =====
+    // ===== 全件削除 =====
     public function confirmDeleteAll(): void
     {
         $this->showDeleteAllConfirm = true;
@@ -189,7 +260,9 @@ class CarImageManager extends Component
 
         $this->selectedIds          = [];
         $this->showDeleteAllConfirm = false;
+        $this->viewMode             = 'grid';
         $this->loadImages();
+        $this->loadPendingResponses();
         $this->dispatch('notify', type: 'success', message: '全ての画像を削除しました');
     }
 
@@ -212,8 +285,8 @@ class CarImageManager extends Component
     #[\Livewire\Attributes\On('images-uploaded')]
     public function refreshImages(): void
     {
-        \Log::info('refreshImages called');
         $this->loadImages();
+        $this->loadPendingResponses();
         $this->dispatch('notify', type: 'success', message: '画像をアップロードしました');
     }
 }

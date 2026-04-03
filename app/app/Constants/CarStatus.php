@@ -38,7 +38,6 @@ class CarStatus
     const CAN_REQUEST_APPROVAL = [
         self::DRAFT,
         self::PENDING,
-        self::REJECTED,
         self::AVAILABLE,
     ];
 
@@ -47,5 +46,41 @@ class CarStatus
         self::DRAFT,
         self::PENDING,
         self::REJECTED,
+    ];
+
+    // 車両登録ページ用
+    const STATUS_CONFIG = [
+        self::DRAFT => [
+            'label'  => '下書き',
+            'bg'     => '#f3f4f6',
+            'color'  => '#374151',
+            'border' => '#d1d5db',
+            'icon'   => '📝',
+            'description' => '保存のみされている状態です。承認依頼を送ると管理者が確認します。',
+        ],
+        self::PENDING => [
+            'label'  => '承認待ち',
+            'bg'     => '#fef3c7',
+            'color'  => '#92400e',
+            'border' => '#fcd34d',
+            'icon'   => '⏳',
+            'description' => '管理者が確認中です。承認されるまでお待ちください。',
+        ],
+        self::REJECTED => [
+            'label'  => '差し戻し',
+            'bg'     => '#fef2f2',
+            'color'  => '#991b1b',
+            'border' => '#fca5a5',
+            'icon'   => '⚠️',
+            'description' => '管理者から差し戻しがあります。指摘内容を確認して再申請してください。',
+        ],
+        self::AVAILABLE => [
+            'label'  => '承認済み',
+            'bg'     => '#f0fdf4',
+            'color'  => '#15803d',
+            'border' => '#86efac',
+            'icon'   => '✅',
+            'description' => '承認済みで公開中です。編集すると再度承認が必要になります。',
+        ],
     ];
 }

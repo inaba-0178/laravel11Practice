@@ -14,7 +14,8 @@ class MstVehicleYearVersions extends Model
 
     protected $fillable = [
         'vehicle_id',
-        'year_model',
+        'year_from',
+        'year_to',
         'displacement_cc',
         'drive_type',
         'fuel_efficiency',

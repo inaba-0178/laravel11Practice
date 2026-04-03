@@ -4,34 +4,28 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\CarRegistrationResource\Pages;
 
-use App\Application\Services\MailService;
-use App\Domain\Shared\Constants\MailTemplateKey;
 use App\Filament\Resources\CarRegistrationResource;
 use App\Infrastructure\Eloquent\User\StkCarImages;
 use App\Infrastructure\Eloquent\User\StkCarOptions;
-
 use App\Infrastructure\Eloquent\Mst\MstEquipmentSafety;
 use App\Infrastructure\Eloquent\Mst\MstEquipmentBasic;
 use App\Infrastructure\Eloquent\Mst\MstSeatOption;
 use App\Infrastructure\Eloquent\Mst\MstEquipmentDressup;
 use App\Infrastructure\Eloquent\Mst\MstEquipmentEnv;
-
 use App\Notifications\CarRegistrationPendingNotification;
 use App\Models\User;
-use Filament\Actions;
 use Filament\Actions\Action;
-use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Constants\SpecialTypeOption;
 use App\Constants\CarStatus;
+use App\Infrastructure\Eloquent\User\StkCar;
 
 class EditCarRegistration extends EditRecord
 {
     protected static string $resource = CarRegistrationResource::class;
-
+    protected static string $view = 'filament.resources.car-registration-resource.pages.edit-car-registration';
     // デフォルトのフッターボタンを非表示
     protected function getFormActions(): array
     {
@@ -43,24 +37,29 @@ class EditCarRegistration extends EditRecord
         return $this->getResource()::getUrl('index');
     }
 
+    protected function getFormContentFooter(): ?\Illuminate\Contracts\View\View
+    {
+        return null;
+    }
+
+    public function getFormHeader(): ?\Illuminate\Contracts\View\View  
+    {
+        $record = $this->getRecord();
+        
+        if ($record->status === 'rejected' && $record->rejection_reason) {
+            return view('filament.modals.rejection-reason', [
+                'record' => $record,
+            ]);
+        }
+        
+        return null;
+    }
+
     protected function getHeaderActions(): array
     {
         $record    = $this->getRecord();
         $hasImages = StkCarImages::where('car_id', $record->id)->exists();
         $actions   = [];
-
-        // ===== 差し戻し理由表示ボタン（rejectedのみ） =====
-        if ($record->status === 'rejected' && $record->rejection_reason) {
-            $actions[] = Action::make('rejection_notice')
-                ->label('⚠️ 差し戻し理由を確認する')
-                ->color('danger')
-                ->modalHeading('差し戻し理由')
-                ->modalContent(fn () => view('filament.modals.rejection-reason', [
-                    'reason' => $record->rejection_reason,
-                ]))
-                ->modalSubmitAction(false)
-                ->modalCancelActionLabel('閉じる');
-        }
 
         // ===== 承認依頼ボタン =====
         if (in_array($record->status, CarStatus::CAN_REQUEST_APPROVAL)) {
@@ -75,40 +74,23 @@ class EditCarRegistration extends EditRecord
                 ->modalSubmitActionLabel('承認依頼')
                 ->modalCancelActionLabel('キャンセル')
                 ->action(function () use ($record) {
-                    DB::transaction(function () use ($record) {
-                        $record->update([
-                            'status'           => 'pending',
-                            'rejection_reason' => null,
-                        ]);
-                    });
+                    $this->saveAndRequestApproval($record, clearRejection: true);
+                });
+        }
 
-                    $seriesName = $record->series?->series_name ?? '不明';
-                    $dealerName = $record->dealer?->name ?? '不明';
-
-                    User::whereIn('role', ['super', 'admin'])
-                        ->where('is_active', 1)
-                        ->get()
-                        ->each(fn (User $u) => $u->notify(
-                            new CarRegistrationPendingNotification($seriesName, $dealerName, $record->id)
-                        ));
-
-                    // 同ディーラーユーザーにも通知
-                    User::where('dealer_id', $record->dealer_id)
-                        ->where('is_active', 1)
-                        ->get()
-                        ->each(fn (User $u) => $u->notify(
-                            new \App\Notifications\CarRegistrationStatusNotification(
-                                carName: $seriesName,
-                                status:  'pending',
-                                message: '承認依頼を送信しました。管理者の承認をお待ちください。',
-                                carId:   $record->id,
-                            )
-                        ));
-
-                    Notification::make()
-                        ->title('承認依頼を管理者に送りました。承認されるまでには時間がかかりますのでお待ちください。')
-                        ->success()
-                        ->send();
+        // ===== 再承認依頼ボタン =====
+        if ($record->status === 'rejected') {
+            $actions[] = Action::make('request_approval')
+                ->label('再承認依頼')
+                ->color('warning')
+                ->tooltip(!$hasImages ? '画像を1枚以上アップロードしてください' : null)
+                ->requiresConfirmation()
+                ->modalHeading('再承認依頼を管理者に送ります')
+                ->modalDescription('入力内容や画像アップロードに問題ありませんか？')
+                ->modalSubmitActionLabel('再承認依頼')
+                ->modalCancelActionLabel('キャンセル')
+                ->action(function () use ($record) {
+                    $this->saveAndRequestApproval($record, clearRejection: true);
                 });
         }
 
@@ -124,8 +106,7 @@ class EditCarRegistration extends EditRecord
             ->modalCancelActionLabel('キャンセル')
             ->modalWidth('4xl')
             ->action(function () {
-                // 確定ボタンはモーダルを閉じるだけ
-                // 画像の保存はLivewire側で随時実行済み
+                $this->dispatch('$refresh');
             });
 
 
@@ -182,6 +163,57 @@ class EditCarRegistration extends EditRecord
         }
 
         return $actions;
+    }
+
+    // ===== ディーラー返答保存 =====
+    public function saveDealerResponse(array $data): void
+    {
+        $record = $this->getRecord();
+    
+        if (!$record->rejection_reason || !is_array($record->rejection_reason)) {
+            return;
+        }
+    
+        $reason = $record->rejection_reason;
+    
+        // 全体返答を保存
+        $reason['general_response'] = $data['general_response'] ?? '';
+    
+        // 画像ごとの返答を保存
+        $imageResponses = $data['image_responses'] ?? [];
+        $reason['flagged_images'] = collect($reason['flagged_images'] ?? [])
+            ->map(function ($img) use ($imageResponses) {
+                $id = $img['id'];
+                if (isset($imageResponses[$id])) {
+                    $img['dealer_response'] = $imageResponses[$id];
+                }
+                return $img;
+            })
+            ->toArray();
+    
+        // 項目ごとの返答を保存
+        $itemResponses = $data['item_responses'] ?? [];
+        $reason['items'] = collect($reason['items'] ?? [])
+            ->map(function ($item, $idx) use ($itemResponses) {
+                if (isset($itemResponses[$idx])) {
+                    $item['dealer_response'] = $itemResponses[$idx];
+                }
+                return $item;
+            })
+            ->toArray();
+    
+        $record->update(['rejection_reason' => $reason]);
+    
+        Notification::make()
+            ->title('対応内容を保存しました')
+            ->success()
+            ->send();
+    }
+
+    // EditCarRegistration クラス内に以下を追加
+    protected function getHeaderWidgets(): array
+    {
+        return [];
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
@@ -381,5 +413,53 @@ class EditCarRegistration extends EditRecord
         );
 
         return $data;
+    }
+
+    /**
+     * 承認依頼時に保存する処理
+     * @param StkCar    $record
+     * @param bool      $clearRejection
+     * 
+     * @return void
+     */
+    private function saveAndRequestApproval(StkCar $record, bool $clearRejection = true): void
+    {
+        // 自動保存
+        $this->save();
+
+        DB::transaction(function () use ($record, $clearRejection) {
+            $updateData = ['status' => 'pending'];
+            if ($clearRejection) {
+                $updateData['rejection_reason'] = null;
+            }
+            $record->update($updateData);
+        });
+
+        $seriesName = $record->series?->series_name ?? '不明';
+        $dealerName = $record->dealer?->name ?? '不明';
+
+        User::whereIn('role', ['super', 'admin'])
+            ->where('is_active', 1)
+            ->get()
+            ->each(fn (User $u) => $u->notify(
+                new CarRegistrationPendingNotification($seriesName, $dealerName, $record->id)
+            ));
+
+        User::where('dealer_id', $record->dealer_id)
+            ->where('is_active', 1)
+            ->get()
+            ->each(fn (User $u) => $u->notify(
+                new \App\Notifications\CarRegistrationStatusNotification(
+                    carName: $seriesName,
+                    status:  'pending',
+                    message: '承認依頼を送信しました。管理者の承認をお待ちください。',
+                    carId:   $record->id,
+                )
+            ));
+
+        Notification::make()
+            ->title('承認依頼を管理者に送りました。承認されるまでには時間がかかりますのでお待ちください。')
+            ->success()
+            ->send();
     }
 }
