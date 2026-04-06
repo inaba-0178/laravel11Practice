@@ -56,9 +56,15 @@ class EloquentCarRepository extends BaseRepository implements CarRepositoryInter
                 'stk_car_dealers.city as dealer_city',
                 'stk_car_dealers.review_rating as dealer_rating',
                 'stk_car_dealers.review_count as dealer_review_count',
+                'stk_car_dealers.review_count as dealer_review_count',
+                'stk_car_images.image_url as image_url',
             ])
             ->leftJoin('stk_car_details', 'stk_cars.id', '=', 'stk_car_details.car_id')
             ->leftJoin('stk_car_dealers', 'stk_cars.dealer_id', '=', 'stk_car_dealers.id')
+            ->leftJoin('stk_car_images', function ($join) {
+                $join->on('stk_cars.id', '=', 'stk_car_images.car_id')
+                    ->where('stk_car_images.is_main', '=', 1);
+            })
             ->where('stk_cars.series_id', $seriesId)
             ->whereIn('stk_cars.region_id', $regionIds)
             ->where('stk_cars.status', 'available');
@@ -238,7 +244,7 @@ class EloquentCarRepository extends BaseRepository implements CarRepositoryInter
             fuelType                : $model->fuel_type,
             regionId                : $model->region_id,
             repairHistory           : $model->repair_history,
-            mainImageUrl            : $model->main_image_url,
+            mainImageUrl            : $model->image_url,
             publishedAt             : $publishedAt,
             soldAt                  : $model->sold_at ? new \DateTimeImmutable($model->sold_at) : null,
             inspectionExpireDate    : $model->inspection_expire_date,
