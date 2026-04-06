@@ -48,4 +48,5 @@ return [
     App\Providers\TransactionServiceProvider::class,
     App\Providers\UploadCarImageServiceProvider::class,
     App\Providers\CarLoanServiceProvider::class,
+    App\Providers\PriceHistogramServiceProvider::class,
 ];

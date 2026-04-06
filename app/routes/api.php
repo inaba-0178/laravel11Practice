@@ -46,6 +46,7 @@ use App\Presentation\Controllers\SelectDealerSchedule\SelectDealerScheduleContro
 use App\Presentation\Controllers\CreateReservation\CreateReservationController;
 use App\Presentation\Controllers\CarImage\UploadCarImageController;
 use App\Presentation\Controllers\CarLoan\CarLoanController;
+use App\Presentation\Controllers\PriceHistogram\PriceHistogramController;
 
 /*
 |--------------------------------------------------------------------------
@@ -209,6 +210,8 @@ Route::prefix('SearchOptions')->group(function () {
     Route::get('LoanDownOption', [LoanDownOptionController::class, 'index']);
     //  検索条件の車のタイプの取得
     Route::get('CarTypeOption', [CarTypeOptionController::class, 'index']);
+    // 検索条件の価格にヒストグラムの追加
+    Route::get('CarPriceHistogram', PriceHistogramController::class);
 });
  
 Route::get('SelectDealerData', SelectDealerDataController::class);
