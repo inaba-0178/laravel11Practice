@@ -45,6 +45,7 @@ use App\Presentation\Controllers\SelectReservationType\SelectReservationTypeCont
 use App\Presentation\Controllers\SelectDealerSchedule\SelectDealerScheduleController;
 use App\Presentation\Controllers\CreateReservation\CreateReservationController;
 use App\Presentation\Controllers\CarImage\UploadCarImageController;
+use App\Presentation\Controllers\CarLoan\CarLoanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -213,6 +214,8 @@ Route::prefix('SearchOptions')->group(function () {
 Route::get('SelectDealerData', SelectDealerDataController::class);
 Route::get('SelectDealerReview', SelectDealerReviewController::class);
 Route::get('SelectVehicleSpec', SelectVehicleSpecController::class);
+// CarLoan関連のルート
+Route::get('SelectCarLoan', CarLoanController::class);
 
 Route::get('ReservationTypes', SelectReservationTypeController::class);
 Route::get('DealerSchedules', SelectDealerScheduleController::class);
