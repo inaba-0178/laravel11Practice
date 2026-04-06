@@ -35,7 +35,7 @@ class SelectAreaCarListOutputData
         return $this->count;
     }
 
-    public function getTotalCount(): array
+    public function getTotalCount(): int
     {
         return $this->totalCount;
     }
