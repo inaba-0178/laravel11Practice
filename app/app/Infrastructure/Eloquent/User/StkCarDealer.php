@@ -5,6 +5,7 @@ namespace App\Infrastructure\Eloquent\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
+use App\Infrastructure\Eloquent\User\StkDealerLoanPlan;
 
 class StkCarDealer extends Model
 {
@@ -27,15 +28,24 @@ class StkCarDealer extends Model
         'review_rating',
         'review_count',
         'is_active',
+        'loan_setting_enabled',
+        'loan_setting_requested_by',
+        'loan_setting_reason',
+        'loan_setting_requested_at',
+        'loan_setting_approved_by',
+        'loan_setting_approved_at',
+        'loan_setting_rejected_reason',
     ];
 
     protected $casts = [
-        'region_id'     => 'integer',
-        'latitude'      => 'float',
-        'longitude'     => 'float',
-        'review_rating' => 'float',
-        'review_count'  => 'integer',
-        'is_active'     => 'boolean',
+        'region_id'                 => 'integer',
+        'latitude'                  => 'float',
+        'longitude'                 => 'float',
+        'review_rating'             => 'float',
+        'review_count'              => 'integer',
+        'is_active'                 => 'boolean',
+        'loan_setting_requested_at' => 'datetime',
+        'loan_setting_approved_at'  => 'datetime',
     ];
 
 
@@ -63,4 +73,17 @@ class StkCarDealer extends Model
             && $this->loan_setting_enabled == 0
             && empty($this->loan_setting_rejected_reason);
     }
+
+    // リレーション追加
+    public function loanPlans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(StkDealerLoanPlan::class, 'dealer_id');
+    }
+    
+    public function activeLoanPlans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(StkDealerLoanPlan::class, 'dealer_id')
+            ->where('is_active', 1);
+    }
+ 
 }

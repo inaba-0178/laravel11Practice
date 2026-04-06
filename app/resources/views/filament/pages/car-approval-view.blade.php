@@ -144,53 +144,65 @@
                 </div>
             </div>
 
-            {{-- ローン・諸費用設定 --}}
+            {{-- ローン設定 --}}
             @php $loans = $this->getLoans(); @endphp
-            @if(count($loans) > 0)
             <div style="background: white; border-radius: 12px; border: 0.5px solid #e5e7eb; padding: 14px 18px;">
-                <p style="font-size: 12px; font-weight: 500; color: #374151; margin: 0 0 12px; padding-left: 10px; border-left: 3px solid #185FA5;">ローン・諸費用設定</p>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    @foreach($loans as $loan)
-                    <div style="border: 0.5px solid #e5e7eb; border-radius: 10px; overflow: hidden;">
-                        <div style="padding: 8px 14px; background: #f9fafb; border-bottom: 0.5px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
-                            <p style="font-size: 11px; font-weight: 500; color: #374151; margin: 0;">{{ $loan['type_label'] }}</p>
-                            @if($loan['monthly_payment'])
-                            <p style="font-size: 12px; font-weight: 500; color: #185FA5; margin: 0;">
-                                月々約 {{ number_format($loan['monthly_payment']) }}円
-                            </p>
-                            @endif
-                        </div>
-                        <div style="padding: 10px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                            <div style="font-size: 11px; color: #6b7280;">
-                                金利：{{ $loan['interest_rate'] }}%
-                                @if($loan['is_default_rate'])
-                                    <span style="font-size: 10px; color: #9ca3af;">（システムデフォルト）</span>
+                <p style="font-size: 12px; font-weight: 500; color: #374151; margin: 0 0 12px; padding-left: 10px; border-left: 3px solid #185FA5;">ローン設定</p>
+            
+                @if(count($loans) === 0)
+                    <p style="font-size: 12px; color: #9ca3af;">ローン情報がありません</p>
+                @else
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        @foreach($loans as $loan)
+                        <div style="border: 0.5px solid {{ $loan['is_system_default'] ? '#d1d5db' : '#bae6fd' }}; border-radius: 10px; overflow: hidden;">
+                            <div style="padding: 8px 14px; background: {{ $loan['is_system_default'] ? '#f9fafb' : '#f0f9ff' }}; border-bottom: 0.5px solid {{ $loan['is_system_default'] ? '#d1d5db' : '#bae6fd' }}; display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <p style="font-size: 11px; font-weight: 500; color: {{ $loan['is_system_default'] ? '#6b7280' : '#0369a1' }}; margin: 0;">
+                                        {{ $loan['plan_name'] }}
+                                    </p>
+                                    @if($loan['is_system_default'])
+                                        <span style="font-size: 10px; background: #f3f4f6; color: #6b7280; padding: 1px 6px; border-radius: 4px; border: 0.5px solid #d1d5db;">システムデフォルト</span>
+                                    @endif
+                                    @if($loan['is_contracted'])
+                                        <span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 1px 6px; border-radius: 4px;">契約済み</span>
+                                    @endif
+                                </div>
+                                @if($loan['monthly_payment'])
+                                <p style="font-size: 12px; font-weight: 500; color: #185FA5; margin: 0;">
+                                    月々約 {{ number_format($loan['monthly_payment']) }}円〜
+                                </p>
                                 @endif
                             </div>
-                            <div style="font-size: 11px; color: #6b7280;">
-                                期間：{{ $loan['loan_months'] }}ヶ月
-                                @if($loan['is_default_months'])
-                                    <span style="font-size: 10px; color: #9ca3af;">（システムデフォルト）</span>
+                            <div style="padding: 10px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                                <div style="font-size: 11px; color: #6b7280;">
+                                    金利：{{ $loan['rate'] }}%
+                                    @if($loan['is_default_rate'])
+                                        <span style="font-size: 10px; color: #9ca3af;">（デフォルト）</span>
+                                    @endif
+                                </div>
+                                <div style="font-size: 11px; color: #6b7280;">
+                                    回数：{{ $loan['min_months'] }}〜{{ $loan['max_months'] }}回
+                                </div>
+                                @if($loan['down_payment'])
+                                <div style="font-size: 11px; color: #6b7280;">頭金：{{ number_format($loan['down_payment']) }}円</div>
+                                @endif
+                                @if($loan['misc_fee'])
+                                <div style="font-size: 11px; color: #6b7280;">諸費用：{{ number_format($loan['misc_fee']) }}円</div>
+                                @endif
+                                @if($loan['bonus_amount'] && $loan['bonus_times'])
+                                <div style="font-size: 11px; color: #6b7280; grid-column: span 2;">
+                                    ボーナス：{{ number_format($loan['bonus_amount']) }}円 × 年{{ $loan['bonus_times'] }}回
+                                </div>
+                                @endif
+                                @if($loan['note'])
+                                <div style="font-size: 11px; color: #6b7280; grid-column: span 2;">備考：{{ $loan['note'] }}</div>
                                 @endif
                             </div>
-                            @if($loan['down_payment'])
-                            <div style="font-size: 11px; color: #6b7280;">頭金：{{ number_format($loan['down_payment']) }}円</div>
-                            @endif
-                            @if($loan['misc_fee'])
-                            <div style="font-size: 11px; color: #6b7280;">諸費用：{{ number_format($loan['misc_fee']) }}円</div>
-                            @endif
-                            @if($loan['loan_type'] === 'residual' && $loan['residual_value'])
-                            <div style="font-size: 11px; color: #6b7280;">残価：{{ number_format($loan['residual_value']) }}円</div>
-                            @endif
-                            @if($loan['note'])
-                            <div style="font-size: 11px; color: #6b7280; grid-column: span 2;">備考：{{ $loan['note'] }}</div>
-                            @endif
                         </div>
+                        @endforeach
                     </div>
-                    @endforeach
-                </div>
+                @endif
             </div>
-            @endif
 
             {{-- その他オプション --}}
             @php $otherOptions = $this->getOtherOptions(); @endphp

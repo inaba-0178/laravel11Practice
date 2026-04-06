@@ -223,4 +223,52 @@ class CreateCarRegistration extends CreateRecord
             return $car;
         });
     }
+    
+    protected function afterCreate(): void
+    {
+        $record   = $this->getRecord();
+        $formData = $this->form->getRawState();
+        $loans    = $formData['loans'] ?? [];
+
+        // 作成されたloansを順番で取得
+        $createdLoans = $record->loans()->orderBy('id')->get();
+
+        foreach ($createdLoans as $index => $loan) {
+            $loanData = array_values($loans)[$index] ?? null;
+            if (!$loanData) continue;
+
+            $planId = $loanData['dealer_loan_plan_id'] ?? null;
+
+            if (str_starts_with((string) $planId, 'mst_')) {
+                $mstId       = str_replace('mst_', '', $planId);
+                $defaultPlan = \App\Infrastructure\Eloquent\Mst\MstLoanPlan::find($mstId);
+                if ($defaultPlan) {
+                    $loan->update([
+                        'dealer_loan_plan_id'     => null,
+                        'snapshot_plan_name'      => 'システムデフォルト',
+                        'snapshot_rate'           => $defaultPlan->interest_rate,
+                        'snapshot_months_options' => $defaultPlan->months_options,
+                        'snapshot_min_months'     => $defaultPlan->min_months,
+                        'snapshot_max_months'     => $defaultPlan->max_months,
+                        'snapshot_bonus_amount'   => null,
+                        'snapshot_bonus_times'    => null,
+                    ]);
+                }
+            } else {
+                $plan = \App\Infrastructure\Eloquent\User\StkDealerLoanPlan::find($planId);
+                if ($plan) {
+                    $loan->update([
+                        'dealer_loan_plan_id'     => $plan->id,
+                        'snapshot_plan_name'      => $plan->name,
+                        'snapshot_rate'           => $plan->interest_rate,
+                        'snapshot_months_options' => $plan->months_options,
+                        'snapshot_min_months'     => $plan->min_months,
+                        'snapshot_max_months'     => $plan->max_months,
+                        'snapshot_bonus_amount'   => $plan->bonus_amount,
+                        'snapshot_bonus_times'    => $plan->bonus_times,
+                    ]);
+                }
+            }
+        }
+    }
 }

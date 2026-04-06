@@ -411,6 +411,9 @@ class EditCarRegistration extends EditRecord
             $data['loan_available'],
             $data['description'],
         );
+    
+        // ローンが設定されている場合はセクションを開く
+        $data['has_loans'] = $this->getRecord()->loans()->exists();
 
         return $data;
     }
@@ -461,5 +464,58 @@ class EditCarRegistration extends EditRecord
             ->title('承認依頼を管理者に送りました。承認されるまでには時間がかかりますのでお待ちください。')
             ->success()
             ->send();
+    }
+
+    protected function afterSave(): void
+    {
+        $formData = $this->form->getRawState();
+        $loans    = $formData['loans'] ?? [];
+
+        foreach ($loans as $loanData) {
+            $planId = $loanData['dealer_loan_plan_id'] ?? null;
+            $loanId = $loanData['id'] ?? null;
+
+            if (!$loanId) continue;
+
+            $loan = \App\Infrastructure\Eloquent\User\StkCarLoan::find($loanId);
+            if (!$loan)
+            {
+                continue;
+            }
+
+            if (str_starts_with((string) $planId, 'mst_')) {
+                $mstId       = str_replace('mst_', '', $planId);
+                $defaultPlan = \App\Infrastructure\Eloquent\Mst\MstLoanPlan::find($mstId);
+                if ($defaultPlan) {
+                    $loan->update([
+                        'dealer_loan_plan_id'     => null,
+                        'snapshot_plan_name'      => 'システムデフォルト',
+                        'snapshot_rate'           => $defaultPlan->interest_rate,
+                        'snapshot_months_options' => $defaultPlan->months_options,
+                        'snapshot_min_months'     => $defaultPlan->min_months,
+                        'snapshot_max_months'     => $defaultPlan->max_months,
+                        'snapshot_bonus_amount'   => null,
+                        'snapshot_bonus_times'    => null,
+                    ]);
+                }
+            }
+            else
+            {
+                $plan = \App\Infrastructure\Eloquent\User\StkDealerLoanPlan::find($planId);
+                if ($plan) {
+                    $loan->update([
+                        'dealer_loan_plan_id'     => $plan->id,
+                        'snapshot_plan_name'      => $plan->name,
+                        'snapshot_rate'           => $plan->interest_rate,
+                        'snapshot_months_options' => $plan->months_options,
+                        'snapshot_min_months'     => $plan->min_months,
+                        'snapshot_max_months'     => $plan->max_months,
+                        'snapshot_bonus_amount'   => $plan->bonus_amount,
+                        'snapshot_bonus_times'    => $plan->bonus_times,
+                    ]);
+                }
+                continue;
+            }
+        }
     }
 }

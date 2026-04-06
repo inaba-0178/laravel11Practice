@@ -322,23 +322,44 @@ class ViewCarApproval extends Page
 
     public function getLoans(): array
     {
+        if ($this->record->loans->isEmpty()) {
+            return [];
+        }
+    
         return $this->record->loans->map(function ($loan) {
-            $monthlyPayment = $loan->calcMonthlyPayment($this->record->price);
+            $rate           = $loan->getEffectiveRate();
+            $monthsOptions  = $loan->getEffectiveMonthsOptions();
+            $minMonths      = min($monthsOptions);
+            $monthlyPayment = $loan->calcMonthlyPayment((int) $this->record->price, $minMonths);
+    
+            // システムデフォルトか判定
+            $isSystemDefault = $loan->dealer_loan_plan_id === null
+                || $loan->dealer_loan_plan_id === 'default';
+    
+            $planName = $isSystemDefault
+                ? 'システムデフォルト'
+                : ($loan->snapshot_plan_name ?? $loan->dealerLoanPlan?->name ?? 'ディーラープラン');
+    
             return [
-                'type_label'     => \App\Infrastructure\Eloquent\User\StkCarLoan::TYPE_LABELS[$loan->loan_type] ?? $loan->loan_type,
-                'interest_rate'  => $loan->interest_rate ?? \App\Infrastructure\Eloquent\User\StkCarLoan::DEFAULT_INTEREST_RATE,
-                'is_default_rate'=> $loan->interest_rate === null,
-                'loan_months'    => $loan->loan_months ?? \App\Infrastructure\Eloquent\User\StkCarLoan::DEFAULT_LOAN_MONTHS,
-                'is_default_months' => $loan->loan_months === null,
-                'down_payment'   => $loan->down_payment ?? 0,
-                'misc_fee'       => $loan->misc_fee,
-                'residual_value' => $loan->residual_value,
-                'monthly_payment'=> $monthlyPayment ? round($monthlyPayment) : null,
-                'note'           => $loan->note,
-                'loan_type'      => $loan->loan_type,
+                'plan_name'         => $planName,
+                'type_label'        => \App\Infrastructure\Eloquent\User\StkCarLoan::TYPE_LABELS[$loan->loan_type] ?? '通常ローン',
+                'rate'              => $rate,
+                'is_default_rate'   => !$loan->snapshot_rate && !$loan->interest_rate,
+                'months_options'    => $monthsOptions,
+                'min_months'        => $minMonths,
+                'max_months'        => max($monthsOptions),
+                'down_payment'      => $loan->down_payment ?? 0,
+                'misc_fee'          => $loan->misc_fee,
+                'bonus_amount'      => $loan->snapshot_bonus_amount ?? 0,
+                'bonus_times'       => $loan->snapshot_bonus_times ?? 0,
+                'monthly_payment'   => $monthlyPayment,
+                'note'              => $loan->note,
+                'is_contracted'     => $loan->is_contracted,
+                'is_system_default' => $isSystemDefault,
             ];
         })->toArray();
     }
+
     public function getRejectionCategories(): array
     {
         return ['車両基本情報', '車両スペック', '装備仕様', '画像', 'その他'];

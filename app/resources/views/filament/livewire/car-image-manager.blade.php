@@ -168,7 +168,7 @@
             wire:click="$set('viewMode', 'grid')"
             style="margin-top: 12px; width: 100%; padding: 8px; background: none; border: 0.5px solid #d1d5db; border-radius: 8px; font-size: 12px; color: #6b7280; cursor: pointer;"
         >
-            ← 画像一覧に戻る
+            画像一覧に戻る
         </button>
     </div>
     @endif

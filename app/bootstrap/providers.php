@@ -47,4 +47,5 @@ return [
     App\Providers\CreateReservationServiceProvider::class,
     App\Providers\TransactionServiceProvider::class,
     App\Providers\UploadCarImageServiceProvider::class,
+    App\Providers\CarLoanServiceProvider::class,
 ];

@@ -137,5 +137,17 @@
             許可を取り消す
         </button>
         @endif
+
+        {{-- 拒否済みの場合に表示 --}}
+        @if($isRejected)
+        <button
+            type="button"
+            wire:click="resetRejection"
+            wire:confirm="拒否を解除して未申請状態に戻しますか？"
+            style="width: 100%; padding: 13px; background: #db0209bd; color: #ffffff; border: 0.5px solid #d1d5db; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer;"
+        >
+            拒否を解除する（未申請に戻す）
+        </button>
+        @endif
     </div>
 </x-filament-panels::page>

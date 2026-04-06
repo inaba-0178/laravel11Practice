@@ -65,16 +65,24 @@ class LoanSettingResource extends Resource
                     ->label('ステータス')
                     ->badge()
                     ->formatStateUsing(fn ($state, $record) => match(true) {
-                        $record->loan_setting_enabled == 1                                    => '許可済み',
-                        !empty($record->loan_setting_rejected_reason)                         => '拒否済み',
-                        !empty($record->loan_setting_requested_at)                            => '申請中',
-                        default                                                               => '未申請',
+                        $record->loan_setting_enabled == 1                                     => '許可済み',
+                        !empty($record->loan_setting_rejected_reason)                          => '拒否済み',
+                        !empty($record->loan_setting_requested_at)
+                            && empty($record->loan_setting_approved_at)                        => '申請中',
+                        $record->loan_setting_enabled == 0
+                            && !empty($record->loan_setting_approved_at)
+                            && empty($record->loan_setting_rejected_reason)                    => '承認取消',
+                        default                                                                => '未申請',
                     })
                     ->color(fn ($state, $record) => match(true) {
-                        $record->loan_setting_enabled == 1           => 'success',
-                        !empty($record->loan_setting_rejected_reason) => 'danger',
-                        !empty($record->loan_setting_requested_at)    => 'warning',
-                        default                                       => 'gray',
+                        $record->loan_setting_enabled == 1                                     => 'success',
+                        !empty($record->loan_setting_rejected_reason)                          => 'danger',
+                        !empty($record->loan_setting_requested_at)
+                            && empty($record->loan_setting_approved_at)                        => 'warning',
+                        $record->loan_setting_enabled == 0
+                            && !empty($record->loan_setting_approved_at)
+                            && empty($record->loan_setting_rejected_reason)                    => 'gray',
+                        default                                                                => 'gray',
                     }),
             ])
             ->modifyQueryUsing(fn ($query) => $query->whereNotNull('loan_setting_requested_at'))
