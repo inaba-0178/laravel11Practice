@@ -47,6 +47,7 @@ use App\Presentation\Controllers\CreateReservation\CreateReservationController;
 use App\Presentation\Controllers\CarImage\UploadCarImageController;
 use App\Presentation\Controllers\CarLoan\CarLoanController;
 use App\Presentation\Controllers\PriceHistogram\PriceHistogramController;
+use App\Presentation\Controllers\FavoriteCar\FavoriteCarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -228,3 +229,10 @@ Route::post('Reservations', CreateReservationController::class);
 //Route::middleware('auth:sanctum')->group(function () {
     Route::post('/CarImages/upload', UploadCarImageController::class);
 //});
+
+// お気に入り（認証必須）
+Route::middleware('auth:sanctum')->group(function () {
+    Route::patch('/Favorites/toggle', [FavoriteCarController::class, 'toggle']);
+    Route::get('/Favorites/isFavorite', [FavoriteCarController::class, 'isFavorite']);
+    Route::get('/Favorites', [FavoriteCarController::class, 'list']);
+});
