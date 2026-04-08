@@ -23,19 +23,29 @@ class FavoriteCarsController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            $carIdsParam = $request->query('carIds')
-                ? array_map('intval', explode(',', $request->query('carIds')))
-                : [];
+            $rawCarIds = $request->query('carIds', '');
 
-            if (empty($carIdsParam)) {
+            if (empty($rawCarIds)) {
                 return response()->json([
                     'success' => true,
                     'cars'    => [],
                 ]);
             }
 
-            $carIds     = new CarIds($carIdsParam);
-            $outputData = $this->useCase->execute($carIds);
+            // 数値チェック
+            $rawArray = explode(',', $rawCarIds);
+            $hasInvalid = array_filter($rawArray, fn($v) => !ctype_digit($v) || (int)$v <= 0);
+
+            if (!empty($hasInvalid)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'carIdsは正の整数で指定してください。',
+                ], 422);
+            }
+
+            $carIdsParam = array_map('intval', $rawArray);
+            $carIds      = new CarIds($carIdsParam);
+            $outputData  = $this->useCase->execute($carIds);
 
             return response()->json($outputData->toArray());
 

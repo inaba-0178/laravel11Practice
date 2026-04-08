@@ -24,7 +24,6 @@ class EloquentFavoriteCarsRepository implements FavoriteCarsRepositoryInterface
                 'color',
                 'status',
                 'repair_history',
-                'main_image_url',
                 'fuel_type',
                 'transmission',
             ])

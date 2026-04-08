@@ -12,6 +12,10 @@ class EloquentFavoriteCarSeriesRepository implements FavoriteCarSeriesRepository
      */
     public function findSeriesNamesByIds(array $seriesIds): array
     {
+        if (empty($seriesIds)) {
+            return [];
+        }
+
         return MstCarSeries::whereIn('series_id', $seriesIds)
             ->pluck('series_name', 'series_id')
             ->toArray();
