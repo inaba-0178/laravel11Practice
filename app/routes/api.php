@@ -48,6 +48,7 @@ use App\Presentation\Controllers\CarImage\UploadCarImageController;
 use App\Presentation\Controllers\CarLoan\CarLoanController;
 use App\Presentation\Controllers\PriceHistogram\PriceHistogramController;
 use App\Presentation\Controllers\FavoriteCar\FavoriteCarController;
+use App\Presentation\Controllers\FavoriteCars\FavoriteCarsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -235,4 +236,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/Favorites/toggle', [FavoriteCarController::class, 'toggle']);
     Route::get('/Favorites/isFavorite', [FavoriteCarController::class, 'isFavorite']);
     Route::get('/Favorites', [FavoriteCarController::class, 'list']);
+    // お気に入り車両情報一括取得
+    Route::get('/FavoriteCars', FavoriteCarsController::class);
 });

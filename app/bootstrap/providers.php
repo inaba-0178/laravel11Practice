@@ -50,4 +50,6 @@ return [
     App\Providers\CarLoanServiceProvider::class,
     App\Providers\PriceHistogramServiceProvider::class,
     App\Providers\FavoriteCarServiceProvider::class,
+    App\Providers\FavoriteCarsServiceProvider::class,
+    App\Providers\FavoriteCarSeriesServiceProvider::class,
 ];
