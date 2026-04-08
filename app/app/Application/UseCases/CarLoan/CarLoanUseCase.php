@@ -3,7 +3,7 @@
 namespace App\Application\UseCases\CarLoan;
 
 use App\Domain\CarLoan\Services\LoanCalculator;
-use App\Domain\CarLoan\Services\LoanPlanResolver;
+use App\Domain\Common\Services\LoanPlanResolver;
 use App\Domain\CarLoan\ValueObjects\CarId;
 use App\Domain\CarLoan\Repositories\CarLoanRepositoryInterface;
 
