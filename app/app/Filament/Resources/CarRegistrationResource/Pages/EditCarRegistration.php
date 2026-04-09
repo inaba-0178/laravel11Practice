@@ -21,9 +21,11 @@ use Illuminate\Support\Facades\DB;
 use App\Constants\SpecialTypeOption;
 use App\Constants\CarStatus;
 use App\Infrastructure\Eloquent\User\StkCar;
+use App\Filament\Resources\CarRegistrationResource\Concerns\ValidatesCarData;
 
 class EditCarRegistration extends EditRecord
 {
+    use ValidatesCarData;
     protected static string $resource = CarRegistrationResource::class;
     protected static string $view = 'filament.resources.car-registration-resource.pages.edit-car-registration';
     // デフォルトのフッターボタンを非表示
@@ -291,6 +293,8 @@ class EditCarRegistration extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        $this->validateCarData($data);
+
         $record = $this->getRecord();
 
         // available編集時はpendingに戻す

@@ -100,6 +100,7 @@
                         ['走行距離', number_format($car->mileage).'km'],
                         ['修復歴', \App\Constants\RepairHistory::LABELS[$car->repair_history] ?? '-'],
                         ['支払価格', number_format($car->price).'円'],
+                        ['リサイクル預託金', $car->recycle_fee ? number_format((int)$car->recycle_fee).'円' : '-'],
                         ['色', $car->color ?? '-'],
                         ['車検満了日', $detail?->inspection_expire_date ?? '-'],
                         ['駆動方式', $detail?->drive_system ?? '-'],
