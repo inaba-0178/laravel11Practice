@@ -18,6 +18,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\EditAction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Pages\DealerFeeDetail;
@@ -140,6 +141,7 @@ class DealerFeeResource extends Resource
         return [
             'index'     => ListDealerFees::route('/'),
             'create'    => CreateDealerFee::route('/create'),
+            'edit'      => EditDealerFee::route('/{record}/edit'),
         ];
     }
 }

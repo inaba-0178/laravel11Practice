@@ -25,13 +25,11 @@ class DealerFeeDetail extends Page
     public ?string $id                  = null;
     public ?StkDealerFee $record        = null;
 
-    // mount内に認可チェック追加
     public function mount(Request $request): void
     {
         $this->id     = $request->input('id');
-        $this->record = StkDealerFee::findOrFail($this->id);
+        $this->record = StkDealerFee::whereNull('deleted_at')->findOrFail($this->id);
 
-        // 自分のディーラーのデータのみアクセス可能
         if ($this->record->dealer_id !== Auth::user()->dealer_id) {
             abort(403);
         }
@@ -83,7 +81,7 @@ class DealerFeeDetail extends Page
             ]);
     }
 
-    // 削除
+    // 編集・削除
     protected function getHeaderActions(): array
     {
         return [
