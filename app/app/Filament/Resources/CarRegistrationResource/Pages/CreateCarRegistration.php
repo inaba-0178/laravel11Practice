@@ -22,9 +22,11 @@ use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Filament\Resources\CarRegistrationResource\Concerns\ValidatesCarData;
 
 class CreateCarRegistration extends CreateRecord
 {
+    use ValidatesCarData;
     protected static string $resource = CarRegistrationResource::class;
 
     // 保存時のステータスを保持するプロパティ
@@ -118,6 +120,8 @@ class CreateCarRegistration extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
+        $this->validateCarData($data);
+
         $user = Auth::user();
 
         return DB::transaction(function () use ($data, $user) {
@@ -141,8 +145,8 @@ class CreateCarRegistration extends CreateRecord
                 'fuel_type'          => $data['fuel_type'] ?? null,
                 'region_id'          => $data['region_id'],
                 'repair_history'     => $data['repair_history'] ?? 'unknown',
-                'main_image_url'     => null,
                 'published_at'       => null,
+                'recycle_fee'        => $data['recycle_fee'] ?? null,
             ]);
 
             // ===== stk_car_details 登録 =====

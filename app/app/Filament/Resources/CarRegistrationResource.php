@@ -246,6 +246,13 @@ class CarRegistrationResource extends Resource
                                 ->default(false),
                         ])
                         ->columns(3),
+                    TextInput::make('recycle_fee')
+                        ->label('リサイクル預託金（円）')
+                        ->numeric()
+                        ->integer()
+                        ->minValue(0)
+                        ->rules(['integer', 'min:0'])
+                        ->nullable(),
                 ])
                 ->columns(2),
 
