@@ -14,6 +14,9 @@ use Database\Seeders\Mst\MstEquipmentSafetySeeder;
 use Database\Seeders\Mst\MstEquipmentEnvSeeder;
 use Database\Seeders\Mst\MstEquipmentDressupSeeder;
 use Database\Seeders\Mst\MstSeatOptionSeeder;
+use Database\Seeders\Mst\MstVehicleWeightTaxSeeder;
+use Database\Seeders\Mst\MstLiabilityInsuranceSeeder;
+use Database\Seeders\User\StkDealerFeeSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -33,14 +36,17 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             //MailTemplateSeeder::class,
-            MstColorOptionSeeder::class,
-            MstBasicOptionSeeder::class,
-            MstDetailOptionSeeder::class,
-            MstEquipmentBasicSeeder::class,
-            MstEquipmentSafetySeeder::class,
-            MstEquipmentEnvSeeder::class,
-            MstEquipmentDressupSeeder::class,
-            MstSeatOptionSeeder::class,
+            // MstColorOptionSeeder::class,
+            // MstBasicOptionSeeder::class,
+            // MstDetailOptionSeeder::class,
+            // MstEquipmentBasicSeeder::class,
+            // MstEquipmentSafetySeeder::class,
+            // MstEquipmentEnvSeeder::class,
+            // MstEquipmentDressupSeeder::class,
+            // MstSeatOptionSeeder::class,
+            MstVehicleWeightTaxSeeder::class,
+            MstLiabilityInsuranceSeeder::class,
+            StkDealerFeeSeeder::class,
         ]);
     }
 }

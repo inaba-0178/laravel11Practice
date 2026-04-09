@@ -41,4 +41,12 @@ class EloquentFavoriteCarsRepository implements FavoriteCarsRepositoryInterface
             ->get()
             ->keyBy('car_id');
     }
+
+    public function findLoansByCarIds(array $carIds): Collection
+    {
+        return StkCarLoans::whereIn('car_id', $carIds)
+            ->select(['car_id', 'snapshot_rate', 'snapshot_term', 'snapshot_monthly', 'dealer_loan_plan_id'])
+            ->get()
+            ->keyBy('car_id');
+    }
 }

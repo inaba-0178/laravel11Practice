@@ -26,6 +26,7 @@ class StkCar extends Model
         'stock_number',
         'status',
         'price',
+        'recycle_fee',
         'price_display_type',
         'model_year',
         'mileage',
@@ -42,10 +43,11 @@ class StkCar extends Model
     ];
 
     protected $casts = [
-        'price' => 'decimal:0',
-        'published_at' => 'datetime',
-        'sold_at' => 'datetime',
-        'rejection_reason' => 'array',
+        'price'             => 'decimal:0',
+        'recycle_fee'       => 'decimal:0',
+        'published_at'      => 'datetime',
+        'sold_at'           => 'datetime',
+        'rejection_reason'  => 'array',
     ];
 
     public function dealer()
