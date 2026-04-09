@@ -147,6 +147,7 @@ class CreateCarRegistration extends CreateRecord
                 'repair_history'     => $data['repair_history'] ?? 'unknown',
                 'published_at'       => null,
                 'recycle_fee'        => $data['recycle_fee'] ?? null,
+                'dealer_fee_id'      => $data['dealer_fee_id'] ?? null,
             ]);
 
             // ===== stk_car_details 登録 =====
