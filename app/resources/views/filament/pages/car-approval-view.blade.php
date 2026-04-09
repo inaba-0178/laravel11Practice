@@ -101,6 +101,7 @@
                         ['修復歴', \App\Constants\RepairHistory::LABELS[$car->repair_history] ?? '-'],
                         ['支払価格', number_format($car->price).'円'],
                         ['リサイクル預託金', $car->recycle_fee ? number_format((int)$car->recycle_fee).'円' : '-'],
+                        ['諸費用プラン', $car->dealerFee?->name ?? '-'],
                         ['色', $car->color ?? '-'],
                         ['車検満了日', $detail?->inspection_expire_date ?? '-'],
                         ['駆動方式', $detail?->drive_system ?? '-'],
@@ -117,6 +118,27 @@
                     @endforeach
                 </div>
             </div>
+
+            {{-- 諸費用プラン --}}
+            @if($car->dealerFee)
+            <div style="background: white; border-radius: 12px; border: 0.5px solid #e5e7eb; padding: 14px 18px;">
+                <p style="font-size: 12px; font-weight: 500; color: #374151; margin: 0 0 10px; padding-left: 10px; border-left: 3px solid #185FA5;">諸費用プラン（{{ $car->dealerFee->name }}）</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #e5e7eb; border: 0.5px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                    @foreach([
+                        ['登録・手続き代行費用', number_format((int)$car->dealerFee->registration_fee).'円'],
+                        ['車庫証明費用',         number_format((int)$car->dealerFee->garage_cert_fee).'円'],
+                        ['納車費用',             number_format((int)$car->dealerFee->delivery_fee).'円'],
+                        ['整備費用',             number_format((int)$car->dealerFee->maintenance_fee).'円'],
+                        ['合計',                 number_format((int)$car->dealerFee->registration_fee + (int)$car->dealerFee->garage_cert_fee + (int)$car->dealerFee->delivery_fee + (int)$car->dealerFee->maintenance_fee).'円'],
+                    ] as [$label, $value])
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; background: white;">
+                        <div style="padding: 8px 12px; font-size: 11px; color: #6b7280; background: #f9fafb;">{{ $label }}</div>
+                        <div style="padding: 8px 12px; font-size: 12px; color: #111827;">{{ $value }}</div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
 
             {{-- 装備仕様（カテゴリ分け） --}}
             <div style="background: white; border-radius: 12px; border: 0.5px solid #e5e7eb; padding: 14px 18px;">

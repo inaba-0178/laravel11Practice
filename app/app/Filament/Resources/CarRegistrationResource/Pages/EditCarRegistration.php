@@ -288,6 +288,7 @@ class EditCarRegistration extends EditRecord
             ->toArray();
 
         $data['other_options'] = $otherOptions;
+
         return $data;
     }
 
@@ -475,11 +476,20 @@ class EditCarRegistration extends EditRecord
         $formData = $this->form->getRawState();
         $loans    = $formData['loans'] ?? [];
 
+        \Log::info('afterSave loans', ['loans' => $loans]);
+
         foreach ($loans as $loanData) {
             $planId = $loanData['dealer_loan_plan_id'] ?? null;
             $loanId = $loanData['id'] ?? null;
 
-            if (!$loanId) continue;
+            \Log::info('afterSave loanData', [
+                'loanId' => $loanId,
+                'planId' => $planId,
+            ]);
+            if (!$loanId)
+            {
+                continue;
+            }
 
             $loan = \App\Infrastructure\Eloquent\User\StkCarLoan::find($loanId);
             if (!$loan)
@@ -487,10 +497,12 @@ class EditCarRegistration extends EditRecord
                 continue;
             }
 
-            if (str_starts_with((string) $planId, 'mst_')) {
+            if (str_starts_with((string) $planId, 'mst_'))
+            {
                 $mstId       = str_replace('mst_', '', $planId);
                 $defaultPlan = \App\Infrastructure\Eloquent\Mst\MstLoanPlan::find($mstId);
-                if ($defaultPlan) {
+                if ($defaultPlan)
+                {
                     $loan->update([
                         'dealer_loan_plan_id'     => null,
                         'snapshot_plan_name'      => 'システムデフォルト',
@@ -506,7 +518,8 @@ class EditCarRegistration extends EditRecord
             else
             {
                 $plan = \App\Infrastructure\Eloquent\User\StkDealerLoanPlan::find($planId);
-                if ($plan) {
+                if ($plan)
+                {
                     $loan->update([
                         'dealer_loan_plan_id'     => $plan->id,
                         'snapshot_plan_name'      => $plan->name,

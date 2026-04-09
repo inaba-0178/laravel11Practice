@@ -237,7 +237,7 @@ class ViewCarApproval extends Page
 
     public function getCarData(): array
     {
-        $car     = $this->record->load(['series', 'detail', 'options', 'dealer']);
+        $car     = $this->record->load(['series', 'detail', 'options', 'dealer', 'dealerFee']);
         $series  = MstCarSeries::find($car->series_id);
         $vehicle = MstVehicles::find($car->vehicle_id);
         return ['car' => $car, 'series' => $series, 'vehicle' => $vehicle];

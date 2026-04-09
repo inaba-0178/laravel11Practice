@@ -9,6 +9,7 @@ use App\Infrastructure\Eloquent\Mst\MstCarSeries;
 use App\Infrastructure\Eloquent\Mst\MstVehicles;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
 use App\Infrastructure\Eloquent\User\StkCarLoan;
+use App\Infrastructure\Eloquent\User\StkDealerFee;
 
 class StkCar extends Model
 {
@@ -40,6 +41,7 @@ class StkCar extends Model
         'published_at',
         'sold_at',
         'rejection_reason',
+        'dealer_fee_id',
     ];
 
     protected $casts = [
@@ -93,5 +95,10 @@ class StkCar extends Model
     public function loans()
     {
         return $this->hasMany(StkCarLoan::class, 'car_id');
+    }
+
+    public function dealerFee()
+    {
+        return $this->belongsTo(StkDealerFee::class, 'dealer_fee_id');
     }
 }

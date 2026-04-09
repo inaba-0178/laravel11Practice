@@ -16,6 +16,7 @@ use App\Infrastructure\Eloquent\Mst\MstSeatOption;
 use App\Infrastructure\Eloquent\Mst\MstEquipmentDressup;
 use App\Infrastructure\Eloquent\Mst\MstEquipmentEnv;
 use App\Infrastructure\Eloquent\User\StkCar;
+use App\Infrastructure\Eloquent\User\StkDealerFee;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -253,6 +254,27 @@ class CarRegistrationResource extends Resource
                         ->minValue(0)
                         ->rules(['integer', 'min:0'])
                         ->nullable(),
+                    Select::make('dealer_fee_id')
+                        ->label('諸費用プラン')
+                        ->options(function () {
+                            $dealerId = Auth::user()?->dealer_id;
+                            return StkDealerFee::where('dealer_id', $dealerId)
+                                ->whereNull('deleted_at')
+                                ->get()
+                                ->mapWithKeys(fn ($fee) => [
+                                    $fee->id => "{$fee->name}（登録:{$fee->registration_fee}円 車庫:{$fee->garage_cert_fee}円 納車:{$fee->delivery_fee}円 整備:{$fee->maintenance_fee}円）"
+                                ])
+                                ->toArray();
+                        })
+                        ->default(function () {
+                            $dealerId = Auth::user()?->dealer_id;
+                            return StkDealerFee::where('dealer_id', $dealerId)
+                                ->where('is_default', true)
+                                ->whereNull('deleted_at')
+                                ->value('id');
+                        })
+                        ->nullable()
+                        ->columnSpanFull(),
                 ])
                 ->columns(2),
 
@@ -308,7 +330,8 @@ class CarRegistrationResource extends Resource
                         ->label('ドア数')
                         ->numeric()
                         ->minValue(2)
-                        ->maxValue(6),
+                        ->maxValue(7)
+                        ->required(),
 
                     Select::make('slide_door')
                         ->label('スライドドア')
@@ -367,10 +390,16 @@ class CarRegistrationResource extends Resource
                             ->relationship('loans')
                             ->schema([
                                 \Filament\Forms\Components\Select::make('dealer_loan_plan_id')
-                                    ->label('プランを選択')
-                                    ->options($planOptions)
-                                    ->required()
-                                    ->columnSpanFull(),
+                                ->label('プランを選択')
+                                ->options($planOptions)
+                                ->required()
+                                ->columnSpanFull()
+                                ->afterStateHydrated(function ($state, $set) use ($defaultPlan) {
+                                    // dealer_loan_plan_idがnullの場合はシステムデフォルトキーに変換
+                                    if ($state === null && $defaultPlan) {
+                                        $set('dealer_loan_plan_id', "mst_{$defaultPlan->id}");
+                                    }
+                                }),
                             ])
                             ->addActionLabel('＋ プランを追加')
                             ->maxItems(3)
