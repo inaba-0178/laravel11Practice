@@ -261,6 +261,10 @@ class EloquentCarRepository extends BaseRepository implements CarRepositoryInter
             dealerReviewCount       : $model->dealer_review_count ?? 0,
             bodyTypeName            : isset($bodyTypes[$model->body_type_id]) ? $bodyTypes[$model->body_type_id]->name : '',
             isNew                   : $isNew,
+            recycleFee              : $model->recycle_fee ? (int)$model->recycle_fee : null,
+            dealerFeeId             : $model->dealer_fee_id ? (int)$model->dealer_fee_id : null,
+            totalPrice              : null,
+            loanMonthly             : null,
         );
     }
 }

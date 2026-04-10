@@ -11,6 +11,7 @@ use App\Domain\SelectCarData\Repositories\CarImageRepositoryInterface;
 use App\Infrastructure\Repositories\SelectCarData\EloquentCarImageRepository;
 use App\Domain\SelectCarData\Repositories\CarOptionRepositoryInterface;
 use App\Infrastructure\Repositories\SelectCarData\EloquentCarOptionRepository;
+use App\Domain\Common\Services\TotalPriceCalculator;
 use Illuminate\Support\ServiceProvider;
 
 class SelectCarDataServiceProvider extends ServiceProvider
@@ -48,6 +49,7 @@ class SelectCarDataServiceProvider extends ServiceProvider
                 $app->make(CarDetailRepositoryInterface::class),
                 $app->make(CarImageRepositoryInterface::class),
                 $app->make(CarOptionRepositoryInterface::class),
+                $app->make(TotalPriceCalculator::class),
             );
         });
     }

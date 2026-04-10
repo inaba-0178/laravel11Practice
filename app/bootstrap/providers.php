@@ -53,4 +53,5 @@ return [
     App\Providers\FavoriteCarsServiceProvider::class,
     App\Providers\FavoriteCarSeriesServiceProvider::class,
     App\Providers\LoanPlanServiceProvider::class,
+    App\Providers\DealerFeeServiceProvider::class,
 ];

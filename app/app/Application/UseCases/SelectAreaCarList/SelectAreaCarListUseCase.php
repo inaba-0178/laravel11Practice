@@ -8,11 +8,19 @@ use App\Domain\SelectAreaCarList\ValueObjects\RegionIds;
 use App\Domain\SelectAreaCarList\ValueObjects\OffSet;
 use App\Domain\SelectAreaCarList\ValueObjects\Limit;
 use App\Domain\SelectAreaCarList\Exceptions\SelectAreaCarNotFoundException;
+use App\Domain\Common\Services\TotalPriceCalculator;
+use App\Domain\Common\Services\LoanPlanResolver;
+use App\Domain\Common\Services\CarListMapper;
+use App\Domain\SelectAreaCarList\Services\SelectAreaCarMerger;
 
 class SelectAreaCarListUseCase
 {
     public function __construct(
         private readonly CarRepositoryInterface $carRepository,
+        private readonly TotalPriceCalculator   $totalPriceCalculator,
+        private readonly LoanPlanResolver       $loanPlanResolver,
+        private readonly CarListMapper          $carListMapper,
+        private readonly SelectAreaCarMerger    $selectAreaCarMerger,
     ) {}
 
     /**
@@ -45,6 +53,19 @@ class SelectAreaCarListUseCase
             $searchParams,
         );
 
-        return new SelectAreaCarListOutputData($cars, $totalCount);
+        // 支払総額・ローン一括計算
+        $carCollection = collect($cars)->map(fn ($car) => $car->toCalculatorInput());
+        
+        $totalPrices   = $this->totalPriceCalculator->calculateByCarIds($carCollection);
+        $carIds        = collect($cars)->pluck('id')->toArray();
+        $loanPlans     = $this->loanPlanResolver->resolveByCarIds($carIds);
+
+        return new SelectAreaCarListOutputData(
+            $cars,
+            $totalCount,
+            $totalPrices,
+            $loanPlans,
+            $this->selectAreaCarMerger,
+        );
     }
 }

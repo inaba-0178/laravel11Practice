@@ -19,6 +19,7 @@ class EloquentCarRepository implements CarRepositoryInterface
     {
         $cars = $this->model
             ->where('series_id', $seriesId)
+            ->where('status', 'available')
             ->get();
 
         return $cars->map(fn($car) => $this->toEntity($car))->all();

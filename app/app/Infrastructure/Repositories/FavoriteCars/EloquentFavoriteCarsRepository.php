@@ -15,17 +15,22 @@ class EloquentFavoriteCarsRepository implements FavoriteCarsRepositoryInterface
     public function findByCarIds(array $carIds): Collection
     {
         return StkCar::whereIn('id', $carIds)
+            ->with(['detail', 'dealerFee', 'bodyType']) // ← eager load追加
             ->select([
                 'id',
                 'series_id',
-                'price',
+                'vehicle_id',
                 'model_year',
+                'price',
                 'mileage',
                 'color',
                 'status',
                 'repair_history',
                 'fuel_type',
                 'transmission',
+                'recycle_fee',
+                'dealer_fee_id',
+                'body_type_id',
             ])
             ->get();
     }

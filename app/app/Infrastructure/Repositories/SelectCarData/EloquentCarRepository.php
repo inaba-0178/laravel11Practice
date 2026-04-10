@@ -52,6 +52,11 @@ class EloquentCarRepository extends BaseRepository implements CarRepositoryInter
             mainImageUrl      : $model->main_image_url ?? '',
             publishedAt       : $model->published_at?->toDateTimeImmutable(),
             soldAt            : $model->sold_at?->toDateTimeImmutable(),
+            recycleFee        : $model->recycle_fee ? (int)$model->recycle_fee : null,
+            dealerFeeId       : $model->dealer_fee_id ? (int)$model->dealer_fee_id : null,
+            totalPrice        : null,
+            priceWithTax      : null,
+            miscFees          : null,
         );
     }
 }

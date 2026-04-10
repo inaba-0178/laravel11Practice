@@ -7,6 +7,7 @@ use App\Domain\SelectCarData\Repositories\CarImageRepositoryInterface;
 use App\Domain\SelectCarData\Repositories\CarOptionRepositoryInterface;
 use App\Domain\SelectCarData\ValueObjects\CarId;
 use App\Domain\SelectCarData\Exceptions\CarNotFoundException;
+use App\Domain\Common\Services\TotalPriceCalculator;
 
 class SelectCarDataUseCase
 {
@@ -15,6 +16,7 @@ class SelectCarDataUseCase
         private readonly CarDetailRepositoryInterface   $carDetailRepository,
         private readonly CarImageRepositoryInterface    $carImageRepository,
         private readonly CarOptionRepositoryInterface   $carOptionRepository,
+        private readonly TotalPriceCalculator           $totalPriceCalculator,
     ) {}
 
     /**
@@ -33,6 +35,22 @@ class SelectCarDataUseCase
         $carImageData = $this->carImageRepository->findByCarId($id);
         $carOptionData = $this->carOptionRepository->findByCarId($id);
 
-        return new SelectCarDataOutputData($carData, $carDetailData, $carImageData, $carOptionData);
+        $carInput = $carData->toCalculatorInput(
+            $carDetailData->inspectionExpireDate ?? null
+        );
+
+        $totalPrice   = $this->totalPriceCalculator->calculate($carInput);
+        $priceWithTax = $this->totalPriceCalculator->calcPriceWithTax((int)$carData->price);
+        $miscFees     = $this->totalPriceCalculator->calcMiscFees($carInput);
+
+        return new SelectCarDataOutputData(
+            $carData,
+            $carDetailData,
+            $carImageData,
+            $carOptionData,
+            $totalPrice,
+            $priceWithTax,
+            $miscFees,
+        );
     }
 }
