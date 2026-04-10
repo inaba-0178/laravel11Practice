@@ -10,6 +10,7 @@ use App\Infrastructure\Eloquent\Mst\MstVehicles;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
 use App\Infrastructure\Eloquent\User\StkCarLoan;
 use App\Infrastructure\Eloquent\User\StkDealerFee;
+use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
 
 class StkCar extends Model
 {
@@ -45,8 +46,8 @@ class StkCar extends Model
     ];
 
     protected $casts = [
-        'price'             => 'decimal:0',
-        'recycle_fee'       => 'decimal:0',
+        'price'             => 'float',
+        'recycle_fee'       => 'float',
         'published_at'      => 'datetime',
         'sold_at'           => 'datetime',
         'rejection_reason'  => 'array',
@@ -100,5 +101,10 @@ class StkCar extends Model
     public function dealerFee()
     {
         return $this->belongsTo(StkDealerFee::class, 'dealer_fee_id');
+    }
+
+    public function bodyType()
+    {
+        return $this->belongsTo(MstBodyTypes::class, 'body_type_id');
     }
 }

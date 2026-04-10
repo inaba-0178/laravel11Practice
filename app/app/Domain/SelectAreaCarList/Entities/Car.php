@@ -14,7 +14,7 @@ final class Car
         public readonly int                $vehicleId,
         public readonly ?string            $stockNumber,
         public readonly string             $status,
-        public readonly string             $price,
+        public readonly float              $price,
         public readonly string             $priceDisplayType,
         public readonly ?int               $modelYear,
         public readonly int                $mileage,
@@ -45,6 +45,10 @@ final class Car
         public readonly ?string            $bodyTypeName,
         // 新着フラグ（publishedAtが7日以内）
         public readonly bool               $isNew,
+        public readonly ?int               $recycleFee = null,
+        public readonly ?int               $dealerFeeId = null,
+        public readonly ?int               $totalPrice = null,
+        public readonly ?int               $loanMonthly = null,
     ) {}
 
     public function toArray(): array
@@ -83,6 +87,27 @@ final class Car
             'dealerRating'        => $this->dealerRating,
             'dealerReviewCount'   => $this->dealerReviewCount,
             'isNew'               => $this->isNew,
+            'recycleFee'          => $this->recycleFee,
+            'dealerFeeId'         => $this->dealerFeeId,
+            // OutputDataでマージするため常にnull
+            'totalPrice'          => null,
+            'loanMonthly'         => null,
+        ];
+    }
+
+    public function toCalculatorInput(): object
+    {
+        return (object)[
+            'id'            => $this->id,
+            'price'         => $this->price,
+            'vehicle_id'    => $this->vehicleId,
+            'model_year'    => $this->modelYear,
+            'body_type_id'  => $this->bodyTypeId,
+            'recycle_fee'   => $this->recycleFee,
+            'dealer_fee_id' => $this->dealerFeeId,
+            'detail'        => (object)[
+                'inspection_expire_date' => $this->inspectionExpireDate,
+            ],
         ];
     }
 }

@@ -24,6 +24,11 @@ final class Car
         public readonly ?string             $mainImageUrl,
         public readonly ?DateTimeImmutable  $publishedAt,
         public readonly ?DateTimeImmutable  $soldAt,
+        public readonly ?int                $recycleFee,
+        public readonly ?int                $dealerFeeId,
+        public readonly ?int                $totalPrice,
+        public readonly ?int                $priceWithTax,
+        public readonly ?int                $miscFees,
     ) {}
 
     public function getId(): int
@@ -138,6 +143,27 @@ final class Car
             'mainImageUrl'      => $this->mainImageUrl ?? '',
             'publishedAt'       => $this->publishedAt?->format('Y-m-d H:i:s'),
             'soldAt'            => $this->soldAt?->format('Y-m-d H:i:s'),
+            'recycleFee'        => $this->recycleFee,
+            'dealerFeeId'       => $this->dealerFeeId,
+            'totalPrice'        => $this->totalPrice,
+            'priceWithTax'      => $this->priceWithTax,
+            'miscFees'          => $this->miscFees,
+        ];
+    }
+
+    public function toCalculatorInput(DateTimeImmutable $inspectionExpireDate): object
+    {
+        return (object)[
+            'id'            => $this->id,
+            'price'         => $this->price,
+            'vehicle_id'    => $this->vehicleId,
+            'model_year'    => $this->modelYear,
+            'body_type_id'  => $this->bodyTypeId,
+            'recycle_fee'   => $this->recycleFee,
+            'dealer_fee_id' => $this->dealerFeeId,
+            'detail'        => (object)[
+                'inspection_expire_date' => $inspectionExpireDate,
+            ],
         ];
     }
 }
