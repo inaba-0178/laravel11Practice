@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\SelectAreaCarList\Services;
+namespace App\Domain\Common\Services;
 
-use App\Domain\SelectAreaCarList\Entities\Car;
-use App\Domain\Common\Services\CarListMapper;
+use App\Domain\Common\Entities\Car;
 
-class SelectAreaCarMerger
+class CarMerger
 {
     public function __construct(
         private readonly CarListMapper $carListMapper,

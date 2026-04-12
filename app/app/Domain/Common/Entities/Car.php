@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\SelectAreaCarList\Entities;
+namespace App\Domain\Common\Entities;
 
 use DateTimeImmutable;
 
