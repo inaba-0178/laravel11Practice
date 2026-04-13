@@ -4,29 +4,28 @@ namespace App\Providers;
 
 use App\Domain\SelectAreaCarList\Repositories\CarRepositoryInterface;
 use App\Infrastructure\Repositories\SelectAreaCarList\EloquentCarRepository;
-
+use App\Domain\Common\Services\TotalPriceCalculator;
+use App\Domain\Common\Services\LoanPlanResolver;
+use App\Domain\Common\Services\CarMerger;
 use Illuminate\Support\ServiceProvider;
 
 class SelectAreaCarServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
     public function register(): void
     {
-        
-        // Repository の登録
         $this->app->bind(
             CarRepositoryInterface::class,
             EloquentCarRepository::class,
         );
-    }
 
-    /**
-     * Bootstrap services.
-     */
-    public function boot(): void
-    {
-        //
+        $this->app->bind(SelectAreaCarListUseCase::class, function ($app) {
+            return new SelectAreaCarListUseCase(
+                $app->make(CarRepositoryInterface::class),
+                $app->make(TotalPriceCalculator::class),
+                $app->make(LoanPlanResolver::class),
+                $app->make(CarListMapper::class),
+                $app->make(CarMerger::class),
+            );
+        });
     }
 }
