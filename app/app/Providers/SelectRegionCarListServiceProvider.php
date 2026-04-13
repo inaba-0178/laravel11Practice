@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
-use App\Domain\SelectAreaCarList\Repositories\CarRepositoryInterface;
-use App\Infrastructure\Repositories\SelectAreaCarList\EloquentCarRepository;
+use App\Domain\SelectRegionCarList\Repositories\CarRepositoryInterface;
+use App\Infrastructure\Repositories\SelectRegionCarList\EloquentCarRepository;
+use App\Application\UseCases\SelectRegionCarList\SelectRegionCarListUseCase;
 use App\Domain\Common\Services\TotalPriceCalculator;
 use App\Domain\Common\Services\LoanPlanResolver;
 use App\Domain\Common\Services\CarMerger;
 use Illuminate\Support\ServiceProvider;
 
-class SelectAreaCarServiceProvider extends ServiceProvider
+class SelectRegionCarListServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
@@ -18,12 +21,11 @@ class SelectAreaCarServiceProvider extends ServiceProvider
             EloquentCarRepository::class,
         );
 
-        $this->app->bind(SelectAreaCarListUseCase::class, function ($app) {
-            return new SelectAreaCarListUseCase(
+        $this->app->bind(SelectRegionCarListUseCase::class, function ($app) {
+            return new SelectRegionCarListUseCase(
                 $app->make(CarRepositoryInterface::class),
                 $app->make(TotalPriceCalculator::class),
                 $app->make(LoanPlanResolver::class),
-                $app->make(CarListMapper::class),
                 $app->make(CarMerger::class),
             );
         });

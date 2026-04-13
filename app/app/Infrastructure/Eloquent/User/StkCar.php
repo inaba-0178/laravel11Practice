@@ -48,6 +48,8 @@ class StkCar extends Model
     protected $casts = [
         'price'             => 'float',
         'recycle_fee'       => 'float',
+        'model_year'        => 'integer',
+        'mileage'           => 'integer',
         'published_at'      => 'datetime',
         'sold_at'           => 'datetime',
         'rejection_reason'  => 'array',

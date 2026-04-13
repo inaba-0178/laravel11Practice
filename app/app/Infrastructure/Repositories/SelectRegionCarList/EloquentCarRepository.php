@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Infrastructure\Repositories\SelectAreaCarList;
+declare(strict_types=1);
 
-use App\Domain\SelectAreaCarList\Repositories\CarRepositoryInterface;
+namespace App\Infrastructure\Repositories\SelectRegionCarList;
+
+use App\Domain\SelectRegionCarList\Repositories\CarRepositoryInterface;
 use App\Infrastructure\Eloquent\User\StkCar;
 use Illuminate\Database\Eloquent\Builder;
 use App\Infrastructure\Repositories\Common\BaseCarRepository;
-use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
 
 class EloquentCarRepository extends BaseCarRepository implements CarRepositoryInterface
 {
-    public function __construct(
-        StkCar $model
-    ) {
+    public function __construct(StkCar $model)
+    {
         parent::__construct($model);
     }
 
-    public function findBySeriesId(int $seriesId, array $regionIds, int $offset, int $limit, array $searchParams = [], string $sortKey = '', string $sortOrder = ''): array
+    public function findByRegionIds(array $regionIds, int $offset, int $limit, array $searchParams = [], string $sortKey = '', string $sortOrder = ''): array
     {
-        $query = $this->buildQuery($seriesId, $regionIds, $searchParams);
+        $query     = $this->buildQuery($regionIds, $searchParams);
         $this->applySorting($query, $sortKey, $sortOrder);
         $cars      = $query->offset($offset)->limit($limit)->get();
         $bodyTypes = $this->getBodyTypes($cars);
@@ -26,12 +26,12 @@ class EloquentCarRepository extends BaseCarRepository implements CarRepositoryIn
         return $this->toEntities($cars, fn($car) => $this->toEntity($car, $bodyTypes));
     }
 
-    public function findByTotalCount(int $seriesId, array $regionIds, array $searchParams = []): int
+    public function findTotalCount(array $regionIds, array $searchParams = []): int
     {
-        return $this->buildQuery($seriesId, $regionIds, $searchParams)->count();
+        return $this->buildQuery($regionIds, $searchParams)->count();
     }
 
-    private function buildQuery(int $seriesId, array $regionIds, array $searchParams): Builder
+    private function buildQuery(array $regionIds, array $searchParams): Builder
     {
         $query = $this->model
             ->select([
@@ -48,7 +48,6 @@ class EloquentCarRepository extends BaseCarRepository implements CarRepositoryIn
                 'stk_car_dealers.city as dealer_city',
                 'stk_car_dealers.review_rating as dealer_rating',
                 'stk_car_dealers.review_count as dealer_review_count',
-                'stk_car_dealers.review_count as dealer_review_count',
                 'stk_car_images.image_url as image_url',
             ])
             ->leftJoin('stk_car_details', 'stk_cars.id', '=', 'stk_car_details.car_id')
@@ -57,8 +56,7 @@ class EloquentCarRepository extends BaseCarRepository implements CarRepositoryIn
                 $join->on('stk_cars.id', '=', 'stk_car_images.car_id')
                     ->where('stk_car_images.is_main', '=', 1);
             })
-            ->where('stk_cars.series_id', $seriesId)
-            ->whereIn('stk_cars.region_id', $regionIds)
+            ->whereIn('stk_cars.region_id', $regionIds)  // ← whereIn に変更
             ->where('stk_cars.status', 'available');
 
         $this->applySearchFilters($query, $searchParams);

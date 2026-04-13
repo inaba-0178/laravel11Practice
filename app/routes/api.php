@@ -49,6 +49,7 @@ use App\Presentation\Controllers\CarLoan\CarLoanController;
 use App\Presentation\Controllers\PriceHistogram\PriceHistogramController;
 use App\Presentation\Controllers\FavoriteCar\FavoriteCarController;
 use App\Presentation\Controllers\FavoriteCars\FavoriteCarsController;
+use App\Presentation\Controllers\SelectRegionCarList\SelectRegionCarListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -239,3 +240,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // お気に入り車両情報一括取得
     Route::get('/FavoriteCars', FavoriteCarsController::class);
 });
+
+//　TOPページ　県選択時の車両一覧
+Route::get('/SelectRegionCarList', SelectRegionCarListController::class);

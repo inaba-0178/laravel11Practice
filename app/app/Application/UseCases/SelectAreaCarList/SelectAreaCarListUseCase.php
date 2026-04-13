@@ -10,8 +10,7 @@ use App\Domain\SelectAreaCarList\ValueObjects\Limit;
 use App\Domain\SelectAreaCarList\Exceptions\SelectAreaCarNotFoundException;
 use App\Domain\Common\Services\TotalPriceCalculator;
 use App\Domain\Common\Services\LoanPlanResolver;
-use App\Domain\Common\Services\CarListMapper;
-use App\Domain\SelectAreaCarList\Services\SelectAreaCarMerger;
+use App\Domain\Common\Services\CarMerger;
 
 class SelectAreaCarListUseCase
 {
@@ -19,8 +18,7 @@ class SelectAreaCarListUseCase
         private readonly CarRepositoryInterface $carRepository,
         private readonly TotalPriceCalculator   $totalPriceCalculator,
         private readonly LoanPlanResolver       $loanPlanResolver,
-        private readonly CarListMapper          $carListMapper,
-        private readonly SelectAreaCarMerger    $selectAreaCarMerger,
+        private readonly CarMerger              $carMerger,
     ) {}
 
     /**
@@ -29,13 +27,13 @@ class SelectAreaCarListUseCase
      * @throws SelectAreaCarNotFoundException
      */
     public function execute(
-        SeriesId $seriesId,
-        RegionIds $regionIds,
-        Offset $offset,
-        Limit $limit,
-        array $searchParams = [],
-        string $sortKey = '',
-        string $sortOrder = '',
+        SeriesId    $seriesId,
+        RegionIds   $regionIds,
+        Offset      $offset,
+        Limit       $limit,
+        array       $searchParams   = [],
+        string      $sortKey        = '',
+        string      $sortOrder      = '',
     ): SelectAreaCarListOutputData {
         $cars = $this->carRepository->findBySeriesId(
             $seriesId->getValue(),
@@ -65,7 +63,7 @@ class SelectAreaCarListUseCase
             $totalCount,
             $totalPrices,
             $loanPlans,
-            $this->selectAreaCarMerger,
+            $this->carMerger,
         );
     }
 }
