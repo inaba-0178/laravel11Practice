@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Controllers\SelectRegionCarList;
 
 use App\Application\UseCases\SelectRegionCarList\SelectRegionCarListUseCase;
-use App\Domain\SelectRegionCarList\ValueObjects\RegionId;
+use App\Domain\SelectRegionCarList\ValueObjects\RegionIds;
 use App\Domain\SelectRegionCarList\ValueObjects\OffSet;
 use App\Domain\SelectRegionCarList\ValueObjects\Limit;
 use App\Domain\SelectRegionCarList\Exceptions\SelectRegionCarNotFoundException;
@@ -25,16 +25,22 @@ class SelectRegionCarListController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            $regionIdParam = $request->query('regionId');
-            $offsetParam   = $request->query('offset');
-            $limitParam    = $request->query('limit');
-            $sortKey       = $request->query('sortKey', '');
-            $sortOrder     = $request->query('sortOrder', '');
+            $offsetParam    = $request->query('offset');
+            $limitParam     = $request->query('limit');
+            $sortKey        = $request->query('sortKey', '');
+            $sortOrder      = $request->query('sortOrder', '');
 
-            if (empty($regionIdParam)) {
+            $regionIdParam  = $request->query('regionId');
+            $regionIdsParam = $request->query('regionIds');
+
+            if (!empty($regionIdsParam)) {
+                $ids = explode(',', $regionIdsParam);
+            } elseif (!empty($regionIdParam)) {
+                $ids = [$regionIdParam];
+            } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'regionIdパラメータが必要です',
+                    'message' => 'regionIdまたはregionIdsパラメータが必要です',
                 ], 400);
             }
 
@@ -62,11 +68,11 @@ class SelectRegionCarListController extends Controller
                 'equipment',
             ]);
 
-            $regionId   = new RegionId((int) $regionIdParam);
-            $offset     = new OffSet((int) ($offsetParam ?? 0));
-            $limit      = new Limit((int) ($limitParam ?? 10));
+            $regionIds  = new RegionIds($ids);
+            $offset     = new OffSet((int)($offsetParam ?? 0));
+            $limit      = new Limit((int)($limitParam ?? 10));
             $outputData = $this->useCase->execute(
-                $regionId,
+                $regionIds,
                 $offset,
                 $limit,
                 $searchParams,

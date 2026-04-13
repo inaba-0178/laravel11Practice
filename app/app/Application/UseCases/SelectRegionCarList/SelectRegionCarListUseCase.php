@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\UseCases\SelectRegionCarList;
 
 use App\Domain\SelectRegionCarList\Repositories\CarRepositoryInterface;
-use App\Domain\SelectRegionCarList\ValueObjects\RegionId;
+use App\Domain\SelectRegionCarList\ValueObjects\RegionIds;
 use App\Domain\SelectRegionCarList\ValueObjects\OffSet;
 use App\Domain\SelectRegionCarList\ValueObjects\Limit;
 use App\Domain\Common\Services\TotalPriceCalculator;
@@ -22,15 +22,15 @@ class SelectRegionCarListUseCase
     ) {}
 
     public function execute(
-        RegionId $regionId,
-        OffSet   $offset,
-        Limit    $limit,
-        array    $searchParams = [],
-        string   $sortKey = '',
-        string   $sortOrder = '',
+        RegionIds $regionIds,
+        OffSet    $offset,
+        Limit     $limit,
+        array     $searchParams = [],
+        string    $sortKey = '',
+        string    $sortOrder = '',
     ): SelectRegionCarListOutputData {
-        $cars = $this->carRepository->findByRegionId(
-            $regionId->getValue(),
+        $cars = $this->carRepository->findByRegionIds(
+            $regionIds->getValues(),
             $offset->getValue(),
             $limit->getValue(),
             $searchParams,
@@ -39,7 +39,7 @@ class SelectRegionCarListUseCase
         );
 
         $totalCount = $this->carRepository->findTotalCount(
-            $regionId->getValue(),
+            $regionIds->getValues(),
             $searchParams,
         );
 
