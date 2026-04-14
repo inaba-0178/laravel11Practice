@@ -16,6 +16,7 @@ use App\Infrastructure\Eloquent\Mst\MstRegions;
 use App\Infrastructure\Eloquent\Mst\MstAreas;
 use Filament\Actions\Action;
 use Illuminate\Support\Facades\Auth;
+use App\Constants\DealerTypesConstants;
 
 class DealerShopDetail extends Page
 {
@@ -55,11 +56,7 @@ class DealerShopDetail extends Page
         $region = MstRegions::find($this->record->region_id);
         $area   = MstAreas::find($this->record->area_code);
 
-        $dealerTypeMap = [
-            'new_car'  => '新車',
-            'used_car' => '中古車',
-            'both'     => '両方',
-        ];
+        $dealerTypeMap = DealerTypesConstants::DEALER_TYPES;
 
         $loanStatus = match(true) {
             $this->record->loan_setting_enabled == 1                => '承認済み',
