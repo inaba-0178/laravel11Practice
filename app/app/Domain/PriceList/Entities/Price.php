@@ -46,7 +46,7 @@ final class Price
         return [
             'id'            => $this->id,
             'name'          => $this->name ?? '',
-            'max_amount'    => $this->maxAmount,
+            'max_amount'    => $this->maxAmount / 10000, // ← 万円単位に変換
             'is_unlimited'  => $this->isUnlimited,
         ];
     }
