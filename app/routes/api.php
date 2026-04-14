@@ -50,6 +50,7 @@ use App\Presentation\Controllers\PriceHistogram\PriceHistogramController;
 use App\Presentation\Controllers\FavoriteCar\FavoriteCarController;
 use App\Presentation\Controllers\FavoriteCars\FavoriteCarsController;
 use App\Presentation\Controllers\SelectRegionCarList\SelectRegionCarListController;
+use App\Presentation\Controllers\SelectConditionCarList\SelectConditionCarListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -243,3 +244,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 //　TOPページ　県選択時の車両一覧
 Route::get('/SelectRegionCarList', SelectRegionCarListController::class);
+
+//　TOPページ　こだわり条件
+Route::get('/SelectConditionCarList', SelectConditionCarListController::class);
