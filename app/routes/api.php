@@ -51,6 +51,7 @@ use App\Presentation\Controllers\FavoriteCar\FavoriteCarController;
 use App\Presentation\Controllers\FavoriteCars\FavoriteCarsController;
 use App\Presentation\Controllers\SelectRegionCarList\SelectRegionCarListController;
 use App\Presentation\Controllers\SelectConditionCarList\SelectConditionCarListController;
+use App\Presentation\Controllers\DealerImage\UploadDealerImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -247,3 +248,5 @@ Route::get('/SelectRegionCarList', SelectRegionCarListController::class);
 
 //　TOPページ　こだわり条件
 Route::get('/SelectConditionCarList', SelectConditionCarListController::class);
+
+Route::post('/DealerImages/upload', UploadDealerImageController::class);

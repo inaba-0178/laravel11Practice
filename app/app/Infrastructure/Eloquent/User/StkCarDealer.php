@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
 use App\Infrastructure\Eloquent\User\StkDealerLoanPlan;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class StkCarDealer extends Model
 {
@@ -21,8 +23,10 @@ class StkCarDealer extends Model
         'city',
         'address_detail',
         'phone',
-        'business_hours',
-        'regular_holiday',
+        'business_hours_from',
+        'business_hours_to',
+        'regular_holiday_days',
+        'regular_holiday_except_holiday',
         'latitude',
         'longitude',
         'review_rating',
@@ -35,17 +39,24 @@ class StkCarDealer extends Model
         'loan_setting_approved_by',
         'loan_setting_approved_at',
         'loan_setting_rejected_reason',
+        'email',
+        'website_url',
+        'area_code',
+        'address_detail',
+        'dealer_type',
+        'free_text',
     ];
 
     protected $casts = [
-        'region_id'                 => 'integer',
-        'latitude'                  => 'float',
-        'longitude'                 => 'float',
-        'review_rating'             => 'float',
-        'review_count'              => 'integer',
-        'is_active'                 => 'boolean',
-        'loan_setting_requested_at' => 'datetime',
-        'loan_setting_approved_at'  => 'datetime',
+        'region_id'                         => 'integer',
+        'latitude'                          => 'float',
+        'longitude'                         => 'float',
+        'review_rating'                     => 'float',
+        'review_count'                      => 'integer',
+        'is_active'                         => 'boolean',
+        'loan_setting_requested_at'         => 'datetime',
+        'loan_setting_approved_at'          => 'datetime',
+        'regular_holiday_except_holiday'    => 'boolean',
     ];
 
 
@@ -75,15 +86,26 @@ class StkCarDealer extends Model
     }
 
     // リレーション追加
-    public function loanPlans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function loanPlans(): HasMany
     {
         return $this->hasMany(StkDealerLoanPlan::class, 'dealer_id');
     }
     
-    public function activeLoanPlans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function activeLoanPlans(): HasMany
     {
         return $this->hasMany(StkDealerLoanPlan::class, 'dealer_id')
             ->where('is_active', 1);
     }
- 
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(StkDealerImage::class, 'dealer_id');
+    }
+
+    public function mainImage(): HasOne
+    {
+        return $this->hasOne(StkDealerImage::class, 'dealer_id')
+            ->where('is_main', true);
+    }
+
 }

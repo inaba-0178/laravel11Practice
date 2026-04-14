@@ -56,4 +56,5 @@ return [
     App\Providers\DealerFeeServiceProvider::class,
     App\Providers\SelectRegionCarListServiceProvider::class,
     App\Providers\SelectConditionCarListServiceProvider::class,
+    App\Providers\UploadDealerImageServiceProvider::class,
 ];
