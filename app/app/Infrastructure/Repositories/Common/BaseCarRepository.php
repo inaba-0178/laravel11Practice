@@ -99,6 +99,9 @@ abstract class BaseCarRepository extends BaseRepository
                 });
             }
         }
+        if (!empty($searchParams['dealerId'])) {
+            $query->where('stk_cars.dealer_id', (int) $searchParams['dealerId']);
+        }
     }
 
     protected function applySorting(Builder $query, string $sortKey, string $sortOrder): void

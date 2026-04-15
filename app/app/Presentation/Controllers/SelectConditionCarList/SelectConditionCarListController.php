@@ -51,6 +51,7 @@ class SelectConditionCarListController extends Controller
                 'inspectionRemaining',
                 'freeWord',
                 'equipment',
+                'dealerId',
             ]);
 
             $offset     = new OffSet((int)($offsetParam ?? 0));
