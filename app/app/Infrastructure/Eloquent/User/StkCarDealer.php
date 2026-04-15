@@ -48,15 +48,16 @@ class StkCarDealer extends Model
     ];
 
     protected $casts = [
-        'region_id'                         => 'integer',
-        'latitude'                          => 'float',
-        'longitude'                         => 'float',
-        'review_rating'                     => 'float',
-        'review_count'                      => 'integer',
-        'is_active'                         => 'boolean',
-        'loan_setting_requested_at'         => 'datetime',
-        'loan_setting_approved_at'          => 'datetime',
-        'regular_holiday_except_holiday'    => 'boolean',
+        'region_id'                      => 'integer',
+        'area_code'                      => 'integer',
+        'latitude'                       => 'float',
+        'longitude'                      => 'float',
+        'review_rating'                  => 'float',
+        'review_count'                   => 'integer',
+        'is_active'                      => 'boolean',
+        'regular_holiday_except_holiday' => 'boolean',
+        'loan_setting_requested_at'      => 'datetime',
+        'loan_setting_approved_at'       => 'datetime',
     ];
 
 
