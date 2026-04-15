@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\CheckboxList;
 use App\Constants\DealerEgularHolidayDayConstants;
 use App\Constants\DealerTypesConstants;
+use App\Domain\Common\Services\GeocodingService;
 
 class DealerShopResource extends Resource
 {
@@ -60,7 +61,42 @@ class DealerShopResource extends Resource
             TextInput::make('postal_code')
                 ->label('郵便番号')
                 ->nullable()
-                ->maxLength(8),
+                ->maxLength(8)
+                ->placeholder('例：1234567')
+                ->regex('/^\d{7}$|^\d{3}-\d{4}$/')
+                ->reactive()
+                ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                    if (!$state) return;
+
+                    $geocoding = new GeocodingService();
+                    $result    = $geocoding->resolveFromPostalCode($state);
+                    if (!$result) return;
+
+                    $region = MstRegions::where('name', 'like', '%' . $result['address1'] . '%')->first();
+
+                    if ($region) {
+                        $set('area_code', $region->area_code);
+                        // area_codeのreactive完了後にregion_idをセット
+                        $set('region_id', null);
+                        $set('region_id', $region->id);
+                    }
+
+                    $set('city', $result['address2'] . $result['address3']);
+                    $set('latitude',  $result['latitude']);
+                    $set('longitude', $result['longitude']);
+                }),
+
+            TextInput::make('latitude')
+                ->label('緯度')
+                ->numeric()
+                ->nullable()
+                ->step(0.0000001),
+
+            TextInput::make('longitude')
+                ->label('経度')
+                ->numeric()
+                ->nullable()
+                ->step(0.0000001),
 
             Select::make('area_code')
                 ->label('地方')
@@ -81,7 +117,9 @@ class DealerShopResource extends Resource
                 })
                 ->required()
                 ->reactive()
-                ->disabled(fn (callable $get) => !$get('area_code')),
+                ->disabled(fn (callable $get) => !$get('area_code'))
+                ->dehydrated(true)
+                ->afterStateUpdated(fn ($state) => $state),
 
             TextInput::make('city')
                 ->label('市区町村')
