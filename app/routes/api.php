@@ -52,6 +52,7 @@ use App\Presentation\Controllers\FavoriteCars\FavoriteCarsController;
 use App\Presentation\Controllers\SelectRegionCarList\SelectRegionCarListController;
 use App\Presentation\Controllers\SelectConditionCarList\SelectConditionCarListController;
 use App\Presentation\Controllers\DealerImage\UploadDealerImageController;
+use App\Presentation\Controllers\SelectDealerInfoData\SelectDealerInfoDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -250,3 +251,6 @@ Route::get('/SelectRegionCarList', SelectRegionCarListController::class);
 Route::get('/SelectConditionCarList', SelectConditionCarListController::class);
 
 Route::post('/DealerImages/upload', UploadDealerImageController::class);
+
+// 選択したディーラー情報取得API
+Route::get('/SelectDealerInfoData', SelectDealerInfoDataController::class);

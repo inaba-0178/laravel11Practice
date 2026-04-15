@@ -22,6 +22,7 @@ class StkDealerImage extends Model
     ];
 
     protected $casts = [
+        'dealer_id'  => 'integer',
         'is_main'    => 'boolean',
         'sort_order' => 'integer',
     ];

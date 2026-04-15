@@ -3,11 +3,19 @@
         {{ $this->form }}
     </x-filament::section>
 
-    <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
-        <x-filament::button wire:click="save" color="primary">
-            保存する
-        </x-filament::button>
-    </div>
-
     @livewire('dealer-image-manager', ['dealerId' => $this->record->id])
+
+    {{-- 画像未アップロード警告をモーダルに注入 --}}
+    <div
+        x-data="{}"
+        x-init="
+            const observer = new MutationObserver(() => {
+                const warning = document.getElementById('upload-warning');
+                if (warning && window.dealerImageFileCount > 0) {
+                    warning.style.display = 'block';
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        "
+    ></div>
 </x-filament-panels::page>

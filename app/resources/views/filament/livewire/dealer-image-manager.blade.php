@@ -59,6 +59,11 @@
     }"
 >
 
+    <div x-init="
+        $watch('fileCount', val => { window.dealerImageFileCount = val; });
+        window.dealerImageFileCount = 0;
+    "></div>
+
     {{-- ===== ヘッダー ===== --}}
     <div style="padding: 14px 20px; border-bottom: 0.5px solid #e5e7eb;">
         <p style="font-size: 15px; font-weight: 500; margin: 0;">店舗画像管理</p>
@@ -86,6 +91,16 @@
             </p>
         </div>
 
+        {{-- 注意書き --}}
+        <p style="
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #dc2626;
+            text-align: center;
+        ">
+            ⚠️ ファイル選択後、必ず「画像をアップロードする」ボタンを押してください。ボタンを押さないと画像は保存されません。
+        </p>
         <button
             type="button"
             x-on:click="uploadAll"
@@ -109,6 +124,7 @@
         >
             <span style="font-size: 16px;">↑</span>
             <span x-show="!uploading">画像をアップロードする</span>
+
             <span x-show="uploading" x-text="'アップロード中 ' + uploadedCount + '/' + fileCount + ' 枚'"></span>
         </button>
 
