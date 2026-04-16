@@ -58,4 +58,5 @@ return [
     App\Providers\SelectConditionCarListServiceProvider::class,
     App\Providers\UploadDealerImageServiceProvider::class,
     App\Providers\SelectDealerInfoDataServiceProvider::class,
+    App\Providers\UploadStaffImageServiceProvider::class,
 ];

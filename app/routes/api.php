@@ -53,6 +53,7 @@ use App\Presentation\Controllers\SelectRegionCarList\SelectRegionCarListControll
 use App\Presentation\Controllers\SelectConditionCarList\SelectConditionCarListController;
 use App\Presentation\Controllers\DealerImage\UploadDealerImageController;
 use App\Presentation\Controllers\SelectDealerInfoData\SelectDealerInfoDataController;
+use App\Presentation\Controllers\StaffImage\UploadStaffImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -232,7 +233,7 @@ Route::post('Reservations', CreateReservationController::class);
 
 // 認証済みディーラーのみアクセス可能
 //Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/CarImages/upload', UploadCarImageController::class);
+//    Route::post('/CarImages/upload', UploadCarImageController::class);
 //});
 
 // お気に入り（認証必須）
@@ -250,7 +251,12 @@ Route::get('/SelectRegionCarList', SelectRegionCarListController::class);
 //　TOPページ　こだわり条件
 Route::get('/SelectConditionCarList', SelectConditionCarListController::class);
 
-Route::post('/DealerImages/upload', UploadDealerImageController::class);
+
 
 // 選択したディーラー情報取得API
 Route::get('/SelectDealerInfoData', SelectDealerInfoDataController::class);
+
+// 画像アップロード
+Route::post('/CarImages/upload', UploadCarImageController::class);
+Route::post('/DealerImages/upload', UploadDealerImageController::class);
+Route::post('/StaffImages/upload', UploadStaffImageController::class);
