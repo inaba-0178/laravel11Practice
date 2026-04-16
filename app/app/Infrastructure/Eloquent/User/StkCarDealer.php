@@ -109,4 +109,15 @@ class StkCarDealer extends Model
             ->where('is_main', true);
     }
 
+    public function staffs(): HasMany
+    {
+        return $this->hasMany(StkDealerStaff::class, 'dealer_id');
+    }
+
+    public function activeStaffs(): HasMany
+    {
+        return $this->hasMany(StkDealerStaff::class, 'dealer_id')
+            ->where('is_active', true)
+            ->orderBy('sort_order');
+    }
 }
