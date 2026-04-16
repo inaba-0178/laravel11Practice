@@ -14,6 +14,7 @@ use App\Infrastructure\Eloquent\User\StkDealerStaff;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
+use Filament\Infolists\Components\ImageEntry;
 
 class DealerStaffDetail extends Page
 {
@@ -59,6 +60,9 @@ class DealerStaffDetail extends Page
             'is_active'  => $this->record->is_active ? '表示' : '非表示',
             'created_at' => $this->record->created_at,
             'updated_at' => $this->record->updated_at,
+            'image_url' => $this->record->image_path
+                ? \Illuminate\Support\Facades\Storage::disk('s3')->url($this->record->image_path)
+                : null,
         ];
 
         return Infolist::make()
@@ -80,6 +84,15 @@ class DealerStaffDetail extends Page
                     ->schema([
                         TextEntry::make('created_at')->label('作成日時'),
                         TextEntry::make('updated_at')->label('更新日時'),
+                    ]),
+                Section::make('画像')
+                    ->schema([
+                        TextEntry::make('image_url')
+                            ->label('スタッフ画像')
+                            ->formatStateUsing(fn ($state) => $state
+                                ? new \Illuminate\Support\HtmlString("<img src='{$state}' style='width:160px; height:160px; object-fit:cover; border-radius:8px;' />")
+                                : '画像未登録'
+                            ),
                     ]),
             ]);
     }
