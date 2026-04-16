@@ -78,6 +78,7 @@ class DealerStaffResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(fn (StkDealerStaff $record) => DealerStaffDetail::getUrl(['id' => $record->id]))
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
