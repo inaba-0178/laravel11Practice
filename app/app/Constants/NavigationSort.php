@@ -25,6 +25,7 @@ enum NavigationSort :int
     case DEALER_FEE                 = 4;
     case DEALER_SHOP                = 5;
     case DEALER_STAFF               = 6;
+    case DEALER_CONTENT             = 7;
 
     // 管理者機能
     case CAR_APPROVAL               = 1;

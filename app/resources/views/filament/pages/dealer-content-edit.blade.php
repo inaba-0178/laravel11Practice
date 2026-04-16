@@ -9,5 +9,5 @@
         </x-filament::button>
     </div>
 
-    @livewire('asset-image-manager', ['type' => 'staff', 'recordId' => $this->record->id])
+    @livewire('asset-image-manager', ['type' => 'content', 'recordId' => $this->record->id])
 </x-filament-panels::page>

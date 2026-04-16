@@ -120,4 +120,16 @@ class StkCarDealer extends Model
             ->where('is_active', true)
             ->orderBy('sort_order');
     }
+
+    public function contents(): HasMany
+    {
+        return $this->hasMany(StkDealerContent::class, 'dealer_id');
+    }
+
+    public function activeContents(): HasMany
+    {
+        return $this->hasMany(StkDealerContent::class, 'dealer_id')
+            ->where('is_active', true)
+            ->orderBy('sort_order');
+    }
 }

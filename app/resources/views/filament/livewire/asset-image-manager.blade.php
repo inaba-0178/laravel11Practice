@@ -1,10 +1,11 @@
 <div
     x-data="{
-        staffId:       @js($staffId),
-        file:          null,
-        fileName:      '',
-        uploading:     false,
-        errorMessage:  '',
+        type:         @js($type),
+        recordId:     @js($recordId),
+        file:         null,
+        fileName:     '',
+        uploading:    false,
+        errorMessage: '',
 
         onFileChange(e) {
             const selected    = e.target.files[0];
@@ -20,11 +21,12 @@
 
             try {
                 const formData = new FormData();
-                formData.append('file',     this.file);
-                formData.append('staff_id', this.staffId);
+                formData.append('type',      this.type);
+                formData.append('record_id', this.recordId);
+                formData.append('file',      this.file);
                 const token = document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '';
 
-                const response = await fetch('/api/StaffImages/upload', {
+                const response = await fetch('/api/Assets/upload', {
                     method: 'POST',
                     headers: { 'X-XSRF-TOKEN': decodeURIComponent(token) },
                     body: formData,
@@ -33,7 +35,7 @@
                 const data = await response.json();
                 if (!data.success) throw new Error(data.message);
 
-                window.Livewire.dispatchTo('staff-image-manager', 'staff-image-uploaded');
+                window.Livewire.dispatchTo('asset-image-manager', 'asset-image-uploaded');
                 this.$refs.fileInput.value = '';
                 this.file     = null;
                 this.fileName = '';
@@ -49,8 +51,8 @@
 
     {{-- ===== ヘッダー ===== --}}
     <div style="padding: 14px 20px; border-bottom: 0.5px solid #e5e7eb;">
-        <p style="font-size: 15px; font-weight: 500; margin: 0;">スタッフ画像管理</p>
-        <p style="font-size: 13px; color: #6b7280; margin: 4px 0 0;">{{ $staffName }}</p>
+        <p style="font-size: 15px; font-weight: 500; margin: 0;">画像管理</p>
+        <p style="font-size: 13px; color: #6b7280; margin: 4px 0 0;">{{ $label }}</p>
     </div>
 
     {{-- ===== 現在の画像 ===== --}}
@@ -58,11 +60,11 @@
         <p style="font-size: 13px; font-weight: 500; color: #6b7280; margin: 0 0 10px;">現在の画像</p>
 
         @if($imageUrl)
-            <div style="position: relative; width: 160px;">
+            <div style="position: relative; width: 200px;">
                 <img
                     src="{{ $imageUrl }}"
-                    alt="{{ $staffName }}"
-                    style="width: 160px; height: 160px; object-fit: cover; border-radius: 8px; border: 0.5px solid #e5e7eb;"
+                    alt="{{ $label }}"
+                    style="width: 200px; height: 150px; object-fit: cover; border-radius: 8px; border: 0.5px solid #e5e7eb;"
                 />
                 <button
                     type="button"
@@ -71,7 +73,7 @@
                 >✕</button>
             </div>
         @else
-            <div style="width: 160px; height: 160px; background: #f3f4f6; border-radius: 8px; border: 0.5px solid #e5e7eb; display: flex; align-items: center; justify-content: center;">
+            <div style="width: 200px; height: 150px; background: #f3f4f6; border-radius: 8px; border: 0.5px solid #e5e7eb; display: flex; align-items: center; justify-content: center;">
                 <p style="font-size: 12px; color: #9ca3af; margin: 0;">NO IMAGE</p>
             </div>
         @endif
