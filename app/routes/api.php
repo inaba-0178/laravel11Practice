@@ -54,6 +54,7 @@ use App\Presentation\Controllers\SelectConditionCarList\SelectConditionCarListCo
 use App\Presentation\Controllers\DealerImage\UploadDealerImageController;
 use App\Presentation\Controllers\SelectDealerInfoData\SelectDealerInfoDataController;
 use App\Presentation\Controllers\StaffImage\UploadStaffImageController;
+use App\Presentation\Controllers\SelectDealerStaffData\SelectDealerStaffDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -255,6 +256,7 @@ Route::get('/SelectConditionCarList', SelectConditionCarListController::class);
 
 // 選択したディーラー情報取得API
 Route::get('/SelectDealerInfoData', SelectDealerInfoDataController::class);
+Route::get('/SelectDealerStaffData', SelectDealerStaffDataController::class);
 
 // 画像アップロード
 Route::post('/CarImages/upload', UploadCarImageController::class);
