@@ -56,6 +56,7 @@ use App\Presentation\Controllers\SelectDealerInfoData\SelectDealerInfoDataContro
 use App\Presentation\Controllers\StaffImage\UploadStaffImageController;
 use App\Presentation\Controllers\SelectDealerStaffData\SelectDealerStaffDataController;
 use App\Presentation\Controllers\Asset\UploadAssetController;
+use App\Presentation\Controllers\SelectDealerContentData\SelectDealerContentDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -265,3 +266,5 @@ Route::post('/DealerImages/upload', UploadDealerImageController::class);
 Route::post('/StaffImages/upload', UploadStaffImageController::class);
 
 Route::post('/Assets/upload', UploadAssetController::class);
+
+Route::get('/SelectDealerContentData', SelectDealerContentDataController::class);
