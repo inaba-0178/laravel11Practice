@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Filament\Resources\DealerReviewResource;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Notifications\Notification;
+use App\Filament\Pages\DealerReviewDetail;
 
 class DealerReviewReplyDetail extends Page
 {
@@ -30,7 +31,7 @@ class DealerReviewReplyDetail extends Page
     {
         $this->id     = $request->input('id');
         $this->record = StkDealerReviewReply::withTrashed()
-            ->with(['user', 'review'])
+            ->with(['user', 'review', 'deletedBy'])
             ->findOrFail($this->id);
 
         $user = Auth::user();
@@ -58,16 +59,14 @@ class DealerReviewReplyDetail extends Page
     public function infoList(): Infolist
     {
         $data = [
-            'id'             => $this->record->id,
-            'responder_name' => $this->record->responder_name ?? '-',
-            'status'         => $this->record->deleted_at ? '削除済み' : '公開中',
-            'body'           => $this->record->body,
-            'created_at'     => $this->record->created_at,
-            'deleted_reason' => $this->record->deleted_reason ?? '-',
-            'deleted_at'     => $this->record->deleted_at ?? '-',
-            'deleted_by' => $this->record->deleted_by
-                ? \App\Models\User::find($this->record->deleted_by)?->name ?? '-'
-                : '-',
+            'id'                => $this->record->id,
+            'responder_name'    => $this->record->responder_name ?? '-',
+            'status'            => $this->record->deleted_at ? '削除済み' : '公開中',
+            'body'              => $this->record->body,
+            'created_at'        => $this->record->created_at,
+            'deleted_reason'    => $this->record->deleted_reason ?? '-',
+            'deleted_at'        => $this->record->deleted_at ?? '-',
+            'deleted_by'        => $this->record->deletedBy?->name ?? '-',
         ];
 
         return Infolist::make()

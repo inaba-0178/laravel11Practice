@@ -13,11 +13,11 @@ use App\Constants\RoleConstants;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Support\Facades\Auth;
@@ -45,7 +45,7 @@ class DealerReviewResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $user  = Auth::user();
-        $query = parent::getEloquentQuery()->with(['member', 'replies']);
+        $query = parent::getEloquentQuery()->with(['member', 'activeReplies']);
 
         if (in_array($user->role, [RoleConstants::DEALER, RoleConstants::DEALER_STAFF])) {
             $query->where('dealer_id', $user->dealer_id);
@@ -57,7 +57,6 @@ class DealerReviewResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->recordUrl(fn (StkDealerReview $record) => DealerReviewDetail::getUrl(['id' => $record->id]))
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
@@ -76,9 +75,9 @@ class DealerReviewResource extends Resource
                     ->label('口コミ内容')
                     ->limit(50),
 
-                TextColumn::make('replies_count')
+                TextColumn::make('active_replies_count')
                     ->label('返信')
-                    ->counts('replies')
+                    ->counts('activeReplies')
                     ->formatStateUsing(fn ($state) => $state > 0 ? "返信済み({$state}件)" : '未返信')
                     ->badge()
                     ->color(fn ($state) => $state > 0 ? 'success' : 'warning'),
@@ -98,9 +97,9 @@ class DealerReviewResource extends Resource
                     ])
                     ->query(function (Builder $query, array $data) {
                         if ($data['value'] === 'replied') {
-                            $query->whereHas('replies');
+                            $query->whereHas('activeReplies');
                         } elseif ($data['value'] === 'unreplied') {
-                            $query->whereDoesntHave('replies');
+                            $query->whereDoesntHave('activeReplies');
                         }
                     }),
 
@@ -142,7 +141,7 @@ class DealerReviewResource extends Resource
                             });
                         }
                     }),
-            ])
+            ], FiltersLayout::AboveContent)
             ->actions([
                 Action::make('detail')
                     ->label('詳細')
