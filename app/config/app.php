@@ -129,4 +129,6 @@ return [
 
 
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:8080'),
+
+    'admin_url' => env('ADMIN_URL', ''),
 ];

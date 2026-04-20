@@ -29,4 +29,10 @@ enum NavigationSort :int
 
     // 管理者機能
     case CAR_APPROVAL               = 1;
+
+    //　システム
+    case USER_MANAGEMENT            = 1;
+
+    //　ユーザー機能
+    case USER_PASSWORD              = 1;
 }
