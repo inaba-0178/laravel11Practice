@@ -4,7 +4,8 @@ namespace App\Infrastructure\Eloquent\User;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Infrastructure\Eloquent\User\StkDealerReview;
 
 class StkCarDetails extends Model
 {
@@ -40,5 +41,10 @@ class StkCarDetails extends Model
     public function car()
     {
         return $this->belongsTo(StkCar::class, 'car_id');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(StkDealerReview::class, 'dealer_id');
     }
 }
