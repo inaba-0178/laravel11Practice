@@ -21,12 +21,14 @@ class StkDealerReviewReply extends Model
         'responder_name',
         'body',
         'deleted_reason',
+        'deleted_by',
     ];
 
     protected $casts = [
-        'review_id' => 'integer',
-        'dealer_id' => 'integer',
-        'user_id'   => 'integer',
+        'review_id'     => 'integer',
+        'dealer_id'     => 'integer',
+        'user_id'       => 'integer',
+        'deleted_by'    => 'integer',
     ];
 
     public function review()
@@ -42,5 +44,10 @@ class StkDealerReviewReply extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function deletedBy()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'deleted_by');
     }
 }
