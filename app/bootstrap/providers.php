@@ -62,4 +62,5 @@ return [
     App\Providers\SelectDealerStaffDataServiceProvider::class,
     App\Providers\UploadAssetServiceProvider::class,
     App\Providers\SelectDealerContentDataServiceProvider::class,
+    App\Providers\SelectDealerReviewDataServiceProvider::class,
 ];
