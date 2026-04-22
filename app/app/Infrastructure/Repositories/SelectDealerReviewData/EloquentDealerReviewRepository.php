@@ -27,7 +27,7 @@ class EloquentDealerReviewRepository implements DealerReviewRepositoryInterface
             ->map(fn ($review) => new DealerReview(
                 id               : $review->id,
                 dealerId         : $review->dealer_id,
-                nickname         : $review->member?->nickname,
+                nickname         : $review->nickname,
                 rating           : $review->rating,
                 ratingService    : $review->rating_service,
                 ratingAtmosphere : $review->rating_atmosphere,

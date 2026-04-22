@@ -16,14 +16,18 @@ class StkDealerReview extends Model
     protected $fillable = [
         'dealer_id',
         'member_id',
+        'nickname',
         'rating',
         'rating_service',
         'rating_atmosphere',
         'rating_after',
-        'rating_quality',
-        'comment',
+        'rating_quality',        
         'purchased_car',
         'purchased_at',
+        'comment',
+        'guest_name',
+        'guest_phone',
+        'guest_email',
     ];
 
     protected $casts = [
