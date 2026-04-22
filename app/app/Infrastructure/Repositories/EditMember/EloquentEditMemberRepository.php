@@ -4,13 +4,13 @@ namespace App\Infrastructure\Repositories\EditMember;
 
 use App\Domain\EditMember\Repositories\EditMemberRepositoryInterface;
 use App\Domain\Member\Entities\Member;
-use App\Infrastructure\Eloquent\User\Member as EloquentMember;
+use App\Infrastructure\Eloquent\User\UsrUser;
 
 class EloquentEditMemberRepository implements EditMemberRepositoryInterface
 {
     public function findById(string $id): ?Member
     {
-        $eloquentMember = EloquentMember::find($id);
+        $eloquentMember = UsrUser::find($id);
 
         if (!$eloquentMember) {
             return null;
@@ -21,7 +21,7 @@ class EloquentEditMemberRepository implements EditMemberRepositoryInterface
 
     public function update(string $id, array $data): Member
     {
-        $eloquentMember = EloquentMember::find($id);
+        $eloquentMember = UsrUser::find($id);
         if (!$eloquentMember) {
             throw new \RuntimeException('ユーザーが見つかりません');
         }
@@ -29,7 +29,7 @@ class EloquentEditMemberRepository implements EditMemberRepositoryInterface
         return $this->toEntity($eloquentMember->fresh());
     }
 
-    private function toEntity(EloquentMember $eloquentMember): Member
+    private function toEntity(UsrUser $eloquentMember): Member
     {
         return new Member(
             id:                $eloquentMember->id,

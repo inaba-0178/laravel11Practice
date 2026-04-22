@@ -3,12 +3,12 @@
 namespace App\Infrastructure\Repositories\MemberAuth;
 
 use App\Domain\MemberAuth\Repositories\MemberAuthRepositoryInterface;
-use App\Infrastructure\Eloquent\User\Member;
+use App\Infrastructure\Eloquent\User\UsrUser;
 
 class EloquentMemberAuthRepository implements MemberAuthRepositoryInterface
 {
-    public function findByEmail(string $email): ?Member
+    public function findByEmail(string $email): ?UsrUser
     {
-        return Member::where('email', $email)->first();
+        return UsrUser::where('email', $email)->first();
     }
 }

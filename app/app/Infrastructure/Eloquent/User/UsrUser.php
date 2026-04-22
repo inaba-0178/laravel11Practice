@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class UsrUser extends Authenticatable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Notifiable, HasApiTokens, HasUuids, SoftDeletes;
 
     protected $connection = 'user';
     protected $table      = 'usr_users';
@@ -40,6 +43,7 @@ class UsrUser extends Authenticatable
         'email_verified_at' => 'datetime',
         'email_changed_at'  => 'datetime',
         'gender'            => 'integer',
+        'password'          => 'hashed',
     ];
 
     protected $hidden = [

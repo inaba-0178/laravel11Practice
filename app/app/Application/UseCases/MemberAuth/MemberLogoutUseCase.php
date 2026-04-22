@@ -2,7 +2,7 @@
 
 namespace App\Application\UseCases\MemberAuth;
 
-use App\Infrastructure\Eloquent\User\Member;
+use App\Infrastructure\Eloquent\User\UsrUser;
 
 class MemberLogoutUseCase
 {
