@@ -4,26 +4,26 @@ namespace App\Infrastructure\Repositories\Member;
 
 use App\Domain\Member\Entities\Member;
 use App\Domain\Member\Repositories\MemberRepositoryInterface;
-use App\Infrastructure\Eloquent\User\Member as EloquentMember;
+use App\Infrastructure\Eloquent\User\UsrUser;
 
 class EloquentMemberRepository implements MemberRepositoryInterface
 {
     public function create(array $data): Member
     {
-        $eloquentMember = EloquentMember::create($data);
+        $eloquentMember = UsrUser::create($data);
         return $this->toEntity($eloquentMember);
     }
 
     public function findByEmail(string $email): ?Member
     {
-        $eloquentMember = EloquentMember::where('email', $email)->first();
+        $eloquentMember = UsrUser::where('email', $email)->first();
         if (!$eloquentMember) {
             return null;
         }
         return $this->toEntity($eloquentMember);
     }
 
-    private function toEntity(EloquentMember $eloquentMember): Member
+    private function toEntity(UsrUser $eloquentMember): Member
     {
         return new Member(
             id:                $eloquentMember->id,

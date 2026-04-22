@@ -40,9 +40,9 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'member' => [
-            'driver'   => 'sanctum',
-            'provider' => 'members',
+        'members' => [
+            'driver' => 'eloquent',
+            'model'  => App\Infrastructure\Eloquent\User\UsrUser::class,
         ],
     ],
 
