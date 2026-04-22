@@ -8,6 +8,8 @@ use App\Application\UseCases\StoreDealerReview\StoreDealerReviewUseCase;
 use App\Domain\StoreDealerReview\Repositories\StoreDealerReviewRepositoryInterface;
 use App\Infrastructure\Repositories\StoreDealerReview\EloquentStoreDealerReviewRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Infrastructure\Eloquent\User\StkDealerReview;
+use App\Infrastructure\Eloquent\User\StkCarDealer;
 
 class StoreDealerReviewServiceProvider extends ServiceProvider
 {
@@ -20,7 +22,10 @@ class StoreDealerReviewServiceProvider extends ServiceProvider
 
         $this->app->bind(StoreDealerReviewUseCase::class, function ($app) {
             return new StoreDealerReviewUseCase(
-                $app->make(StoreDealerReviewRepositoryInterface::class),
+                new EloquentStoreDealerReviewRepository(
+                    $app->make(StkDealerReview::class),
+                    $app->make(StkCarDealer::class),
+                ),
             );
         });
     }

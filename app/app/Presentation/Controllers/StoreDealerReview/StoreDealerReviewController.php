@@ -59,12 +59,6 @@ class StoreDealerReviewController extends Controller
                 $memberId = null;
             }
 
-            $token    = $request->bearerToken();
-            if ($token) {
-                $member   = UsrUser::where('remember_token', $token)->first();
-                $memberId = $member?->id;
-            }
-
             // 非ログイン時はゲスト情報が必須
             if (!$memberId) {
                 $request->validate([

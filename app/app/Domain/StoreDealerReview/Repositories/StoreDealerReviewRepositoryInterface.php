@@ -8,6 +8,6 @@ use App\Infrastructure\Eloquent\User\StkDealerReview;
 
 interface StoreDealerReviewRepositoryInterface
 {
-    public function store(array $data): StkDealerReview;
+    public function store(array $data): int;
     public function updateDealerRating(int $dealerId): void;
 }

@@ -12,11 +12,12 @@ class EloquentStoreDealerReviewRepository implements StoreDealerReviewRepository
 {
     public function __construct(
         private readonly StkDealerReview $model,
+        private readonly StkCarDealer    $dealerModel, // 追加
     ) {}
 
-    public function store(array $data): StkDealerReview
+    public function store(array $data): int
     {
-        return $this->model->create($data);
+        return $this->model->create($data)->id; // ->id を追加
     }
 
     public function updateDealerRating(int $dealerId): void
@@ -31,10 +32,12 @@ class EloquentStoreDealerReviewRepository implements StoreDealerReviewRepository
             ->whereNull('deleted_at')
             ->count();
 
-        StkCarDealer::where('id', $dealerId)
+        $this->dealerModel  // StkCarDealer:: → $this->dealerModel に変更
+            ->where('id', $dealerId)
             ->update([
                 'review_rating' => round((float) $avg, 2),
                 'review_count'  => $count,
             ]);
     }
+
 }

@@ -24,7 +24,7 @@ final class StoreDealerReviewUseCase
             throw new DealerNotFoundException($input->dealerId->getValue());
         }
 
-        $review = $this->repository->store([
+        $reviewId = $this->repository->store([
             'dealer_id'         => $input->dealerId->getValue(),
             'member_id'         => $input->memberId,
             'nickname'          => $input->nickname->getValue(),
@@ -43,6 +43,6 @@ final class StoreDealerReviewUseCase
 
         $this->repository->updateDealerRating($input->dealerId->getValue());
 
-        return new StoreDealerReviewOutputData($review->id);
+        return new StoreDealerReviewOutputData($reviewId);
     }
 }
