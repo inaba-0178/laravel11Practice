@@ -59,6 +59,7 @@ use App\Presentation\Controllers\Asset\UploadAssetController;
 use App\Presentation\Controllers\SelectDealerContentData\SelectDealerContentDataController;
 use App\Presentation\Controllers\SelectDealerReviewData\SelectDealerReviewDataController;
 use App\Presentation\Controllers\StoreDealerReview\StoreDealerReviewController;
+use App\Presentation\Controllers\SelectDealerAffiliatedData\SelectDealerAffiliatedDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -272,3 +273,4 @@ Route::post('/Assets/upload', UploadAssetController::class);
 Route::get('/SelectDealerContentData', SelectDealerContentDataController::class);
 Route::get('/SelectDealerReviewData', SelectDealerReviewDataController::class);
 Route::post('/DealerReview/store', StoreDealerReviewController::class);
+Route::get('/SelectDealerAffiliatedData', SelectDealerAffiliatedDataController::class);

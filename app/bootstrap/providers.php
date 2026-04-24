@@ -64,4 +64,5 @@ return [
     App\Providers\SelectDealerContentDataServiceProvider::class,
     App\Providers\SelectDealerReviewDataServiceProvider::class,
     App\Providers\StoreDealerReviewServiceProvider::class,
+    App\Providers\SelectDealerAffiliatedDataServiceProvider::class,
 ];
