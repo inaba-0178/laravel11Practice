@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Infrastructure\Eloquent\User\StkDealerLoanPlan;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Constants\AffiliatedStoreStatus;
 
 class StkCarDealer extends Model
 {
@@ -131,5 +132,19 @@ class StkCarDealer extends Model
         return $this->hasMany(StkDealerContent::class, 'dealer_id')
             ->where('is_active', true)
             ->orderBy('sort_order');
+    }
+
+    // 自分が申請元の系列店・提携店
+    public function affiliatedStores()
+    {
+        return $this->hasMany(StkAffiliatedStore::class, 'dealer_id')
+            ->where('status', AffiliatedStoreStatus::APPROVED);
+    }
+
+    // 自分が申請先の系列店・提携店
+    public function affiliatedByStores()
+    {
+        return $this->hasMany(StkAffiliatedStore::class, 'affiliated_dealer_id')
+            ->where('status', AffiliatedStoreStatus::APPROVED);
     }
 }
