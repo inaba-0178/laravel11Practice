@@ -147,4 +147,15 @@ class StkCarDealer extends Model
         return $this->hasMany(StkAffiliatedStore::class, 'affiliated_dealer_id')
             ->where('status', AffiliatedStoreStatus::APPROVED);
     }
+
+    public function cars(): HasMany
+    {
+        return $this->hasMany(StkCar::class, 'dealer_id');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(StkDealerReview::class, 'dealer_id')
+            ->whereNull('deleted_at');
+    }
 }
