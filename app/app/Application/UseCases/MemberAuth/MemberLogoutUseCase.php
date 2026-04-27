@@ -6,7 +6,7 @@ use App\Infrastructure\Eloquent\User\UsrUser;
 
 class MemberLogoutUseCase
 {
-    public function execute(Member $member): void
+    public function execute(UsrUser $member): void
     {
         $member->currentAccessToken()->delete();
     }

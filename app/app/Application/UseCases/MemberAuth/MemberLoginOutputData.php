@@ -7,8 +7,8 @@ use App\Infrastructure\Eloquent\User\UsrUser;
 class MemberLoginOutputData
 {
     public function __construct(
-        private readonly Member $member,
-        private readonly string $token,
+        private readonly UsrUser $member,
+        private readonly string  $token,
     ) {}
 
     public function toArray(): array
@@ -16,7 +16,13 @@ class MemberLoginOutputData
         return [
             'success' => true,
             'token'   => $this->token,
-            'member'  => $this->member,
+            'member'  => [
+                'id'       => $this->member->id,
+                'nickname' => $this->member->nickname,
+                'email'    => $this->member->email,
+                'sei'      => $this->member->sei,
+                'mei'      => $this->member->mei,
+            ],
         ];
     }
 }
