@@ -34,6 +34,7 @@ class StkCar extends Model
         'mileage',
         'body_type_id',
         'color',
+        'color_group',
         'transmission',
         'fuel_type',
         'region_id',

@@ -197,6 +197,22 @@ class CarRegistrationResource extends Resource
                         ->label('ボディカラー')
                         ->required()
                         ->maxLength(100),
+                    
+                    Select::make('color_group')
+                        ->label('色系統')
+                        ->options([
+                            'white'  => '白系',
+                            'black'  => '黒系',
+                            'silver' => '銀系',
+                            'red'    => '赤系',
+                            'blue'   => '青系',
+                            'green'  => '緑系',
+                            'brown'  => '茶系',
+                            'yellow' => '黄系',
+                            'pink'   => 'ピンク系',
+                            'other'  => 'その他',
+                        ])
+                        ->required(),
 
                     Select::make('repair_history')
                         ->label('修復歴')

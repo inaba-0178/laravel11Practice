@@ -128,26 +128,27 @@ class CreateCarRegistration extends CreateRecord
 
             // ===== stk_cars 登録 =====
             $car = StkCar::create([
-                'dealer_id'          => $user->dealer_id,
-                'manufacturer_id'    => $data['manufacturer_id'],
-                'series_id'          => $data['series_id'],
-                'vehicle_id'         => $data['vehicle_id'],
-                'year_version_id'    => $data['year_version_id'] ?? null,
-                'stock_number'       => null,
-                'status'             => $this->saveStatus, // draft or pending
-                'price'              => $data['price'],
-                'price_display_type' => $data['price_display_type'] ?? 'actual',
-                'model_year'         => $data['model_year'] ?? null,
-                'mileage'            => $data['mileage'],
-                'body_type_id'       => $data['body_type_id'] ?? null,
-                'color'              => $data['color'],
-                'transmission'       => $data['transmission'] ?? null,
-                'fuel_type'          => $data['fuel_type'] ?? null,
-                'region_id'          => $data['region_id'],
-                'repair_history'     => $data['repair_history'] ?? 'unknown',
-                'published_at'       => null,
-                'recycle_fee'        => $data['recycle_fee'] ?? null,
-                'dealer_fee_id'      => $data['dealer_fee_id'] ?? null,
+                'dealer_id'             => $user->dealer_id,
+                'manufacturer_id'       => $data['manufacturer_id'],
+                'series_id'             => $data['series_id'],
+                'vehicle_id'            => $data['vehicle_id'],
+                'year_version_id'       => $data['year_version_id'] ?? null,
+                'stock_number'          => null,
+                'status'                => $this->saveStatus, // draft or pending
+                'price'                 => $data['price'],
+                'price_display_type'    => $data['price_display_type'] ?? 'actual',
+                'model_year'            => $data['model_year'] ?? null,
+                'mileage'               => $data['mileage'],
+                'body_type_id'          => $data['body_type_id'] ?? null,
+                'color'                 => $data['color'],
+                'color_group'           => $data['color_group'] ?? null,
+                'transmission'          => $data['transmission'] ?? null,
+                'fuel_type'             => $data['fuel_type'] ?? null,
+                'region_id'             => $data['region_id'],
+                'repair_history'        => $data['repair_history'] ?? 'unknown',
+                'published_at'          => null,
+                'recycle_fee'           => $data['recycle_fee'] ?? null,
+                'dealer_fee_id'         => $data['dealer_fee_id'] ?? null,
             ]);
 
             // ===== stk_car_details 登録 =====

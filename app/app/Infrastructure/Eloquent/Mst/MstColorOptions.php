@@ -13,6 +13,7 @@ class MstColorOptions extends Model
         'value',
         'label',
         'hex_code',
+        'group',
         'sort_order',
         'is_active',
     ];

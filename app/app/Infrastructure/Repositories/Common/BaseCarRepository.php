@@ -46,7 +46,7 @@ abstract class BaseCarRepository extends BaseRepository
             $query->where('stk_cars.repair_history', 'none');
         }
         if (!empty($searchParams['colors'])) {
-            $query->whereIn('stk_cars.color', explode(',', $searchParams['colors']));
+            $query->whereIn('stk_cars.color_group', explode(',', $searchParams['colors']));
         }
         if (!empty($searchParams['engineFrom'])) {
             $query->where('stk_car_details.displacement', '>=', $searchParams['engineFrom']);

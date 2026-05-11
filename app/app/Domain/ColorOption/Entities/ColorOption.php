@@ -9,6 +9,7 @@ final class ColorOption
         public readonly string  $value,
         public readonly string  $label,
         public readonly ?string $hexCode,
+        public readonly ?string $group,
         public readonly int     $sortOrder,
         public readonly bool    $isActive,
     ) {}
@@ -33,6 +34,11 @@ final class ColorOption
         return $this->hexCode;
     }
 
+    public function getGroup(): ?string
+    {
+        return $this->group;
+    }
+
     public function getSortOrder(): int
     {
         return $this->sortOrder;
@@ -49,6 +55,7 @@ final class ColorOption
             'value'    => $this->value,
             'label'    => $this->label,
             'hex_code' => $this->hexCode,
+            'group'    => $this->group,
         ];
     }
 }
