@@ -181,6 +181,10 @@ class DealerShopResource extends Resource
                 ->options(DealerTypesConstants::DEALER_TYPES)
                 ->required(),
 
+            Toggle::make('is_maker_dealer')
+                ->label('メーカー系販売店')
+                ->default(false),
+
             Textarea::make('free_text')
                 ->label('フリーテキスト')
                 ->nullable()

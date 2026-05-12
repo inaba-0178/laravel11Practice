@@ -22,6 +22,9 @@ use App\Constants\SpecialTypeOption;
 use App\Constants\CarStatus;
 use App\Infrastructure\Eloquent\User\StkCar;
 use App\Filament\Resources\CarRegistrationResource\Concerns\ValidatesCarData;
+use App\Constants\SalesOption;
+use App\Constants\AudioOption;
+use App\Constants\NaviOption;
 
 class EditCarRegistration extends EditRecord
 {
@@ -241,11 +244,47 @@ class EditCarRegistration extends EditRecord
             ->pluck('option_name')
             ->toArray();
 
-        $data['special_one_owner']   = in_array('one_owner',   $specialOptions);
-        $data['special_camping_car'] = in_array('camping_car', $specialOptions);
-        $data['special_welfare_car'] = in_array('welfare_car', $specialOptions);
-        $data['special_unused']      = in_array('unused',      $specialOptions);
-        $data['special_eco_car']     = in_array('eco_car',     $specialOptions);
+        $data['special_one_owner']      = in_array('one_owner',   $specialOptions);
+        $data['special_camping_car']    = in_array('camping_car', $specialOptions);
+        $data['special_welfare_car']    = in_array('welfare_car', $specialOptions);
+        $data['special_unused']         = in_array('unused',      $specialOptions);
+        $data['special_eco_car']        = in_array('eco_car',     $specialOptions);
+        $data['special_unregistered']   = in_array('unregistered', $specialOptions);
+
+        // 販売・サービス情報オプションの読み込み
+        $otherOptions = $this->getRecord()->options
+            ->where('option_category', 'other')
+            ->pluck('option_name')
+            ->toArray();
+
+        $data['opt_quality_cert']   = in_array('quality_cert',   $otherOptions);
+        $data['opt_purchase_plan']  = in_array('purchase_plan',  $otherOptions);
+        $data['opt_sensor_after']   = in_array('sensor_after',   $otherOptions);
+        $data['opt_online_consult'] = in_array('online_consult', $otherOptions);
+
+        // オーディオ・ナビオプションの読み込み
+        $audioOptions = $this->getRecord()->options
+            ->where('option_category', 'audio')
+            ->pluck('option_name')
+            ->toArray();
+
+        $data['audio_cd']        = in_array(AudioOption::CD,        $audioOptions);
+        $data['audio_dvd']       = in_array(AudioOption::DVD,       $audioOptions);
+        $data['audio_bluetooth'] = in_array(AudioOption::BLUETOOTH, $audioOptions);
+        $data['audio_usb']       = in_array(AudioOption::USB,       $audioOptions);
+        $data['audio_maker']     = collect($audioOptions)
+            ->filter(fn ($v) => str_starts_with($v, 'maker_'))
+            ->map(fn ($v) => str_replace('maker_', '', $v))
+            ->first() ?? '';
+
+        $naviOptions = $this->getRecord()->options
+            ->where('option_category', 'navigation')
+            ->pluck('option_name')
+            ->toArray();
+
+        $data['navi_navi'] = in_array(NaviOption::NAVI,     $naviOptions);
+        $data['navi_tv']   = in_array(NaviOption::TV,       $naviOptions);
+        $data['navi_dvd']  = in_array(NaviOption::DVD_NAVI, $naviOptions);
 
         // 装備仕様オプションの読み込み
         $equipmentCategories = ['safety', 'basic', 'seat', 'dress_up', 'environmental'];
@@ -272,7 +311,7 @@ class EditCarRegistration extends EditRecord
         }
 
         // その他オプションの読み込み
-        $otherCategories = ['audio', 'navigation', 'special_type', 'other'];
+        $otherCategories = ['special_type', 'other'];
 
         $otherOptions = $this->getRecord()->options
             ->whereIn('option_category', $otherCategories)
@@ -326,11 +365,12 @@ class EditCarRegistration extends EditRecord
         $record->options()->where('option_category', 'special_type')->delete();
 
         $specialMap = [
-            'special_one_owner'   => 'one_owner',
-            'special_camping_car' => 'camping_car',
-            'special_welfare_car' => 'welfare_car',
-            'special_unused'      => 'unused',
-            'special_eco_car'     => 'eco_car',
+            'special_one_owner'     => 'one_owner',
+            'special_camping_car'   => 'camping_car',
+            'special_welfare_car'   => 'welfare_car',
+            'special_unused'        => 'unused',
+            'special_eco_car'       => 'eco_car',
+            'special_unregistered'  => 'unregistered',
         ];
 
         $maxOrder = $record->options()->max('display_order') ?? 1000;
@@ -344,6 +384,33 @@ class EditCarRegistration extends EditRecord
                     'display_order'   => ++$maxOrder,
                 ]);
             }
+        }
+
+        // 販売・サービス情報オプションの更新
+        $optionMap = [
+            'opt_quality_cert'   => 'quality_cert',
+            'opt_purchase_plan'  => 'purchase_plan',
+            'opt_sensor_after'   => 'sensor_after',
+            'opt_online_consult' => 'online_consult',
+        ];
+
+        $record->options()
+            ->where('option_category', 'other')
+            ->whereIn('option_name', array_values($optionMap))
+            ->delete();
+
+        $maxOrder = $record->options()->max('display_order') ?? 1000;
+        foreach ($optionMap as $key => $value) {
+            if (!empty($data[$key])) {
+                StkCarOptions::create([
+                    'car_id'          => $record->id,
+                    'option_category' => 'other',
+                    'option_name'     => $value,
+                    'is_equipped'     => 1,
+                    'display_order'   => ++$maxOrder,
+                ]);
+            }
+            unset($data[$key]);
         }
 
         // 装備仕様オプションの更新（一旦削除して再登録）
@@ -376,8 +443,14 @@ class EditCarRegistration extends EditRecord
         }
 
         // その他オプションの更新（一旦削除して再登録）
-        $otherCategories = ['audio', 'navigation', 'special_type', 'other'];
-        $record->options()->whereIn('option_category', $otherCategories)->delete();
+        $record->options()
+            ->whereIn('option_category', ['audio', 'navigation'])
+            ->delete();
+
+        $record->options()
+            ->where('option_category', 'other')
+            ->whereNotIn('option_name', SalesOption::SALES_OPTIONS)
+            ->delete();
 
         $maxOrder = $record->options()->max('display_order') ?? 1000;
         foreach ($data['other_options'] ?? [] as $option) {
@@ -391,6 +464,55 @@ class EditCarRegistration extends EditRecord
             ]);
         }
 
+        // オーディオ・ナビの更新は既にaudio/navigationカテゴリを削除済みなので再登録のみ
+        $audioMap = [
+            'audio_cd'        => AudioOption::CD,
+            'audio_dvd'       => AudioOption::DVD,
+            'audio_bluetooth' => AudioOption::BLUETOOTH,
+            'audio_usb'       => AudioOption::USB,
+        ];
+        foreach ($audioMap as $key => $value) {
+            if (!empty($data[$key])) {
+                StkCarOptions::create([
+                    'car_id'          => $record->id,
+                    'option_category' => 'audio',
+                    'option_name'     => $value,
+                    'is_equipped'     => 1,
+                    'display_order'   => ++$maxOrder,
+                ]);
+            }
+            unset($data[$key]);
+        }
+
+        if (!empty($data['audio_maker'])) {
+            StkCarOptions::create([
+                'car_id'          => $record->id,
+                'option_category' => 'audio',
+                'option_name'     => 'maker_' . $data['audio_maker'],
+                'is_equipped'     => 1,
+                'display_order'   => ++$maxOrder,
+            ]);
+        }
+        unset($data['audio_maker']);
+
+        $naviMap = [
+            'navi_navi' => NaviOption::NAVI,
+            'navi_tv'   => NaviOption::TV,
+            'navi_dvd'  => NaviOption::DVD_NAVI,
+        ];
+        foreach ($naviMap as $key => $value) {
+            if (!empty($data[$key])) {
+                StkCarOptions::create([
+                    'car_id'          => $record->id,
+                    'option_category' => 'navigation',
+                    'option_name'     => $value,
+                    'is_equipped'     => 1,
+                    'display_order'   => ++$maxOrder,
+                ]);
+            }
+            unset($data[$key]);
+        }
+
         unset($data['other_options']);
 
         // stk_cars側に不要なキーを除去
@@ -400,6 +522,15 @@ class EditCarRegistration extends EditRecord
             $data['special_welfare_car'],
             $data['special_unused'],
             $data['special_eco_car'],
+            $data['special_unregistered'],
+            $data['audio_cd'],
+            $data['audio_dvd'],
+            $data['audio_bluetooth'],
+            $data['audio_usb'],
+            $data['audio_maker'],
+            $data['navi_navi'],
+            $data['navi_tv'],
+            $data['navi_dvd'],
         );
 
         // stk_cars側に不要なキーを除去

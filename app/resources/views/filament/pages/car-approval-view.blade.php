@@ -103,6 +103,7 @@
                         ['リサイクル預託金', $car->recycle_fee ? number_format((int)$car->recycle_fee).'円' : '-'],
                         ['諸費用プラン', $car->dealerFee?->name ?? '-'],
                         ['色', $car->color ?? '-'],
+                        ['色系統', $car->color_group ?? '-'],
                         ['車検満了日', $detail?->inspection_expire_date ?? '-'],
                         ['駆動方式', $detail?->drive_system ?? '-'],
                         ['排気量', $detail?->displacement ? number_format($detail->displacement).'cc' : '-'],
@@ -226,6 +227,66 @@
                     </div>
                 @endif
             </div>
+
+            {{-- 車両の特徴 --}}
+            @php $specialTypes = $this->getSpecialTypeOptions(); @endphp
+            @if(count($specialTypes) > 0)
+            <div style="background: white; border-radius: 12px; border: 0.5px solid #e5e7eb; padding: 14px 18px;">
+                <p style="font-size: 12px; font-weight: 500; color: #374151; margin: 0 0 12px; padding-left: 10px; border-left: 3px solid #185FA5;">車両の特徴</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    @foreach($specialTypes as $label)
+                        <span style="padding: 4px 12px; border-radius: 6px; font-size: 11px; background: #fef2f2; color: #991b1b; border: 0.5px solid #fca5a5;">
+                            {{ $label }}
+                        </span>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            {{-- 販売・サービス情報 --}}
+            @php $salesOptions = $this->getSalesOptions(); @endphp
+            @if(count($salesOptions) > 0)
+            <div style="background: white; border-radius: 12px; border: 0.5px solid #e5e7eb; padding: 14px 18px;">
+                <p style="font-size: 12px; font-weight: 500; color: #374151; margin: 0 0 12px; padding-left: 10px; border-left: 3px solid #185FA5;">販売・サービス情報</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    @foreach($salesOptions as $label)
+                        <span style="padding: 4px 12px; border-radius: 6px; font-size: 11px; background: #f0f9ff; color: #0369a1; border: 0.5px solid #bae6fd;">
+                            {{ $label }}
+                        </span>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            {{-- オーディオ --}}
+            @php $audioOptions = $this->getAudioOptions(); @endphp
+            @if(count($audioOptions) > 0)
+            <div style="background: white; border-radius: 12px; border: 0.5px solid #e5e7eb; padding: 14px 18px;">
+                <p style="font-size: 12px; font-weight: 500; color: #374151; margin: 0 0 12px; padding-left: 10px; border-left: 3px solid #185FA5;">オーディオ</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    @foreach($audioOptions as $label)
+                        <span style="padding: 4px 12px; border-radius: 6px; font-size: 11px; background: #f0fdf4; color: #15803d; border: 0.5px solid #bbf7d0;">
+                            {{ $label }}
+                        </span>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            {{-- ナビ --}}
+            @php $naviOptions = $this->getNaviOptions(); @endphp
+            @if(count($naviOptions) > 0)
+            <div style="background: white; border-radius: 12px; border: 0.5px solid #e5e7eb; padding: 14px 18px;">
+                <p style="font-size: 12px; font-weight: 500; color: #374151; margin: 0 0 12px; padding-left: 10px; border-left: 3px solid #185FA5;">ナビ・AV</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    @foreach($naviOptions as $label)
+                        <span style="padding: 4px 12px; border-radius: 6px; font-size: 11px; background: #f0fdf4; color: #15803d; border: 0.5px solid #bbf7d0;">
+                            {{ $label }}
+                        </span>
+                    @endforeach
+                </div>
+            </div>
+            @endif
 
             {{-- その他オプション --}}
             @php $otherOptions = $this->getOtherOptions(); @endphp

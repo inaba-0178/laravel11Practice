@@ -86,6 +86,7 @@ class DealerShopDetail extends Page
                                             return $this->record->regular_holiday_days . $suffix;
                                     })(),
             'dealer_type'       => $dealerTypeMap[$this->record->dealer_type] ?? '-',
+            'is_maker_dealer'   => $this->record->is_maker_dealer ? 'メーカー系販売店' : '-',
             'free_text'         => $this->record->free_text ?? '-',
             'is_active'         => $this->record->is_active ? '公開中' : '非公開',
             'review_rating'     => $this->record->review_rating ?? '-',
@@ -109,6 +110,7 @@ class DealerShopDetail extends Page
                         TextEntry::make('city')->label('市区町村'),
                         TextEntry::make('address_detail')->label('番地・建物'),
                         TextEntry::make('dealer_type')->label('ディーラー種別'),
+                        TextEntry::make('is_maker_dealer')->label('メーカー系販売店'),
                     ]),
 
                 Section::make('連絡先')

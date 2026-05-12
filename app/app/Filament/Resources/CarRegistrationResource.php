@@ -261,8 +261,29 @@ class CarRegistrationResource extends Resource
                             Checkbox::make('special_eco_car')
                                 ->label('エコカー減税対象')
                                 ->default(false),
+                            Checkbox::make('special_unregistered')
+                                ->label('未登録車')
+                                ->default(false),
                         ])
                         ->columns(3),
+
+                    Fieldset::make('販売・サービス情報')
+                        ->schema([
+                            Checkbox::make('opt_quality_cert')
+                                ->label('車両品質評価書付き')
+                                ->default(false),
+                            Checkbox::make('opt_purchase_plan')
+                                ->label('購入プラン付き')
+                                ->default(false),
+                            Checkbox::make('opt_sensor_after')
+                                ->label('アフター保証対象車')
+                                ->default(false),
+                            Checkbox::make('opt_online_consult')
+                                ->label('オンライン相談可')
+                                ->default(false),
+                        ])
+                        ->columns(2),
+
                     TextInput::make('recycle_fee')
                         ->label('リサイクル預託金（円）')
                         ->numeric()
@@ -460,6 +481,38 @@ class CarRegistrationResource extends Resource
                             self::buildEquipmentCheckboxes('environmental', MstEquipmentEnv::class)
                         )
                         ->columns(4),
+
+                    Fieldset::make('オーディオ・ナビ')
+                        ->schema([
+                            Checkbox::make('audio_cd')
+                                ->label('CD再生')
+                                ->default(false),
+                            Checkbox::make('audio_dvd')
+                                ->label('DVD再生')
+                                ->default(false),
+                            Checkbox::make('audio_bluetooth')
+                                ->label('Bluetooth')
+                                ->default(false),
+                            Checkbox::make('audio_usb')
+                                ->label('USB')
+                                ->default(false),
+                            TextInput::make('audio_maker')
+                                ->label('オーディオメーカー')
+                                ->placeholder('例：パイオニア、ケンウッド')
+                                ->maxLength(100)
+                                ->columnSpanFull(),
+                            Checkbox::make('navi_navi')
+                                ->label('カーナビあり')
+                                ->default(false),
+                            Checkbox::make('navi_tv')
+                                ->label('TVあり')
+                                ->default(false),
+                            Checkbox::make('navi_dvd')
+                                ->label('DVDナビあり')
+                                ->default(false),
+                        ])
+                        ->columns(4)
+                        ->columnSpanFull(),
                 ]),
 
             // ===== ⑤その他オプション（動的行追加） =====
