@@ -200,6 +200,7 @@
                     <option value="exterior">エクステリア</option>
                     <option value="interior">インテリア</option>
                     <option value="engine">エンジン</option>
+                    <option value="360">360°</option>
                     <option value="other">その他</option>
                 </select>
             </div>

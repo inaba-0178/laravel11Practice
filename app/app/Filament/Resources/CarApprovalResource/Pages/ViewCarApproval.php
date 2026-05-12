@@ -23,6 +23,10 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Storage;
 use App\Constants\CarOptionCategory;
+use App\Constants\SpecialTypeOption;
+use App\Constants\SalesOption;
+use App\Constants\AudioOption;
+use App\Constants\NaviOption;
 
 class ViewCarApproval extends Page
 {
@@ -300,21 +304,18 @@ class ViewCarApproval extends Page
 
     public function getOtherOptions(): array
     {
-        $categories = CarOptionCategory::LABELS;
-
         $options = $this->record->options
-            ->whereIn('option_category', array_keys($categories))
+            ->where('option_category', 'other')  // otherのみに絞る
             ->where('is_equipped', 1)
+            ->whereNotIn('option_name', SalesOption::SALES_OPTIONS)
             ->groupBy('option_category');
 
         $result = [];
-        foreach ($categories as $key => $label) {
-            if ($options->has($key) && $options[$key]->count() > 0) {
-                $result[$key] = [
-                    'label' => $label,
-                    'items' => $options[$key]->pluck('option_name')->toArray(),
-                ];
-            }
+        if ($options->has('other') && $options['other']->count() > 0) {
+            $result['other'] = [
+                'label' => 'その他',
+                'items' => $options['other']->pluck('option_name')->toArray(),
+            ];
         }
 
         return $result;
@@ -363,5 +364,49 @@ class ViewCarApproval extends Page
     public function getRejectionCategories(): array
     {
         return ['車両基本情報', '車両スペック', '装備仕様', '画像', 'その他'];
+    }
+
+    public function getSpecialTypeOptions(): array
+    {
+        return $this->record->options
+            ->where('option_category', 'special_type')
+            ->where('is_equipped', 1)
+            ->map(fn ($opt) => SpecialTypeOption::label($opt->option_name))
+            ->values()
+            ->toArray();
+    }
+
+    public function getSalesOptions(): array
+    {
+        return $this->record->options
+            ->where('option_category', 'other')
+            ->where('is_equipped', 1)
+            ->whereIn('option_name', SalesOption::SALES_OPTIONS)
+            ->map(fn ($opt) => SalesOption::label($opt->option_name))
+            ->values()
+            ->toArray();
+    }
+
+    public function getAudioOptions(): array
+    {
+        return $this->record->options
+            ->where('option_category', 'audio')
+            ->where('is_equipped', 1)
+            ->map(fn ($opt) => str_starts_with($opt->option_name, 'maker_')
+                ? 'メーカー：' . str_replace('maker_', '', $opt->option_name)
+                : (AudioOption::LABELS[$opt->option_name] ?? $opt->option_name)
+            )
+            ->values()
+            ->toArray();
+    }
+
+    public function getNaviOptions(): array
+    {
+        return $this->record->options
+            ->where('option_category', 'navigation')
+            ->where('is_equipped', 1)
+            ->map(fn ($opt) => NaviOption::LABELS[$opt->option_name] ?? $opt->option_name)
+            ->values()
+            ->toArray();
     }
 }

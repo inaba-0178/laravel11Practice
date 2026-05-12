@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 final class ImageType
 {
-    private const ALLOWED = ['exterior', 'interior', 'engine', 'other'];
+    private const ALLOWED = ['exterior', 'interior', 'engine', 'other', '360'];
 
     // 将来的に動画対応する場合はここに追加
     // private const ALLOWED_VIDEO = ['exterior', 'interior', 'engine', 'other'];

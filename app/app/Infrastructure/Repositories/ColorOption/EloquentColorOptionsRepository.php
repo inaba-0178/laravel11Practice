@@ -19,6 +19,7 @@ class EloquentColorOptionsRepository implements ColorOptionsRepositoryInterface
                 value:     $model->value,
                 label:     $model->label,
                 hexCode:   $model->hex_code,
+                group:     $model->group,
                 sortOrder: $model->sort_order,
                 isActive:  $model->is_active,
             ));

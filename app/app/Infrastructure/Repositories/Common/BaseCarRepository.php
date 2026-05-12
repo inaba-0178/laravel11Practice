@@ -46,7 +46,7 @@ abstract class BaseCarRepository extends BaseRepository
             $query->where('stk_cars.repair_history', 'none');
         }
         if (!empty($searchParams['colors'])) {
-            $query->whereIn('stk_cars.color', explode(',', $searchParams['colors']));
+            $query->whereIn('stk_cars.color_group', explode(',', $searchParams['colors']));
         }
         if (!empty($searchParams['engineFrom'])) {
             $query->where('stk_car_details.displacement', '>=', $searchParams['engineFrom']);
@@ -83,6 +83,7 @@ abstract class BaseCarRepository extends BaseRepository
         if (!empty($searchParams['freeWord'])) {
             $query->where('stk_car_details.free_text', 'like', '%' . $searchParams['freeWord'] . '%');
         }
+
         if (!empty($searchParams['carTypes'])) {
             $carTypes = explode(',', $searchParams['carTypes']);
             $query->whereHas('vehicle', function ($q) use ($carTypes) {
@@ -99,8 +100,64 @@ abstract class BaseCarRepository extends BaseRepository
                 });
             }
         }
+
         if (!empty($searchParams['dealerId'])) {
             $query->where('stk_cars.dealer_id', (int) $searchParams['dealerId']);
+        }
+
+        if (!empty($searchParams['equipment'])) {
+            $equipments = explode(',', $searchParams['equipment']);
+            foreach ($equipments as $equipment) {
+                $query->whereHas('options', function ($q) use ($equipment) {
+                    $q->where('option_name', $equipment)
+                    ->where('is_equipped', 1);
+                });
+            }
+        }
+
+        if (!empty($searchParams['options'])) {
+            $options = explode(',', $searchParams['options']);
+
+            if (in_array('no_repair', $options)) {
+                $query->where('stk_cars.repair_history', 'none');
+            }
+            if (in_array('new_arrival', $options)) {
+                $query->where('stk_cars.published_at', '>=', now()->subDays(7));
+            }
+            if (in_array('total_payment', $options)) {
+                $query->whereNotNull('stk_cars.recycle_fee')
+                    ->whereNotNull('stk_cars.dealer_fee_id');
+            }
+            if (in_array('maker_dealer', $options)) {
+                $query->whereHas('dealer', fn ($q) => $q->where('is_maker_dealer', 1));
+            }
+            if (in_array('360_image', $options)) {
+                $query->whereHas('images', fn ($q) => $q->where('image_type', '360'));
+            }
+
+            // special_type・other系オプション
+            $optionNames = array_intersect($options, [
+                'unregistered',
+                'quality_cert',
+                'purchase_plan',
+                'sensor_after',
+                'online_consult',
+                // オーディオ
+                'cd',
+                'dvd',
+                'bluetooth',
+                'usb',
+                // ナビ
+                'navi',
+                'tv',
+                'dvd_navi',
+            ]);
+            foreach ($optionNames as $optionName) {
+                $query->whereHas('options', function ($q) use ($optionName) {
+                    $q->where('option_name', $optionName)
+                    ->where('is_equipped', 1);
+                });
+            }
         }
     }
 

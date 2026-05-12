@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Filament\Resources\CarRegistrationResource\Concerns\ValidatesCarData;
+use App\Constants\AudioOption;
+use App\Constants\NaviOption;
 
 class CreateCarRegistration extends CreateRecord
 {
@@ -128,26 +130,27 @@ class CreateCarRegistration extends CreateRecord
 
             // ===== stk_cars 登録 =====
             $car = StkCar::create([
-                'dealer_id'          => $user->dealer_id,
-                'manufacturer_id'    => $data['manufacturer_id'],
-                'series_id'          => $data['series_id'],
-                'vehicle_id'         => $data['vehicle_id'],
-                'year_version_id'    => $data['year_version_id'] ?? null,
-                'stock_number'       => null,
-                'status'             => $this->saveStatus, // draft or pending
-                'price'              => $data['price'],
-                'price_display_type' => $data['price_display_type'] ?? 'actual',
-                'model_year'         => $data['model_year'] ?? null,
-                'mileage'            => $data['mileage'],
-                'body_type_id'       => $data['body_type_id'] ?? null,
-                'color'              => $data['color'],
-                'transmission'       => $data['transmission'] ?? null,
-                'fuel_type'          => $data['fuel_type'] ?? null,
-                'region_id'          => $data['region_id'],
-                'repair_history'     => $data['repair_history'] ?? 'unknown',
-                'published_at'       => null,
-                'recycle_fee'        => $data['recycle_fee'] ?? null,
-                'dealer_fee_id'      => $data['dealer_fee_id'] ?? null,
+                'dealer_id'             => $user->dealer_id,
+                'manufacturer_id'       => $data['manufacturer_id'],
+                'series_id'             => $data['series_id'],
+                'vehicle_id'            => $data['vehicle_id'],
+                'year_version_id'       => $data['year_version_id'] ?? null,
+                'stock_number'          => null,
+                'status'                => $this->saveStatus, // draft or pending
+                'price'                 => $data['price'],
+                'price_display_type'    => $data['price_display_type'] ?? 'actual',
+                'model_year'            => $data['model_year'] ?? null,
+                'mileage'               => $data['mileage'],
+                'body_type_id'          => $data['body_type_id'] ?? null,
+                'color'                 => $data['color'],
+                'color_group'           => $data['color_group'] ?? null,
+                'transmission'          => $data['transmission'] ?? null,
+                'fuel_type'             => $data['fuel_type'] ?? null,
+                'region_id'             => $data['region_id'],
+                'repair_history'        => $data['repair_history'] ?? 'unknown',
+                'published_at'          => null,
+                'recycle_fee'           => $data['recycle_fee'] ?? null,
+                'dealer_fee_id'         => $data['dealer_fee_id'] ?? null,
             ]);
 
             // ===== stk_car_details 登録 =====
@@ -191,10 +194,95 @@ class CreateCarRegistration extends CreateRecord
                 }
             }
 
-            // ===== stk_car_options 登録（その他オプション） =====
+            // ===== stk_car_options 登録（その他・special_type・販売サービス） =====
             $maxOrder = StkCarOptions::where('car_id', $car->id)->max('display_order') ?? 1000;
+
+            $optionsToCreate = [];
+
+            // その他オプション
             foreach ($data['other_options'] ?? [] as $option) {
                 if (empty($option['option_name'])) continue;
+                $optionsToCreate[] = [
+                    'option_category' => $option['option_category'],
+                    'option_name'     => $option['option_name'],
+                ];
+            }
+
+            // special_type
+            $specialMap = [
+                'special_one_owner'    => 'one_owner',
+                'special_camping_car'  => 'camping_car',
+                'special_welfare_car'  => 'welfare_car',
+                'special_unused'       => 'unused',
+                'special_eco_car'      => 'eco_car',
+                'special_unregistered' => 'unregistered',
+            ];
+            foreach ($specialMap as $key => $value) {
+                if (!empty($data[$key])) {
+                    $optionsToCreate[] = [
+                        'option_category' => 'special_type',
+                        'option_name'     => $value,
+                    ];
+                }
+            }
+
+            // 販売・サービス情報
+            $optionMap = [
+                'opt_quality_cert'   => 'quality_cert',
+                'opt_purchase_plan'  => 'purchase_plan',
+                'opt_sensor_after'   => 'sensor_after',
+                'opt_online_consult' => 'online_consult',
+            ];
+            foreach ($optionMap as $key => $value) {
+                if (!empty($data[$key])) {
+                    $optionsToCreate[] = [
+                        'option_category' => 'other',
+                        'option_name'     => $value,
+                    ];
+                }
+            }
+
+            // オーディオ
+            $audioMap = [
+                'audio_cd'        => AudioOption::CD,
+                'audio_dvd'       => AudioOption::DVD,
+                'audio_bluetooth' => AudioOption::BLUETOOTH,
+                'audio_usb'       => AudioOption::USB,
+            ];
+            foreach ($audioMap as $key => $value) {
+                if (!empty($data[$key])) {
+                    $optionsToCreate[] = [
+                        'option_category' => 'audio',
+                        'option_name'     => $value,
+                    ];
+                }
+            }
+
+            // オーディオメーカー
+            if (!empty($data['audio_maker'])) {
+                $optionsToCreate[] = [
+                    'option_category' => 'audio',
+                    'option_name'     => 'maker_' . $data['audio_maker'],
+                ];
+            }
+
+            // ナビ
+            $naviMap = [
+                'navi_navi' => NaviOption::NAVI,
+                'navi_tv'   => NaviOption::TV,
+                'navi_dvd'  => NaviOption::DVD_NAVI,
+            ];
+            foreach ($naviMap as $key => $value) {
+                if (!empty($data[$key])) {
+                    $optionsToCreate[] = [
+                        'option_category' => 'navigation',
+                        'option_name'     => $value,
+                    ];
+                }
+            }
+
+            // 一括登録
+            foreach ($optionsToCreate as $option) {
                 StkCarOptions::create([
                     'car_id'          => $car->id,
                     'option_category' => $option['option_category'],
@@ -204,26 +292,7 @@ class CreateCarRegistration extends CreateRecord
                 ]);
             }
 
-            // ===== stk_car_options 登録（special_type） =====
-            $specialMap = [
-                'special_one_owner'   => 'one_owner',
-                'special_camping_car' => 'camping_car',
-                'special_welfare_car' => 'welfare_car',
-                'special_unused'      => 'unused',
-                'special_eco_car'     => 'eco_car',
-            ];
 
-            foreach ($specialMap as $key => $value) {
-                if (!empty($data[$key])) {
-                    StkCarOptions::create([
-                        'car_id'          => $car->id,
-                        'option_category' => 'special_type',
-                        'option_name'     => $value,
-                        'is_equipped'     => 1,
-                        'display_order'   => ++$maxOrder,
-                    ]);
-                }
-            }
 
             return $car;
         });
