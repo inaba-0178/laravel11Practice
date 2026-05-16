@@ -8,12 +8,16 @@ final class RoleConstants
 {
     public const SUPER        = 'super';
     public const ADMIN        = 'admin';
+    public const STAFF        = 'staff';
+    public const TESTER       = 'tester';
     public const DEALER       = 'dealer';
     public const DEALER_STAFF = 'dealer_staff';
 
     public const HIERARCHY = [
-        self::SUPER        => 4,
-        self::ADMIN        => 3,
+        self::SUPER        => 6,
+        self::ADMIN        => 5,
+        self::STAFF        => 4,
+        self::TESTER       => 3,
         self::DEALER       => 2,
         self::DEALER_STAFF => 1,
     ];
@@ -21,6 +25,8 @@ final class RoleConstants
     public const LABELS = [
         self::SUPER        => 'スーパーユーザー',
         self::ADMIN        => '管理者',
+        self::STAFF        => 'スタッフ',
+        self::TESTER       => 'テスター',
         self::DEALER       => 'ディーラー',
         self::DEALER_STAFF => 'ディーラースタッフ',
     ];

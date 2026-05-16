@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
-use App\Constants\RoleConstants;
+use App\Constants\Role\RoleManagement;
 use App\Application\Services\MailService;
 use App\Domain\Shared\Constants\MailTemplateKey;
 use Filament\Resources\Pages\CreateRecord;
@@ -26,10 +26,7 @@ class CreateUser extends CreateRecord
     {
         $user = Auth::user();
 
-        if (in_array($user->role, [
-            RoleConstants::DEALER,
-            RoleConstants::DEALER_STAFF,
-        ])) {
+        if (in_array($user->role, RoleManagement::DEALER_ID_REQUIRED_ROLES)) {
             $data['dealer_id'] = $user->dealer_id;
         }
 

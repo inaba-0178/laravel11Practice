@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 use App\Filament\Resources\DealerReviewResource;
 use App\Infrastructure\Eloquent\User\StkDealerReview;
 use App\Infrastructure\Eloquent\User\StkDealerReviewReply;
-use App\Constants\RoleConstants;
+use App\Constants\Role\RoleManagement;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
@@ -49,7 +49,7 @@ class DealerReviewDetail extends Page implements HasTable
             ->findOrFail($this->id);
 
         $user = Auth::user();
-        if (in_array($user->role, [RoleConstants::DEALER, RoleConstants::DEALER_STAFF])) {
+        if (in_array($user->role, RoleManagement::REVIEW_ACCESS_ROLES)) {
             if ($this->record->dealer_id !== $user->dealer_id) {
                 abort(403);
             }
@@ -191,7 +191,7 @@ class DealerReviewDetail extends Page implements HasTable
     {
         $actions = [];
 
-        if (in_array(Auth::user()->role, [RoleConstants::SUPER, RoleConstants::ADMIN])) {
+        if (in_array(Auth::user()->role, RoleManagement::REVIEW_ADMIN_ROLES)) {
             $actions[] = HeaderAction::make('delete')
                 ->label('口コミを削除')
                 ->color('danger')

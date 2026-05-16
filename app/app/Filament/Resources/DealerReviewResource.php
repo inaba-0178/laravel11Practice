@@ -10,6 +10,7 @@ use App\Infrastructure\Eloquent\User\StkDealerReview;
 use App\Constants\NavigationSort;
 use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
+use App\Constants\Role\RoleManagement;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
@@ -34,12 +35,7 @@ class DealerReviewResource extends Resource
 
     public static function canAccess(): bool
     {
-        return in_array(Auth::user()?->role, [
-            RoleConstants::SUPER,
-            RoleConstants::ADMIN,
-            RoleConstants::DEALER,
-            RoleConstants::DEALER_STAFF,
-        ]);
+        return in_array(Auth::user()?->role, RoleManagement::REVIEW_ACCESS_ROLES);
     }
 
     public static function getEloquentQuery(): Builder
@@ -47,7 +43,7 @@ class DealerReviewResource extends Resource
         $user  = Auth::user();
         $query = parent::getEloquentQuery()->with(['member', 'activeReplies']);
 
-        if (in_array($user->role, [RoleConstants::DEALER, RoleConstants::DEALER_STAFF])) {
+        if (in_array($user->role, RoleManagement::DEALER_ROLES)) {
             $query->where('dealer_id', $user->dealer_id);
         }
 

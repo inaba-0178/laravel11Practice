@@ -10,7 +10,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
 use Illuminate\Http\Request;
 use App\Infrastructure\Eloquent\User\StkDealerReviewReply;
-use App\Constants\RoleConstants;
+use App\Constants\Role\RoleManagement;
 use Illuminate\Support\Facades\Auth;
 use App\Filament\Resources\DealerReviewResource;
 use Filament\Actions\Action as HeaderAction;
@@ -35,7 +35,7 @@ class DealerReviewReplyDetail extends Page
             ->findOrFail($this->id);
 
         $user = Auth::user();
-        if (in_array($user->role, [RoleConstants::DEALER, RoleConstants::DEALER_STAFF])) {
+        if (in_array($user->role, RoleManagement::DEALER_ROLES)) {
             if ($this->record->dealer_id !== $user->dealer_id) {
                 abort(403);
             }

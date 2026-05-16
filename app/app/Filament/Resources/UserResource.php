@@ -8,6 +8,7 @@ use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Constants\RoleConstants;
+use App\Constants\Role\RoleManagement;
 use App\Constants\NavigationSort;
 use App\Constants\NavigationGroup;
 use App\Models\User;
@@ -35,11 +36,7 @@ class UserResource extends Resource
     public static function canAccess(): bool
     {
         $role = Auth::user()?->role;
-        return in_array($role, [
-            RoleConstants::SUPER,
-            RoleConstants::ADMIN,
-            RoleConstants::DEALER,
-        ]);
+        return in_array($role, RoleManagement::USER_MANAGEMENT_ACCESS_ROLES);
     }
 
     public static function getEloquentQuery(): Builder
@@ -49,7 +46,7 @@ class UserResource extends Resource
         $lowerRoles = RoleConstants::getLowerOrEqualRoles($role);
         $query      = parent::getEloquentQuery()->whereIn('role', $lowerRoles);
 
-        if ($role === RoleConstants::DEALER) {
+        if (in_array($role, RoleManagement::DEALER_ROLES)) {
             $query->where('dealer_id', $user->dealer_id);
         }
 
