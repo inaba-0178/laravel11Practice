@@ -22,15 +22,13 @@ echo "Setting permissions..."
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# ストレージディレクトリ作成
+# ストレージディレクトリ作成（storage配下は上記で権限設定済みのため mkdir のみ）
 echo "Creating storage directories..."
-mkdir -p /var/www/storage/app/mst-uploads
-chown -R www-data:www-data /var/www/storage/app/mst-uploads
-chmod -R 775 /var/www/storage/app/mst-uploads
+mkdir -p /var/www/storage/app/private/mst-uploads
 
 # cron起動
 echo "Starting cron..."
-crontab /etc/cron.d/laravel-cron  # 追加
+crontab /etc/cron.d/laravel-cron
 service cron start
 
 # php-fpm起動
