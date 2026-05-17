@@ -14,6 +14,7 @@ use Filament\Pages\Page;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Facades\Storage;
 
 class MstUpload extends Page
 {
@@ -112,6 +113,12 @@ class MstUpload extends Page
 
             $this->importCompleted = true;
             $this->showModal       = false;
+
+            // 一時ファイル削除
+            if ($this->uploadedFilePath) {
+                Storage::delete($this->uploadedFilePath);
+                $this->uploadedFilePath = null;
+            }
 
             Notification::make()
                 ->title("バージョン {$mstVersion->version} のデータ投入が完了しました")
