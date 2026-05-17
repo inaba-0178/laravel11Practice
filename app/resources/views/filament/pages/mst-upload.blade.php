@@ -62,14 +62,6 @@
                     <span wire:loading wire:target="uploadAndValidate">処理中...</span>
                 </button>
 
-                {{-- ローディングオーバーレイ --}}
-                {{-- <div wire:loading wire:target="uploadAndValidate" style="position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 9999;">
-                    <div style="background: white; border-radius: 12px; padding: 32px 48px; text-align: center;">
-                        <p style="font-size: 16px; font-weight: 500; color: #374151; margin: 0 0 8px;">バリデーション中...</p>
-                        <p style="font-size: 13px; color: #6b7280; margin: 0;">しばらくお待ちください</p>
-                    </div>
-                </div> --}}
-
             </div>
         </div>
 
