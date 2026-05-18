@@ -24,7 +24,7 @@ class MstImportService
             $mstVersion = MstVersion::create([
                 'version'     => $version,
                 'description' => $description,
-                'status'      => 'draft',
+                'status'      => 'approved',
                 'uploaded_by' => Auth::id(),
                 'uploaded_at' => now(),
             ]);
