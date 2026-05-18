@@ -113,10 +113,10 @@ class MstUpload extends Page
 
             $this->importCompleted = true;
             $this->showModal       = false;
-
+\Log::info('delete target: ' . $this->uploadedFilePath);
             // 一時ファイル削除
             if ($this->uploadedFilePath) {
-                Storage::delete($this->uploadedFilePath);
+                Storage::disk('local')->delete($this->uploadedFilePath);
                 $this->uploadedFilePath = null;
             }
 
