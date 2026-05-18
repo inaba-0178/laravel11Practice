@@ -125,8 +125,8 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            'timezone' => '+09:00',
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::ATTR_PERSISTENT => true,     // ← 永続的接続
                 PDO::ATTR_TIMEOUT => 5,           // ← タイムアウト5秒
                 PDO::ATTR_EMULATE_PREPARES => true, // ← プリペアドステートメントの高速化
             ]) : [],
@@ -146,6 +146,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            'timezone' => '+09:00',
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::ATTR_PERSISTENT => true,     // ← 永続的接続
                 PDO::ATTR_TIMEOUT => 5,           // ← タイムアウト5秒

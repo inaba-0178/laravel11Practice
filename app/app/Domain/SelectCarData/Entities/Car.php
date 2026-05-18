@@ -151,7 +151,7 @@ final class Car
         ];
     }
 
-    public function toCalculatorInput(DateTimeImmutable $inspectionExpireDate): object
+    public function toCalculatorInput(?DateTimeImmutable $inspectionExpireDate): object
     {
         return (object)[
             'id'            => $this->id,

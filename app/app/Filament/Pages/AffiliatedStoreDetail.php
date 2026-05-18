@@ -11,7 +11,7 @@ use Filament\Infolists\Components\Section;
 use Illuminate\Http\Request;
 use App\Filament\Resources\AffiliatedStoreResource;
 use App\Infrastructure\Eloquent\User\StkAffiliatedStore;
-use App\Constants\RoleConstants;
+use App\Constants\Role\RoleManagement;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
@@ -42,7 +42,7 @@ class AffiliatedStoreDetail extends Page
             ->findOrFail($this->id);
 
         $user = Auth::user();
-        if (in_array($user->role, [RoleConstants::DEALER, RoleConstants::DEALER_STAFF])) {
+        if (in_array($user->role, RoleManagement::AFFILIATED_STORE_ACCESS_ROLES)) {
             if ($this->record->dealer_id !== $user->dealer_id
                 && $this->record->affiliated_dealer_id !== $user->dealer_id) {
                 abort(403);
@@ -249,7 +249,7 @@ class AffiliatedStoreDetail extends Page
         }
 
         // super/adminは強制解除可能
-        if (in_array($user->role, [RoleConstants::SUPER, RoleConstants::ADMIN])
+        if (in_array($user->role, RoleManagement::AFFILIATED_STORE_FORCE_DISSOLVE_ROLES)
             && $this->record->status === 'approved') {
 
             $actions[] = Action::make('force_dissolve')

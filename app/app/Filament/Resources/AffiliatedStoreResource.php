@@ -11,6 +11,7 @@ use App\Infrastructure\Eloquent\User\StkAffiliatedStore;
 use App\Constants\NavigationSort;
 use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
+use App\Constants\Role\RoleManagement;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
@@ -36,12 +37,7 @@ class AffiliatedStoreResource extends Resource
 
     public static function canAccess(): bool
     {
-        return in_array(Auth::user()?->role, [
-            RoleConstants::SUPER,
-            RoleConstants::ADMIN,
-            RoleConstants::DEALER,
-            RoleConstants::DEALER_STAFF,
-        ]);
+        return in_array(Auth::user()?->role, RoleManagement::AFFILIATED_STORE_ACCESS_ROLES);
     }
 
     public static function getEloquentQuery(): Builder

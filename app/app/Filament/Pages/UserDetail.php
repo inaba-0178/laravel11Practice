@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
 use App\Constants\RoleConstants;
+use App\Constants\Role\RoleManagement;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
@@ -39,8 +40,7 @@ class UserDetail extends Page
             abort(403);
         }
 
-        // dealerは自分のdealer_idのみ
-        if ($authUser->role === RoleConstants::DEALER) {
+        if (in_array($authUser->role, RoleManagement::DEALER_ROLES)) {
             if ($this->record->dealer_id !== $authUser->dealer_id) {
                 abort(403);
             }

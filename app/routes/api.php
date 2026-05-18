@@ -61,6 +61,8 @@ use App\Presentation\Controllers\SelectDealerReviewData\SelectDealerReviewDataCo
 use App\Presentation\Controllers\StoreDealerReview\StoreDealerReviewController;
 use App\Presentation\Controllers\SelectDealerAffiliatedData\SelectDealerAffiliatedDataController;
 use App\Presentation\Controllers\SelectDealerList\SelectDealerListController;
+use App\Presentation\Controllers\Maintenance\MaintenanceController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -277,3 +279,5 @@ Route::post('/DealerReview/store', StoreDealerReviewController::class);
 Route::get('/SelectDealerAffiliatedData', SelectDealerAffiliatedDataController::class);
 
 Route::get('/SelectDealerList', SelectDealerListController::class);
+
+Route::get('/Maintenance/status', [MaintenanceController::class, 'status']);

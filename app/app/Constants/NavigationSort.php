@@ -31,6 +31,9 @@ enum NavigationSort :int
 
     // 管理者機能
     case CAR_APPROVAL               = 1;
+    case MST_VERSION                = 2;
+    case MST_UPLOAD                 = 3;
+    case MAINTENANCE                = 4;
 
     //　システム
     case USER_MANAGEMENT            = 1;
