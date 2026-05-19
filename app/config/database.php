@@ -154,6 +154,20 @@ return [
             ]) : [],
         ],
 
+        'mst_backup' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_MST_BACKUP_HOST', 'mst-backup-db'),
+            'port'      => env('DB_MST_BACKUP_PORT', '3306'),
+            'database'  => env('MST_BACKUP_DATABASE', 'mst_backup_db'),
+            'username'  => env('MST_BACKUP_USER', 'admin'),
+            'password'  => env('MST_BACKUP_PASSWORD', ''),
+            'charset'   => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix'    => '',
+            'strict'    => true,
+            'engine'    => null,
+        ],
+
     ],
 
     /*

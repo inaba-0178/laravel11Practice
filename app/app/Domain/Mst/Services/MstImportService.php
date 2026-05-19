@@ -20,13 +20,18 @@ class MstImportService
     {
         return DB::connection('mst')->transaction(function () use ($sheets, $version, $description, $onProgress) {
 
+            // 既存のactiveをarchivedに変更
+            MstVersion::where('status', 'active')->update(['status' => 'archived']);
+
             // バージョンレコード作成
             $mstVersion = MstVersion::create([
                 'version'     => $version,
                 'description' => $description,
-                'status'      => 'draft',
+                'status'      => 'active',
                 'uploaded_by' => Auth::id(),
                 'uploaded_at' => now(),
+                'activated_by' => Auth::id(),
+                'activated_at' => now(),
             ]);
 
             // 外部キー制約を一時無効
@@ -64,6 +69,9 @@ class MstImportService
                         $onProgress($sheetName, $current);
                     }
 
+                    // DELETE前にバックアップ
+                    $this->backupTable($tableName);
+
                     DB::connection('mst')->table($tableName)->delete();
 
                     $insertData = [];
@@ -84,6 +92,21 @@ class MstImportService
 
             return $mstVersion;
         });
+    }
+
+    private function backupTable(string $tableName): void
+    {
+        $backupTable = $tableName . '_backups';
+
+        $rows = DB::connection('mst')->table($tableName)->get()->toArray();
+
+        if (empty($rows)) return;
+
+        $insertData = array_map(fn ($row) => (array) $row, $rows);
+
+        foreach (array_chunk($insertData, 1000) as $chunk) {
+            DB::connection('mst_backup')->table($backupTable)->insert($chunk);
+        }
     }
 
     /**
