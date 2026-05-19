@@ -4,134 +4,147 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\MstVersionResource\Pages;
 
-use App\Constants\Role\RoleManagement;
+use App\Domain\Mst\Services\MstRollbackService;
 use App\Filament\Resources\MstVersionResource;
-use App\Infrastructure\Eloquent\Mst\MstVersion;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Support\Facades\Auth;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 
 class ViewMstVersion extends ViewRecord
 {
     protected static string $resource = MstVersionResource::class;
 
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('基本情報')
+                    ->schema([
+                        TextEntry::make('version')
+                            ->label('バージョン')
+                            ->size('lg')
+                            ->weight('bold')
+                            ->color(fn ($record) => $record->status === 'active' ? 'success' : null),
+
+                        TextEntry::make('status')
+                            ->label('ステータス')
+                            ->badge()
+                            ->color(fn (string $state) => match($state) {
+                                'active'   => 'success',
+                                'archived' => 'gray',
+                                default    => 'gray',
+                            })
+                            ->formatStateUsing(fn (string $state) => match($state) {
+                                'active'   => '適用中',
+                                'archived' => 'アーカイブ',
+                                default    => $state,
+                            }),
+
+                        TextEntry::make('description')
+                            ->label('説明')
+                            ->columnSpanFull()
+                            ->placeholder('説明なし'),
+                    ])
+                    ->columns(2),
+
+                Section::make('アップロード情報')
+                    ->schema([
+                        TextEntry::make('uploadedBy.name')
+                            ->label('アップロード者'),
+
+                        TextEntry::make('uploaded_at')
+                            ->label('アップロード日時')
+                            ->dateTime('Y/m/d H:i'),
+
+                        TextEntry::make('activatedBy.name')
+                            ->label('有効化者'),
+
+                        TextEntry::make('activated_at')
+                            ->label('有効化日時')
+                            ->dateTime('Y/m/d H:i'),
+                    ])
+                    ->columns(2),
+
+                Section::make('ロールバック情報')
+                    ->schema([
+                        TextEntry::make('rolledBackBy.name')
+                            ->label('ロールバック実行者'),
+
+                        TextEntry::make('rolled_back_at')
+                            ->label('ロールバック日時')
+                            ->dateTime('Y/m/d H:i'),
+
+                        TextEntry::make('rollback_reason')
+                            ->label('ロールバック理由')
+                            ->columnSpanFull()
+                            ->placeholder('なし'),
+                    ])
+                    ->columns(2)
+                    ->visible(fn ($record) => $record->rolled_back_at !== null),
+            ]);
+    }
+
     protected function getHeaderActions(): array
     {
-        $record  = $this->getRecord();
-        $user    = Auth::user();
-        $actions = [];
-
-        // 承認申請ボタン（draft → pending）
-        if ($record->isDraft() && in_array($user->role, RoleManagement::MST_OPERATOR_ROLES)) {
-            $actions[] = Action::make('request_approval')
-                ->label('承認申請')
-                ->color('primary')
-                ->requiresConfirmation()
-                ->modalHeading('承認申請しますか？')
-                ->modalSubmitActionLabel('申請する')
+        return [
+            Action::make('rollback')
+                ->label('このバージョンにロールバック')
+                ->icon('heroicon-o-arrow-uturn-left')
+                ->color('danger')
+                ->visible(fn () => $this->record->status !== 'active')
+                ->form([
+                    Textarea::make('rollback_reason')
+                        ->label('ロールバック理由')
+                        ->required()
+                        ->rows(3)
+                        ->placeholder('ロールバックする理由を入力してください'),
+                ])
+                ->modalHeading(fn () => "バージョン {$this->record->version} にロールバック")
+                ->modalDescription(fn () => "バージョン {$this->record->version} のデータに戻します。現在のデータは上書きされます。本当によろしいですか？")
+                ->modalSubmitActionLabel('ロールバック実行')
                 ->modalCancelActionLabel('キャンセル')
-                ->action(function () use ($record, $user) {
-                    $record->update([
-                        'status'       => 'pending',
-                        'requested_by' => $user->id,
-                        'requested_at' => now(),
-                    ]);
-
-                    Notification::make()
-                        ->title('承認申請しました')
-                        ->success()
-                        ->send();
-
-                    $this->redirect(MstVersionResource::getUrl('view', ['record' => $record->id]));
-                });
-        }
-
-        // 承認ボタン（pending → approved）
-        if ($record->isPending() && in_array($user->role, RoleManagement::MST_APPROVER_ROLES)) {
-            // 自分が申請したものは承認できない
-            if ($record->requested_by !== $user->id) {
-                $actions[] = Action::make('approve')
-                    ->label('承認')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading('承認しますか？')
-                    ->modalSubmitActionLabel('承認する')
-                    ->modalCancelActionLabel('キャンセル')
-                    ->action(function () use ($record, $user) {
-                        $record->update([
-                            'status'      => 'approved',
-                            'approved_by' => $user->id,
-                            'approved_at' => now(),
-                        ]);
+                ->action(function (array $data) {
+                    try {
+                        $service = new MstRollbackService();
+                        $service->rollback($this->record, $data['rollback_reason']);
 
                         Notification::make()
-                            ->title('承認しました')
+                            ->title("バージョン {$this->record->version} にロールバックしました")
                             ->success()
                             ->send();
 
-                        $this->redirect(MstVersionResource::getUrl('view', ['record' => $record->id]));
-                    });
-
-                // 却下ボタン
-                $actions[] = Action::make('reject')
-                    ->label('却下')
-                    ->color('danger')
-                    ->form([
-                        \Filament\Forms\Components\Textarea::make('rejected_reason')
-                            ->label('却下理由')
-                            ->required()
-                            ->maxLength(500),
-                    ])
-                    ->requiresConfirmation()
-                    ->modalHeading('却下しますか？')
-                    ->modalSubmitActionLabel('却下する')
-                    ->modalCancelActionLabel('キャンセル')
-                    ->action(function (array $data) use ($record, $user) {
-                        $record->update([
-                            'status'          => 'draft',
-                            'rejected_reason' => $data['rejected_reason'],
+                        $this->refreshFormData([
+                            'status',
+                            'activated_at',
+                            'rolled_back_at',
+                            'rollback_reason',
                         ]);
 
+                    } catch (\RuntimeException $e) {
                         Notification::make()
-                            ->title('却下しました')
+                            ->title('ロールバックできません')
+                            ->body($e->getMessage())
                             ->danger()
+                            ->persistent()
                             ->send();
 
-                        $this->redirect(MstVersionResource::getUrl('view', ['record' => $record->id]));
-                    });
-            }
-        }
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->title('ロールバックに失敗しました')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                }),
+        ];
+    }
 
-        // 有効化ボタン（approved → active）
-        if ($record->isApproved() && in_array($user->role, RoleManagement::MST_APPROVER_ROLES)) {
-            $actions[] = Action::make('activate')
-                ->label('有効化')
-                ->color('success')
-                ->requiresConfirmation()
-                ->modalHeading('有効化しますか？')
-                ->modalDescription('現在のアクティブバージョンはアーカイブされます。')
-                ->modalSubmitActionLabel('有効化する')
-                ->modalCancelActionLabel('キャンセル')
-                ->action(function () use ($record, $user) {
-                    // 現在のactiveをarchivedに
-                    MstVersion::where('status', 'active')->update(['status' => 'archived']);
-
-                    $record->update([
-                        'status'       => 'active',
-                        'activated_by' => $user->id,
-                        'activated_at' => now(),
-                    ]);
-
-                    Notification::make()
-                        ->title('有効化しました')
-                        ->success()
-                        ->send();
-
-                    $this->redirect(MstVersionResource::getUrl('view', ['record' => $record->id]));
-                });
-        }
-
-        return $actions;
+    public function getTitle(): string
+    {
+        return "バージョン {$this->record->version} 詳細";
     }
 }

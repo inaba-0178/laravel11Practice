@@ -25,13 +25,17 @@ class MstVersion extends Model
         'rejected_reason',
         'activated_by',
         'activated_at',
+        'rolled_back_by',
+        'rolled_back_at',
+        'rollback_reason',
     ];
 
     protected $casts = [
-        'uploaded_at'  => 'datetime',
-        'requested_at' => 'datetime',
-        'approved_at'  => 'datetime',
-        'activated_at' => 'datetime',
+        'uploaded_at'       => 'datetime',
+        'requested_at'      => 'datetime',
+        'approved_at'       => 'datetime',
+        'activated_at'      => 'datetime',
+        'rolled_back_at'    => 'datetime',
     ];
 
     // ===== リレーション =====
@@ -81,6 +85,11 @@ class MstVersion extends Model
     public function isArchived(): bool
     {
         return $this->status === 'archived';
+    }
+
+    public function rolledBackBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'rolled_back_by');
     }
 
     /**

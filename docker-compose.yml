@@ -18,11 +18,15 @@ services:
         condition: service_started
       redis:
         condition: service_started
+      mst-backup-db:
+        condition: service_healthy
     environment:
       DB_MST_HOST: mst-db
       DB_MST_PORT: 3306
       DB_USER_HOST: user-db
       DB_USER_PORT: 3306
+      DB_MST_BACKUP_HOST: mst-backup-db
+      DB_MST_BACKUP_PORT: 3306
       TZ: Asia/Tokyo
     networks:
       - app-network
@@ -81,6 +85,32 @@ services:
     volumes:
       - user-db-data:/var/lib/mysql  # ← 名前付きボリューム使用
       - ./docker-config/mariadb/user/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+09:00
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  mst-backup-db:
+    container_name: mst-backup-db
+    image: mariadb:11
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_DATABASE: ${MST_BACKUP_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MST_BACKUP_ROOT_PASSWORD}
+      MYSQL_USER: ${MST_BACKUP_USER}
+      MYSQL_PASSWORD: ${MST_BACKUP_PASSWORD}
+      TZ: Asia/Tokyo
+    volumes:
+      - mst-backup-db-data:/var/lib/mysql
+      - ./docker-config/mariadb/mst-backup/init.sql:/docker-entrypoint-initdb.d/01-init.sql
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
@@ -157,3 +187,4 @@ volumes:
   user-db-data:
   minio-data:
   redis-data:
+  mst-backup-db-data:

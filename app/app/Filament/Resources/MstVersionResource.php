@@ -41,7 +41,12 @@ class MstVersionResource extends Resource
 
                 TextColumn::make('version')
                     ->label('バージョン')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable()
+                    ->weight(fn ($record) => $record->status === 'active' ? 'bold' : 'normal')
+                    ->color(fn ($record) => $record->status === 'active' ? 'success' : null)
+                    ->size(fn ($record) => $record->status === 'active' ? 'lg' : 'sm'),
+
 
                 TextColumn::make('description')
                     ->label('説明')
@@ -49,20 +54,12 @@ class MstVersionResource extends Resource
 
                 TextColumn::make('status')
                     ->label('ステータス')
-                    ->badge()
-                    ->color(fn (string $state) => match($state) {
-                        'draft'    => 'gray',
-                        'pending'  => 'warning',
-                        'approved' => 'info',
-                        'active'   => 'success',
-                        'archived' => 'danger',
-                        default    => 'gray',
-                    })
+                    ->colors([
+                        'success' => 'active',
+                        'gray'    => 'archived',
+                    ])
                     ->formatStateUsing(fn (string $state) => match($state) {
-                        'draft'    => '下書き',
-                        'pending'  => '承認待ち',
-                        'approved' => '承認済み',
-                        'active'   => '有効',
+                        'active'   => '適用中',
                         'archived' => 'アーカイブ',
                         default    => $state,
                     }),
@@ -74,16 +71,6 @@ class MstVersionResource extends Resource
                     ->label('アップロード日時')
                     ->dateTime('Y/m/d H:i')
                     ->sortable(),
-
-                TextColumn::make('approvedBy.name')
-                    ->label('承認者'),
-
-                TextColumn::make('approved_at')
-                    ->label('承認日時')
-                    ->dateTime('Y/m/d H:i'),
-
-                TextColumn::make('activatedBy.name')
-                    ->label('有効化者'),
 
                 TextColumn::make('activated_at')
                     ->label('有効化日時')
