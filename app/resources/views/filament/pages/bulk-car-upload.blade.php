@@ -308,6 +308,7 @@
                     <thead style="position: sticky; top: 0; background: #f9fafb;">
                         <tr>
                             <th style="padding: 8px 10px; text-align: left; color: #374151; border-bottom: 1px solid #e5e7eb;">#</th>
+                            <th style="padding: 8px 10px; text-align: left; color: #374151; border-bottom: 1px solid #e5e7eb;">操作</th>
                             <th style="padding: 8px 10px; text-align: left; color: #374151; border-bottom: 1px solid #e5e7eb;">ユニークID</th>
                             <th style="padding: 8px 10px; text-align: left; color: #374151; border-bottom: 1px solid #e5e7eb;">車体名</th>
                             <th style="padding: 8px 10px; text-align: left; color: #374151; border-bottom: 1px solid #e5e7eb;">価格</th>
@@ -319,14 +320,32 @@
                         @php
                             $folder     = trim($row['画像フォルダ名'] ?? '');
                             $imageCount = isset($uploadedImageMap[$folder]) ? count($uploadedImageMap[$folder]) : 0;
+                            $operation  = trim($row['操作'] ?? '');
+                            $opColor    = match($operation) {
+                                '新規' => '#15803d',
+                                '更新' => '#1d4ed8',
+                                '削除' => '#dc2626',
+                                default => '#374151',
+                            };
+                            $opBg = match($operation) {
+                                '新規' => '#f0fdf4',
+                                '更新' => '#eff6ff',
+                                '削除' => '#fef2f2',
+                                default => '#f9fafb',
+                            };
                         @endphp
                         <tr style="border-bottom: 1px solid #f3f4f6;">
                             <td style="padding: 7px 10px; color: #6b7280;">{{ $idx + 1 }}</td>
+                            <td style="padding: 7px 10px;">
+                                <span style="font-size: 11px; font-weight: 600; color: {{ $opColor }}; background: {{ $opBg }}; padding: 2px 8px; border-radius: 4px;">
+                                    {{ $operation }}
+                                </span>
+                            </td>
                             <td style="padding: 7px 10px; color: #374151; font-size: 11px;">{{ $row['ユニークID'] ?? '' }}</td>
                             <td style="padding: 7px 10px; color: #374151;">{{ $row['車体名'] ?? '' }}</td>
                             <td style="padding: 7px 10px; color: #374151;">¥{{ number_format((int)($row['支払価格（円）'] ?? 0)) }}</td>
                             <td style="padding: 7px 10px; text-align: center; color: {{ $imageCount > 0 ? '#15803d' : '#991b1b' }};">
-                                {{ $imageCount }}枚
+                                {{ $operation === '削除' ? '-' : $imageCount . '枚' }}
                             </td>
                         </tr>
                         @endforeach

@@ -10,10 +10,12 @@ use App\Infrastructure\Eloquent\User\StkCarDetails;
 use App\Infrastructure\Eloquent\User\StkCarOptions;
 use App\Constants\CarStatus;
 use App\Models\User;
-use App\Notifications\CarRegistrationPendingNotification;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Constants\FileStatus;
+use App\Infrastructure\Eloquent\User\StkCarDealer;
+use App\Infrastructure\Eloquent\User\StkCarImages;
+use App\Domain\CarUpload\Notifications\BulkCarRegistrationPendingNotification;
 
 class BulkCarImportService
 {
@@ -40,11 +42,11 @@ class BulkCarImportService
                 $uniqueKey  = trim($row['ユニークID'] ?? '');
 
                 // ===== 削除 =====
-                if ($operation === \App\Constants\FileStatus::LABELS[\App\Constants\FileStatus::DELETE]) {
+                if ($operation === FileStatus::LABELS[FileStatus::DELETE]) {
                     $this->deleteCar($uniqueKey, $dealerId);
 
                 // ===== 更新 =====
-                } elseif ($operation === \App\Constants\FileStatus::LABELS[\App\Constants\FileStatus::UPDATE]) {
+                } elseif ($operation === FileStatus::LABELS[FileStatus::UPDATE]) {
                     $existing = StkCar::where('bulk_upload_key', $uniqueKey)
                         ->where('dealer_id', $dealerId)
                         ->first();
@@ -80,25 +82,6 @@ class BulkCarImportService
      */
     private function deleteCarWithImages(StkCar $car): void
     {
-        // S3フォルダごと削除
-        // $folderPath = "dealers/{$dealerId}/cars/";
-        // $images     = $car->images()->get();
-
-        // if ($images->isNotEmpty()) {
-        //     // フォルダ名を取得して配下を全削除
-        //     $firstPath  = $images->first()->image_url;
-        //     $parts      = explode('/', $firstPath);
-        //     $folderName = $parts[count($parts) - 2] ?? null;
-
-        //     if ($folderName) {
-        //         $s3Folder = "{$folderPath}{$folderName}/";
-        //         $files    = Storage::disk('s3')->allFiles($s3Folder);
-        //         foreach ($files as $file) {
-        //             Storage::disk('s3')->delete($file);
-        //         }
-        //     }
-        // }
-
         $car->images()->delete();
         $car->delete();
     }
@@ -140,7 +123,7 @@ class BulkCarImportService
         });
 
         // 管理者へ通知
-        $dealer     = \App\Infrastructure\Eloquent\User\StkCarDealer::find($dealerId);
+        $dealer     = StkCarDealer::find($dealerId);
         $dealerName = $dealer?->name ?? '不明';
         $count      = count($carIds);
 
@@ -148,7 +131,7 @@ class BulkCarImportService
             ->where('is_active', 1)
             ->get()
             ->each(fn (User $u) => $u->notify(
-                new \App\Notifications\BulkCarRegistrationPendingNotification(
+                new BulkCarRegistrationPendingNotification(
                     dealerName: $dealerName,
                     carCount:   $count,
                     carIds:     $carIds,
@@ -157,35 +140,10 @@ class BulkCarImportService
     }
 
     /**
-     * 再アップロード時の既存未承認データ削除
-     * available/reservedは削除しない
-     */
-    public function deleteUnapprovedByKeys(array $bulkUploadKeys, int $dealerId): void
-    {
-        $protectedStatuses = [CarStatus::AVAILABLE, CarStatus::RESERVED];
-
-        $cars = StkCar::whereIn('bulk_upload_key', $bulkUploadKeys)
-            ->where('dealer_id', $dealerId)
-            ->whereNotIn('status', $protectedStatuses)
-            ->get();
-
-        foreach ($cars as $car) {
-            // S3画像削除
-            $car->images()->each(function ($image) {
-                if ($image->image_url) {
-                    Storage::disk('s3')->delete($image->image_url);
-                }
-            });
-            $car->delete();
-        }
-    }
-
-    /**
      * 1行分の登録処理
      */
     private function importRow(array $row, int $dealerId, array $imageMap): StkCar
     {
-
         // stk_cars登録
         $carData = $this->transformer->transformCarData($row, $dealerId);
         $car     = StkCar::create($carData);
@@ -203,7 +161,6 @@ class BulkCarImportService
 
         // 画像登録
         $folderName = trim($row['画像フォルダ名'] ?? '');
-
         if (!empty($folderName) && isset($imageMap[$folderName])) {
             $this->attachImages($car, $imageMap[$folderName]);
         }
@@ -228,7 +185,7 @@ class BulkCarImportService
         foreach ($s3Paths as $order => $s3Path) {
             $isMain = !$mainImageSet;
 
-            \App\Infrastructure\Eloquent\User\StkCarImages::create([
+            StkCarImages::create([
                 'car_id'        => $car->id,
                 'image_url'     => $s3Path,
                 'image_type'    => 'exterior',

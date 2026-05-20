@@ -12,6 +12,7 @@ use App\Infrastructure\Eloquent\Mst\MstRegions;
 use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
 use App\Infrastructure\Eloquent\User\StkCar;
 use App\Infrastructure\Eloquent\User\StkDealerFee;
+use App\Constants\FileStatus;
 
 class BulkCarValidatorService
 {
@@ -119,7 +120,7 @@ class BulkCarValidatorService
             $operation = trim($row['操作'] ?? '');
 
             // ===== 操作列チェック =====
-            $validOperations = array_values(\App\Constants\FileStatus::LABELS);
+            $validOperations = array_values(FileStatus::LABELS);
             if (empty($operation)) {
                 $errors[] = $this->error($rowNum, '操作', '必須項目です。新規・更新・削除のいずれかを入力してください。');
             } elseif (!in_array($operation, $validOperations)) {

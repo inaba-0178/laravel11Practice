@@ -13,7 +13,6 @@ use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use Livewire\Attributes\State;
 
 class BulkCarUploadPage extends Page
 {
@@ -52,11 +51,7 @@ class BulkCarUploadPage extends Page
     /** 登録済み車両IDリスト（承認依頼用） */
     public array $importedCarIds = [];
 
-    /** 一時xlsxファイルパス */
-    public ?string $tempXlsxPath = null;
-
     /** チャンクアップロード進捗 */
-    public int $imageUploadTotal   = 0;
     public int $imageUploadCurrent = 0;
 
     // ===== STEP1: xlsxアップロード・バリデーション =====
@@ -71,17 +66,7 @@ class BulkCarUploadPage extends Page
         $this->validatedRows = [];
 
         try {
-            \Log::info('uploadXlsx開始', [
-                'filename'       => $filename,
-                'base64_length'  => strlen($base64Data),
-                'base64_preview' => substr($base64Data, 0, 50),
-            ]);
-
             $decoded = base64_decode($base64Data, true);
-
-            \Log::info('デコード結果', [
-                'decoded' => $decoded === false ? 'false' : strlen($decoded) . 'bytes',
-            ]);
 
             if ($decoded === false) {
                 $this->xlsxErrors = [['row' => '-', 'column' => '-', 'message' => 'Base64デコードに失敗しました。']];
@@ -91,29 +76,13 @@ class BulkCarUploadPage extends Page
             $tmpPath = storage_path('app/private/bulk-uploads/tmp_' . uniqid() . '.xlsx');
             $result  = file_put_contents($tmpPath, $decoded);
 
-            \Log::info('file_put_contents結果', [
-                'tmpPath' => $tmpPath,
-                'result'  => $result,
-            ]);
-
-            \Log::info('IOFactory::load開始');
-$spreadsheet = IOFactory::load($tmpPath);
-\Log::info('IOFactory::load完了');
-
-$sheet = $spreadsheet->getActiveSheet();
-\Log::info('getActiveSheet完了');
-
-$rows = $this->parseSheet($sheet);
-\Log::info('parseSheet完了', ['rows_count' => count($rows)]);
-
             if ($result === false) {
                 $this->xlsxErrors = [['row' => '-', 'column' => '-', 'message' => 'ファイルの一時保存に失敗しました。']];
                 return;
             }
 
             $spreadsheet = IOFactory::load($tmpPath);
-            $sheet       = $spreadsheet->getActiveSheet();
-            $rows        = $this->parseSheet($sheet);
+            $rows        = $this->parseSheet($spreadsheet->getActiveSheet());
 
             @unlink($tmpPath);
 
@@ -122,21 +91,8 @@ $rows = $this->parseSheet($sheet);
                 return;
             }
 
-            \Log::info('parseSheet完了', ['rows_count' => count($rows)]);
-
-// ↓ここから追加
-if (empty($rows)) {
-    \Log::info('rows空のため終了');
-    $this->xlsxErrors = [['row' => '-', 'column' => '-', 'message' => 'データが1件もありません。']];
-    return;
-}
-
-$dealerId = Auth::user()->dealer_id;
-\Log::info('バリデーション開始', ['dealerId' => $dealerId]);
-
-$result = app(BulkCarValidatorService::class)->validate($rows, $dealerId);
-\Log::info('バリデーション完了', ['valid' => $result['valid'], 'errors' => $result['errors']]);
-// ↑ここまで追加
+            $dealerId = Auth::user()->dealer_id;
+            $result   = app(BulkCarValidatorService::class)->validate($rows, $dealerId);
 
             if (!$result['valid']) {
                 $this->xlsxErrors = $result['errors'];
@@ -144,7 +100,6 @@ $result = app(BulkCarValidatorService::class)->validate($rows, $dealerId);
             }
 
             $this->validatedRows  = $rows;
-            $this->tempXlsxPath   = $tmpPath;
             $this->previewSummary = $this->buildPreviewSummary($rows);
             $this->step           = 'STEP2';
 
@@ -166,8 +121,6 @@ $result = app(BulkCarValidatorService::class)->validate($rows, $dealerId);
      */
     public function uploadImageChunk(array $files): void
     {
-        \Log::info('uploadImageChunk開始', ['files_count' => count($files)]);
-
         $dealerId = Auth::user()->dealer_id;
 
         foreach ($files as $file) {
@@ -175,31 +128,18 @@ $result = app(BulkCarValidatorService::class)->validate($rows, $dealerId);
             $base64       = $file['base64'];
             $relativePath = $file['relativePath'] ?? '';
 
-            \Log::info('画像処理中', [
-                'filename'     => $filename,
-                'relativePath' => $relativePath,
-            ]);
-
-            // bulkCar/car1/001.jpg → car1
             $parts      = explode('/', $relativePath);
             $folderName = $parts[1] ?? pathinfo($filename, PATHINFO_FILENAME);
 
             $decoded = base64_decode($base64, true);
-            if ($decoded === false) {
-                \Log::error('画像デコード失敗', ['filename' => $filename]);
-                continue;
-            }
+            if ($decoded === false) continue;
 
             $s3Path = "dealers/{$dealerId}/cars/{$folderName}/{$filename}";
             Storage::disk('s3')->put($s3Path, $decoded);
 
-            \Log::info('S3アップロード完了', ['s3Path' => $s3Path]);
-
             $this->uploadedImageMap[$folderName][] = $s3Path;
             $this->imageUploadCurrent++;
         }
-
-        \Log::info('uploadImageChunk完了', ['imageUploadCurrent' => $this->imageUploadCurrent]);
     }
 
     /**
@@ -209,13 +149,7 @@ $result = app(BulkCarValidatorService::class)->validate($rows, $dealerId);
     {
         $this->imageErrors = [];
 
-        // uploadedImageMapのキー（フォルダ名）一覧をそのまま渡す
-        $uploadedFilePaths = [];
-        foreach ($this->uploadedImageMap as $folder => $paths) {
-            foreach ($paths as $path) {
-                $uploadedFilePaths[] = $path;
-            }
-        }
+        $uploadedFilePaths = collect($this->uploadedImageMap)->flatten()->toArray();
 
         $result = app(BulkCarValidatorService::class)->validateImages(
             $this->validatedRows,
@@ -224,8 +158,6 @@ $result = app(BulkCarValidatorService::class)->validate($rows, $dealerId);
 
         if (!$result['valid']) {
             $this->imageErrors = $result['errors'];
-
-            // アップロード済み画像を削除してやり直し
             $this->cleanupUploadedImages();
             return;
         }
@@ -256,11 +188,6 @@ $result = app(BulkCarValidatorService::class)->validate($rows, $dealerId);
      */
     public function importAndRequestApproval(): void
     {
-        \Log::info('importAndRequestApproval開始', [
-            'uploadedImageMap' => $this->uploadedImageMap,
-            'validatedRows_count' => count($this->validatedRows),
-        ]);
-
         $dealerId = Auth::user()->dealer_id;
 
         // 一括登録（操作列で分岐）
@@ -323,20 +250,6 @@ $result = app(BulkCarValidatorService::class)->validate($rows, $dealerId);
             'folders'     => collect($rows)->pluck('画像フォルダ名')->filter()->unique()->count(),
             'unique_ids'  => collect($rows)->pluck('ユニークID')->filter()->unique()->count(),
         ];
-    }
-
-    /**
-     * アップロード済みファイル名一覧を取得
-     */
-    private function getAllUploadedFilenames(): array
-    {
-        $filenames = [];
-        foreach ($this->uploadedImageMap as $folder => $paths) {
-            foreach ($paths as $path) {
-                $filenames[] = basename($path);
-            }
-        }
-        return $filenames;
     }
 
     /**
