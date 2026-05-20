@@ -44,6 +44,7 @@ class StkCar extends Model
         'sold_at',
         'rejection_reason',
         'dealer_fee_id',
+        'bulk_upload_key',
     ];
 
     protected $casts = [
