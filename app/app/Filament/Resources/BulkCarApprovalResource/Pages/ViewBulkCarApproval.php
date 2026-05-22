@@ -94,13 +94,13 @@ class ViewBulkCarApproval extends Page
                 ->color('success')
                 ->action(fn () => $this->approveAll()),
 
-            \Filament\Actions\Action::make('rejectSelected')
-                ->label('選択差し戻し')
-                ->modalHeading('選択差し戻しの確認')
-                ->modalDescription('チェックした車両を差し戻します。よろしいですか？')
-                ->modalSubmitActionLabel('差し戻す')
-                ->color('warning')
-                ->action(fn () => $this->rejectSelected()),
+            // \Filament\Actions\Action::make('rejectSelected')
+            //     ->label('選択差し戻し')
+            //     ->modalHeading('選択差し戻しの確認')
+            //     ->modalDescription('チェックした車両を差し戻します。よろしいですか？')
+            //     ->modalSubmitActionLabel('差し戻す')
+            //     ->color('warning')
+            //     ->action(fn () => $this->rejectSelected()),
 
             \Filament\Actions\Action::make('rejectAll')
                 ->label('一括差し戻し')

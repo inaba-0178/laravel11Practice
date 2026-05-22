@@ -79,7 +79,8 @@ class BulkCarApprovalResource extends Resource
                     ->label('ステータス')
                     ->badge()
                     ->color(fn (StkBulkUploadBatch $record) => match($record->status) {
-                        'approved'         => 'success',
+                        'published'        => 'success',
+                        'approved_pending' => 'info',
                         'rejected'         => 'danger',
                         'partial_rejected' => 'warning',
                         default            => 'gray',

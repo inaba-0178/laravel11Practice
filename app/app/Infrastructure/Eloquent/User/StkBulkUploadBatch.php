@@ -4,6 +4,7 @@ namespace App\Infrastructure\Eloquent\User;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Constants\CarStatus;
 
 class StkBulkUploadBatch extends Model
 {
@@ -51,6 +52,9 @@ class StkBulkUploadBatch extends Model
      */
     public function getStatusAttribute(): string
     {
+        if ($this->cars->contains('status', CarStatus::AVAILABLE)) {
+            return 'published';
+        }
         if ($this->approved_at) {
             return 'approved';
         }
@@ -59,6 +63,9 @@ class StkBulkUploadBatch extends Model
         }
         if ($this->rejected_count > 0 && $this->pending_count > 0) {
             return 'partial_rejected';
+        }
+        if ($this->approved_count > 0 && $this->pending_count === 0 && $this->rejected_count === 0) {
+            return 'approved_pending';
         }
         return 'pending';
     }
@@ -69,7 +76,9 @@ class StkBulkUploadBatch extends Model
     public function getStatusLabelAttribute(): string
     {
         return match($this->status) {
+            'published'        => '公開中',
             'approved'         => '承認済み',
+            'approved_pending' => '承認済み公開前',
             'rejected'         => '差し戻し',
             'partial_rejected' => '一部差し戻し',
             'pending'          => '承認確認中',
