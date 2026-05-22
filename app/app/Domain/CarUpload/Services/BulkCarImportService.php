@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Constants\FileStatus;
 use App\Infrastructure\Eloquent\User\StkCarDealer;
 use App\Infrastructure\Eloquent\User\StkCarImages;
+use App\Infrastructure\Eloquent\User\StkBulkUploadBatch;
+use Illuminate\Support\Facades\Auth;
 use App\Domain\CarUpload\Notifications\BulkCarRegistrationPendingNotification;
 
 class BulkCarImportService
@@ -37,9 +39,27 @@ class BulkCarImportService
         $carIds = [];
 
         DB::connection('user')->transaction(function () use ($rows, $dealerId, $imageMap, $onProgress, &$carIds) {
+
+            // 操作ごとの件数を集計
+            $createCount = collect($rows)->filter(fn ($r) => trim($r['操作'] ?? '') === FileStatus::LABELS[FileStatus::CREATE])->count();
+            $updateCount = collect($rows)->filter(fn ($r) => trim($r['操作'] ?? '') === FileStatus::LABELS[FileStatus::UPDATE])->count();
+            $deleteCount = collect($rows)->filter(fn ($r) => trim($r['操作'] ?? '') === FileStatus::LABELS[FileStatus::DELETE])->count();
+
+            // バッチ作成
+            $batch = StkBulkUploadBatch::create([
+                'dealer_id'     => $dealerId,
+                'uploaded_by'   => Auth::id(),
+                'uploaded_at'   => now(),
+                'total_count'   => count($rows),
+                'create_count'  => $createCount,
+                'update_count'  => $updateCount,
+                'delete_count'  => $deleteCount,
+                'pending_count' => $createCount + $updateCount,
+            ]);
+
             foreach ($rows as $index => $row) {
-                $operation  = trim($row['操作'] ?? '');
-                $uniqueKey  = trim($row['ユニークID'] ?? '');
+                $operation = trim($row['操作'] ?? '');
+                $uniqueKey = trim($row['ユニークID'] ?? '');
 
                 // ===== 削除 =====
                 if ($operation === FileStatus::LABELS[FileStatus::DELETE]) {
@@ -52,20 +72,22 @@ class BulkCarImportService
                         ->first();
 
                     if ($existing) {
-                        // reserved はスキップ
                         if ($existing->status === CarStatus::RESERVED) {
                             continue;
                         }
-                        // 既存を削除して再登録
                         $this->deleteCarWithImages($existing);
                     }
-                    $car      = $this->importRow($row, $dealerId, $imageMap);
-                    $carIds[] = $car->id;
+                    $car              = $this->importRow($row, $dealerId, $imageMap);
+                    $car->bulk_batch_id = $batch->id;
+                    $car->save();
+                    $carIds[]         = $car->id;
 
                 // ===== 新規 =====
                 } else {
-                    $car      = $this->importRow($row, $dealerId, $imageMap);
-                    $carIds[] = $car->id;
+                    $car              = $this->importRow($row, $dealerId, $imageMap);
+                    $car->bulk_batch_id = $batch->id;
+                    $car->save();
+                    $carIds[]         = $car->id;
                 }
 
                 if ($onProgress) {
@@ -210,5 +232,33 @@ class BulkCarImportService
         $parts    = explode('_', $basename);
         $serial   = end($parts);
         return is_numeric($serial) ? (int)$serial : 0;
+    }
+
+    /**
+     * バッチのカウントを更新
+     * 承認・差し戻し時に呼ぶ
+     */
+    public function updateBatchCounts(int $batchId): void
+    {
+        $batch = StkBulkUploadBatch::find($batchId);
+        if (!$batch) return;
+
+        $cars = StkCar::where('bulk_batch_id', $batchId)
+            ->withTrashed()
+            ->get();
+
+        $approvedCount = $cars->filter(fn ($c) => in_array($c->status, [
+            CarStatus::AVAILABLE,
+            CarStatus::APPROVED_PENDING,
+        ]))->count();
+        $rejectedCount = $cars->filter(fn ($c) => $c->status === CarStatus::REJECTED)->count();
+        $pendingCount  = $cars->filter(fn ($c) => $c->status === CarStatus::PENDING)->count();
+
+        $batch->update([
+            'approved_count' => $approvedCount,
+            'rejected_count' => $rejectedCount,
+            'pending_count'  => $pendingCount,
+            'approved_at'    => $pendingCount === 0 && $rejectedCount === 0 ? now() : null,
+        ]);
     }
 }

@@ -6,32 +6,35 @@ namespace App\Constants;
 
 class CarStatus
 {
-    const DRAFT     = 'draft';
-    const PENDING   = 'pending';
-    const AVAILABLE = 'available';
-    const RESERVED  = 'reserved';
-    const SOLD      = 'sold';
-    const REJECTED  = 'rejected';
-    const DELETED   = 'deleted';
+    const DRAFT             = 'draft';
+    const PENDING           = 'pending';
+    const APPROVED_PENDING  = 'approved_pending';
+    const AVAILABLE         = 'available';
+    const RESERVED          = 'reserved';
+    const SOLD              = 'sold';
+    const REJECTED          = 'rejected';
+    const DELETED           = 'deleted';
 
     const LABELS = [
-        self::DRAFT     => '下書き',
-        self::PENDING   => '承認待ち',
-        self::AVAILABLE => '公開中',
-        self::RESERVED  => '予約中',
-        self::SOLD      => '売却済み',
-        self::REJECTED  => '差し戻し',
-        self::DELETED   => '削除済み',
+        self::DRAFT             => '下書き',
+        self::PENDING           => '承認待ち',
+        self::APPROVED_PENDING  => '承認済み公開前',
+        self::AVAILABLE         => '公開中',
+        self::RESERVED          => '予約中',
+        self::SOLD              => '売却済み',
+        self::REJECTED          => '差し戻し',
+        self::DELETED           => '削除済み',
     ];
 
     const COLORS = [
-        self::DRAFT     => 'gray',
-        self::PENDING   => 'warning',
-        self::AVAILABLE => 'success',
-        self::RESERVED  => 'info',
-        self::SOLD      => 'gray',
-        self::REJECTED  => 'danger',
-        self::DELETED   => 'gray',
+        self::DRAFT             => 'gray',
+        self::PENDING           => 'warning',
+        self::APPROVED_PENDING  => 'info',
+        self::AVAILABLE         => 'success',
+        self::RESERVED          => 'info',
+        self::SOLD              => 'gray',
+        self::REJECTED          => 'danger',
+        self::DELETED           => 'gray',
     ];
 
     // 承認依頼ボタンを表示するステータス

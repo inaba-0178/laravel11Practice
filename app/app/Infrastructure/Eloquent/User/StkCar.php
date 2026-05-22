@@ -45,6 +45,7 @@ class StkCar extends Model
         'rejection_reason',
         'dealer_fee_id',
         'bulk_upload_key',
+        'bulk_batch_id',
     ];
 
     protected $casts = [
@@ -110,5 +111,10 @@ class StkCar extends Model
     public function bodyType()
     {
         return $this->belongsTo(MstBodyTypes::class, 'body_type_id');
+    }
+
+    public function bulkBatch()
+    {
+        return $this->belongsTo(StkBulkUploadBatch::class, 'bulk_batch_id');
     }
 }

@@ -19,25 +19,33 @@ class ListCarApprovals extends ListRecords
     {
         return [
             'pending' => Tab::make('承認待ち')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', CarStatus::PENDING))
-                ->badge(StkCar::where('status', CarStatus::PENDING)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query
+                    ->whereNull('bulk_upload_key')
+                    ->where('status', CarStatus::PENDING))
+                ->badge(StkCar::whereNull('bulk_upload_key')->where('status', CarStatus::PENDING)->count())
                 ->badgeColor('warning'),
 
             'rejected' => Tab::make('差し戻し済み')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', CarStatus::REJECTED))
-                ->badge(StkCar::where('status', CarStatus::REJECTED)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query
+                    ->whereNull('bulk_upload_key')
+                    ->where('status', CarStatus::REJECTED))
+                ->badge(StkCar::whereNull('bulk_upload_key')->where('status', CarStatus::REJECTED)->count())
                 ->badgeColor('danger'),
 
             'available' => Tab::make('承認済み')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', CarStatus::AVAILABLE)),
+                ->modifyQueryUsing(fn (Builder $query) => $query
+                    ->whereNull('bulk_upload_key')
+                    ->where('status', CarStatus::AVAILABLE)),
 
             'all' => Tab::make('すべて')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [
-                    CarStatus::PENDING,
-                    CarStatus::REJECTED,
-                    CarStatus::AVAILABLE,
-                    CarStatus::DRAFT,
-                ])),
+                ->modifyQueryUsing(fn (Builder $query) => $query
+                    ->whereNull('bulk_upload_key')
+                    ->whereIn('status', [
+                        CarStatus::PENDING,
+                        CarStatus::REJECTED,
+                        CarStatus::AVAILABLE,
+                        CarStatus::DRAFT,
+                    ])),
         ];
     }
 }

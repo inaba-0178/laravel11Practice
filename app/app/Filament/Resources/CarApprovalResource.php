@@ -31,7 +31,9 @@ class CarApprovalResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) StkCar::where('status', CarStatus::PENDING)->count() ?: null;
+        return (string) StkCar::whereNull('bulk_upload_key')
+            ->where('status', CarStatus::PENDING)
+            ->count() ?: null;
     }
 
     public static function getNavigationBadgeColor(): ?string
@@ -42,6 +44,7 @@ class CarApprovalResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereNull('bulk_upload_key'))
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('管理番号')

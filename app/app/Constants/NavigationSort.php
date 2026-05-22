@@ -35,6 +35,7 @@ enum NavigationSort :int
     case MST_VERSION                = 2;
     case MST_UPLOAD                 = 3;
     case MAINTENANCE                = 4;
+    case BULK_CAR_APPROVAL          = 5;
 
     //　システム
     case USER_MANAGEMENT            = 1;
