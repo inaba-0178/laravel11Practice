@@ -85,5 +85,13 @@ class CarStatus
             'icon'   => '✅',
             'description' => '承認済みで公開中です。編集すると再度承認が必要になります。',
         ],
+        self::APPROVED_PENDING => [
+            'label'       => '承認済み公開前',
+            'bg'          => '#eff6ff',
+            'color'       => '#1d4ed8',
+            'border'      => '#bfdbfe',
+            'icon'        => '🔒',
+            'description' => '承認済みです。管理者が公開処理を行うまでお待ちください。',
+        ],
     ];
 }

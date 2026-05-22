@@ -40,16 +40,18 @@
                 $hasContent = !empty($generalComments[$tabCar->id]) || !empty($flaggedImages[$tabCar->id]) || !empty($rejectionItems[$tabCar->id]);
                 $isSelected = in_array($tabCar->id, $selectedCarIds);
                 $statusColor = match($tabCar->status) {
-                    'available' => '#15803d',
-                    'rejected'  => '#dc2626',
-                    'pending'   => '#92400e',
-                    default     => '#6b7280',
+                    'available'        => '#15803d',
+                    'approved_pending' => '#1d4ed8',
+                    'rejected'         => '#dc2626',
+                    'pending'          => '#92400e',
+                    default            => '#6b7280',
                 };
                 $statusBg = match($tabCar->status) {
-                    'available' => '#f0fdf4',
-                    'rejected'  => '#fef2f2',
-                    'pending'   => '#fef3c7',
-                    default     => '#f3f4f6',
+                    'available'        => '#f0fdf4',
+                    'approved_pending' => '#eff6ff',
+                    'rejected'         => '#fef2f2',
+                    'pending'          => '#fef3c7',
+                    default            => '#f3f4f6',
                 };
                 $thumb    = $tabCar->images->sortBy('display_order')->first();
                 $thumbUrl = $thumb ? Storage::disk('s3')->url($thumb->image_url) : null;
@@ -71,9 +73,9 @@
                 "
                 wire:click="selectCar({{ $tabCar->id }})"
             >
-                <div wire:click.stop="toggleCarSelection({{ $tabCar->id }})">
+                {{-- <div wire:click.stop="toggleCarSelection({{ $tabCar->id }})">
                     <input type="checkbox" {{ $isSelected ? 'checked' : '' }} style="cursor: pointer; width: 14px; height: 14px; flex-shrink: 0;" onclick="event.stopPropagation()">
-                </div>
+                </div> --}}
                 <div style="width: 36px; height: 36px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: #f3f4f6;">
                     @if($thumbUrl)
                         <img src="{{ $thumbUrl }}" style="width: 100%; height: 100%; object-fit: cover;" />
@@ -305,29 +307,27 @@
                     <div style="display: flex; gap: 8px; margin-top: 4px;">
                         <button
                             type="button"
-                            wire:click="approveCar"
-                            wire:confirm="この車両を承認しますか？"
+                            wire:click="mountAction('approveCar')"
                             style="flex: 1; padding: 10px; background: #3B6D11; color: #EAF3DE; border: none; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer;"
                         >
                             この車両を承認
                         </button>
                         <button
                             type="button"
-                            wire:click="rejectCurrent"
-                            wire:confirm="この車両を差し戻しますか？"
+                            wire:click="mountAction('rejectCurrent')"
                             style="flex: 1; padding: 10px; background: #E24B4A; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer;"
                         >
                             この車両を差し戻し
                         </button>
                     </div>
                 </div>
-                
 
                 {{-- ==================== 右：ディーラー返答確認 ==================== --}}
                 <div style="position: sticky; top: 20px; display: flex; flex-direction: column; gap: 10px;">
                     <div style="background: white; border-radius: 12px; border: 0.5px solid #e5e7eb; overflow: hidden;">
                         <div style="padding: 10px 14px; background: #f0f9ff; border-bottom: 0.5px solid #bae6fd;">
                             <p style="font-size: 12px; font-weight: 500; margin: 0; color: #0c4a6e;">ディーラー返答確認</p>
+                            <p style="font-size: 10px; color: #0369a1; margin: 3px 0 0;">各項目の対応を確認して完了マークを付けてください</p>
                         </div>
                         <div style="padding: 14px; display: flex; flex-direction: column; gap: 12px;">
 
@@ -350,16 +350,19 @@
 
                             @foreach($currentFlaggedImages as $flaggedImg)
                             <div style="border: 0.5px solid {{ ($flaggedImg['resolved'] ?? false) ? '#bbf7d0' : '#e5e7eb' }}; border-radius: 8px; overflow: hidden;">
-                                <div style="padding: 8px 12px; background: {{ ($flaggedImg['resolved'] ?? false) ? '#f0fdf4' : '#f9fafb' }}; border-bottom: 0.5px solid {{ ($flaggedImg['resolved'] ?? false) ? '#bbf7d0' : '#e5e7eb' }};">
+                                <div style="padding: 8px 12px; background: {{ ($flaggedImg['resolved'] ?? false) ? '#f0fdf4' : '#f9fafb' }}; border-bottom: 0.5px solid {{ ($flaggedImg['resolved'] ?? false) ? '#bbf7d0' : '#e5e7eb' }}; display: flex; justify-content: space-between; align-items: center;">
                                     <p style="font-size: 11px; font-weight: 500; color: {{ ($flaggedImg['resolved'] ?? false) ? '#15803d' : '#374151' }}; margin: 0;">
                                         画像 ID: {{ $flaggedImg['id'] }}
                                         @if($flaggedImg['resolved'] ?? false)
                                             <span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 1px 6px; border-radius: 4px; margin-left: 4px;">完了</span>
                                         @endif
                                     </p>
+                                    @if(!($flaggedImg['resolved'] ?? false))
+                                        <button type="button" wire:click="resolveImage({{ $flaggedImg['id'] }})" style="font-size: 10px; color: #15803d; background: #dcfce7; border: 0.5px solid #bbf7d0; border-radius: 5px; padding: 2px 8px; cursor: pointer;">完了にする</button>
+                                    @endif
                                 </div>
-                                <div style="padding: 10px 12px;">
-                                    <p style="font-size: 11px; color: #6b7280; margin: 0 0 5px; background: #fef2f2; padding: 5px 8px; border-radius: 5px; border-left: 3px solid #E24B4A;">{{ $flaggedImg['reason'] }}</p>
+                                <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 5px;">
+                                    <p style="font-size: 11px; color: #6b7280; margin: 0; background: #fef2f2; padding: 5px 8px; border-radius: 5px; border-left: 3px solid #E24B4A;">{{ $flaggedImg['reason'] }}</p>
                                     @if(!empty($flaggedImg['dealer_response'] ?? ''))
                                         <p style="font-size: 11px; color: #374151; margin: 0; background: #f0f9ff; padding: 5px 8px; border-radius: 5px; border-left: 3px solid #185FA5;">{{ $flaggedImg['dealer_response'] }}</p>
                                     @else
@@ -371,16 +374,19 @@
 
                             @foreach($currentRejectionItems as $idx => $item)
                             <div style="border: 0.5px solid {{ ($item['resolved'] ?? false) ? '#bbf7d0' : '#e5e7eb' }}; border-radius: 8px; overflow: hidden;">
-                                <div style="padding: 8px 12px; background: {{ ($item['resolved'] ?? false) ? '#f0fdf4' : '#f9fafb' }}; border-bottom: 0.5px solid {{ ($item['resolved'] ?? false) ? '#bbf7d0' : '#e5e7eb' }};">
+                                <div style="padding: 8px 12px; background: {{ ($item['resolved'] ?? false) ? '#f0fdf4' : '#f9fafb' }}; border-bottom: 0.5px solid {{ ($item['resolved'] ?? false) ? '#bbf7d0' : '#e5e7eb' }}; display: flex; justify-content: space-between; align-items: center;">
                                     <p style="font-size: 11px; font-weight: 500; color: {{ ($item['resolved'] ?? false) ? '#15803d' : '#374151' }}; margin: 0;">
                                         {{ $item['category'] ?? 'その他' }}
                                         @if($item['resolved'] ?? false)
                                             <span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 1px 6px; border-radius: 4px; margin-left: 4px;">完了</span>
                                         @endif
                                     </p>
+                                    @if(!($item['resolved'] ?? false))
+                                        <button type="button" wire:click="resolveItem({{ $idx }})" style="font-size: 10px; color: #15803d; background: #dcfce7; border: 0.5px solid #bbf7d0; border-radius: 5px; padding: 2px 8px; cursor: pointer;">完了にする</button>
+                                    @endif
                                 </div>
-                                <div style="padding: 10px 12px;">
-                                    <p style="font-size: 11px; color: #6b7280; margin: 0 0 5px; background: #fef2f2; padding: 5px 8px; border-radius: 5px; border-left: 3px solid #E24B4A;">{{ $item['reason'] ?? '' }}</p>
+                                <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 5px;">
+                                    <p style="font-size: 11px; color: #6b7280; margin: 0; background: #fef2f2; padding: 5px 8px; border-radius: 5px; border-left: 3px solid #E24B4A;">{{ $item['reason'] ?? '' }}</p>
                                     @if(!empty($item['dealer_response'] ?? ''))
                                         <p style="font-size: 11px; color: #374151; margin: 0; background: #f0f9ff; padding: 5px 8px; border-radius: 5px; border-left: 3px solid #185FA5;">{{ $item['dealer_response'] }}</p>
                                     @else

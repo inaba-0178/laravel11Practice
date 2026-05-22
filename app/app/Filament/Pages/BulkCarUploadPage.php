@@ -13,6 +13,7 @@ use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Infrastructure\Eloquent\User\StkBulkUploadBatch;
 
 class BulkCarUploadPage extends Page
 {
@@ -29,6 +30,12 @@ class BulkCarUploadPage extends Page
     }
 
     // ===== State =====
+
+    /** @var string upload=アップロード / history=履歴 */
+    public string $activeTab = 'upload';
+
+    /** バッチ履歴一覧 */
+    public array $batches = [];
 
     /** @var string STEP1=xlsx選択 / STEP2=画像アップロード / STEP3=確認・承認依頼 */
     public string $step = 'STEP1';
@@ -54,12 +61,15 @@ class BulkCarUploadPage extends Page
     /** チャンクアップロード進捗 */
     public int $imageUploadCurrent = 0;
 
+    // ===== mount =====
+
+    public function mount(): void
+    {
+        $this->loadBatches();
+    }
+
     // ===== STEP1: xlsxアップロード・バリデーション =====
 
-    /**
-     * xlsxファイルを受け取りバリデーション
-     * Livewireのファイルアップロード経由で呼ばれる
-     */
     public function uploadXlsx(string $base64Data, string $filename): void
     {
         $this->xlsxErrors    = [];
@@ -82,7 +92,7 @@ class BulkCarUploadPage extends Page
             }
 
             $spreadsheet = IOFactory::load($tmpPath);
-            $rows        = $this->parseSheet($spreadsheet->getActiveSheet());
+            $rows        = app(BulkCarImportService::class)->parseSheet($spreadsheet->getActiveSheet());
 
             @unlink($tmpPath);
 
@@ -100,7 +110,7 @@ class BulkCarUploadPage extends Page
             }
 
             $this->validatedRows  = $rows;
-            $this->previewSummary = $this->buildPreviewSummary($rows);
+            $this->previewSummary = app(BulkCarImportService::class)->buildPreviewSummary($rows);
             $this->step           = 'STEP2';
 
             Notification::make()
@@ -115,10 +125,6 @@ class BulkCarUploadPage extends Page
 
     // ===== STEP2: 画像チャンクアップロード =====
 
-    /**
-     * 画像チャンクを受け取りS3に保存
-     * フロントから10枚単位でPOSTされる
-     */
     public function uploadImageChunk(array $files): void
     {
         $dealerId = Auth::user()->dealer_id;
@@ -142,9 +148,6 @@ class BulkCarUploadPage extends Page
         }
     }
 
-    /**
-     * 画像アップロード完了後のバリデーション
-     */
     public function validateImages(): void
     {
         $this->imageErrors = [];
@@ -158,7 +161,7 @@ class BulkCarUploadPage extends Page
 
         if (!$result['valid']) {
             $this->imageErrors = $result['errors'];
-            $this->cleanupUploadedImages();
+            app(BulkCarImportService::class)->cleanupUploadedImages($this->uploadedImageMap);
             return;
         }
 
@@ -170,27 +173,20 @@ class BulkCarUploadPage extends Page
             ->send();
     }
 
-    /**
-     * 再アップロード時に前回の画像をS3から削除
-     */
     public function resetImageUpload(): void
     {
-        $this->cleanupUploadedImages();
-        $this->uploadedImageMap    = [];
-        $this->imageUploadCurrent  = 0;
-        $this->imageErrors         = [];
+        app(BulkCarImportService::class)->cleanupUploadedImages($this->uploadedImageMap);
+        $this->uploadedImageMap   = [];
+        $this->imageUploadCurrent = 0;
+        $this->imageErrors        = [];
     }
 
     // ===== STEP3: データ登録・一括承認依頼 =====
 
-    /**
-     * 車両データ一括登録 → 承認依頼
-     */
     public function importAndRequestApproval(): void
     {
         $dealerId = Auth::user()->dealer_id;
 
-        // 一括登録（操作列で分岐）
         $carIds = app(BulkCarImportService::class)->import(
             rows:       $this->validatedRows,
             dealerId:   $dealerId,
@@ -200,13 +196,14 @@ class BulkCarUploadPage extends Page
             }
         );
 
-        // 承認依頼（削除のみの場合はcarIdsが空の可能性あり）
         if (!empty($carIds)) {
             app(BulkCarImportService::class)->requestApproval($carIds, $dealerId);
         }
 
         $this->importedCarIds = $carIds;
         $this->step           = 'DONE';
+
+        $this->loadBatches();
 
         Notification::make()
             ->title(count($carIds) . '台の車両を登録し、承認依頼を送信しました。')
@@ -216,50 +213,83 @@ class BulkCarUploadPage extends Page
 
     // ===== ユーティリティ =====
 
-    /**
-     * PhpSpreadsheetのシートを連想配列に変換
-     */
-    private function parseSheet(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet): array
+    public function switchTab(string $tab): void
     {
-        $data    = $sheet->toArray();
-        $headers = $data[1] ?? []; // 2行目がヘッダー（1行目はカテゴリグループ）
-
-        // ★を除去してヘッダー名を正規化
-        $headers = array_map(fn ($h) => ltrim(trim((string)$h), '★'), $headers);
-
-        $rows = [];
-        for ($i = 2; $i < count($data); $i++) {
-            $row = $data[$i];
-            // 空行スキップ
-            if (empty(array_filter($row, fn ($v) => !empty(trim((string)$v))))) {
-                continue;
-            }
-            $rows[] = array_combine($headers, array_pad($row, count($headers), null));
+        $this->activeTab = $tab;
+        if ($tab === 'history') {
+            $this->loadBatches();
         }
-
-        return $rows;
     }
 
-    /**
-     * プレビュー用サマリー生成
-     */
-    private function buildPreviewSummary(array $rows): array
+    private function loadBatches(): void
     {
-        return [
-            'total'       => count($rows),
-            'folders'     => collect($rows)->pluck('画像フォルダ名')->filter()->unique()->count(),
-            'unique_ids'  => collect($rows)->pluck('ユニークID')->filter()->unique()->count(),
-        ];
+        $dealerId = Auth::user()->dealer_id;
+
+        $this->batches = StkBulkUploadBatch::where('dealer_id', $dealerId)
+            ->with('cars')
+            ->orderBy('uploaded_at', 'desc')
+            ->get()
+            ->map(fn ($batch) => [
+                'id'             => $batch->id,
+                'uploaded_at'    => $batch->uploaded_at?->format('Y/m/d H:i'),
+                'total_count'    => $batch->total_count,
+                'create_count'   => $batch->create_count,
+                'update_count'   => $batch->update_count,
+                'delete_count'   => $batch->delete_count,
+                'approved_count' => $batch->approved_count,
+                'rejected_count' => $batch->rejected_count,
+                'pending_count'  => $batch->pending_count,
+                'status'         => $batch->status,
+                'status_label'   => $batch->status_label,
+                'detail_url'     => BulkCarBatchDetailPage::getUrl(['batchId' => $batch->id]),
+            ])
+            ->toArray();
     }
 
-    /**
-     * S3にアップロード済みの画像を削除
-     */
-    private function cleanupUploadedImages(): void
+    // ===== 完了マーク =====
+    public function resolveImage(int $imageId): void
     {
-        foreach ($this->uploadedImageMap as $folder => $paths) {
-            foreach ($paths as $path) {
-                Storage::disk('s3')->delete($path);
+        $car = $this->getCurrentCar();
+        if (!$car || !$car->rejection_reason) return;
+
+        $reason = $car->rejection_reason;
+        $reason['flagged_images'] = collect($reason['flagged_images'] ?? [])
+            ->map(fn ($img) => $img['id'] === $imageId ? array_merge($img, ['resolved' => true]) : $img)
+            ->toArray();
+
+        $car->update(['rejection_reason' => $reason]);
+        $this->record->load(['cars.series', 'cars.detail', 'cars.images', 'cars.options', 'dealer']);
+        $this->syncRejectionState();
+
+        Notification::make()->title('画像指摘を完了にしました')->success()->send();
+    }
+
+    public function resolveItem(int $index): void
+    {
+        $car = $this->getCurrentCar();
+        if (!$car || !$car->rejection_reason) return;
+
+        $reason = $car->rejection_reason;
+        $items  = $reason['items'] ?? [];
+        if (isset($items[$index])) {
+            $items[$index]['resolved'] = true;
+        }
+        $reason['items'] = $items;
+
+        $car->update(['rejection_reason' => $reason]);
+        $this->record->load(['cars.series', 'cars.detail', 'cars.images', 'cars.options', 'dealer']);
+        $this->syncRejectionState();
+
+        Notification::make()->title('項目指摘を完了にしました')->success()->send();
+    }
+
+    private function syncRejectionState(): void
+    {
+        foreach ($this->record->cars as $car) {
+            if ($car->rejection_reason && is_array($car->rejection_reason)) {
+                $this->generalComments[$car->id] = $car->rejection_reason['general_comment'] ?? '';
+                $this->flaggedImages[$car->id]   = $car->rejection_reason['flagged_images'] ?? [];
+                $this->rejectionItems[$car->id]  = $car->rejection_reason['items'] ?? [];
             }
         }
     }

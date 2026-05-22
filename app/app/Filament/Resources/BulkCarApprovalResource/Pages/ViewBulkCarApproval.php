@@ -22,7 +22,6 @@ use App\Notifications\CarRegistrationStatusNotification;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Storage;
-use Filament\Actions\Action;
 
 class ViewBulkCarApproval extends Page
 {
@@ -512,5 +511,71 @@ class ViewBulkCarApproval extends Page
         $this->record = $this->record->fresh(['cars.series', 'cars.detail', 'cars.images', 'cars.options', 'dealer']);
 
         Notification::make()->title('差し戻しました')->danger()->send();
+    }
+
+    // ===== 項目完了マーク =====
+    public function resolveGeneralComment(): void
+    {
+        $car = $this->getCurrentCar();
+        if (!$car || !$car->rejection_reason) return;
+
+        $reason = $car->rejection_reason;
+        $reason['general_resolved'] = true;
+        $car->update(['rejection_reason' => $reason]);
+
+        $this->record->load(['cars.series', 'cars.detail', 'cars.images', 'cars.options', 'dealer']);
+        $this->syncRejectionState();
+
+        Notification::make()->title('全体指摘を完了にしました')->success()->send();
+    }
+
+    public function resolveImage(int $imageId): void
+    {
+        $car = $this->getCurrentCar();
+        if (!$car || !$car->rejection_reason) return;
+
+        $reason = $car->rejection_reason;
+        $reason['flagged_images'] = collect($reason['flagged_images'] ?? [])
+            ->map(fn ($img) => $img['id'] === $imageId ? array_merge($img, ['resolved' => true]) : $img)
+            ->toArray();
+
+        $car->update(['rejection_reason' => $reason]);
+        $this->record->load(['cars.series', 'cars.detail', 'cars.images', 'cars.options', 'dealer']);
+        $this->syncRejectionState();
+
+        Notification::make()->title('画像指摘を完了にしました')->success()->send();
+    }
+
+    public function resolveItem(int $index): void
+    {
+        $car = $this->getCurrentCar();
+        if (!$car || !$car->rejection_reason) return;
+
+        $reason = $car->rejection_reason;
+        $items  = $reason['items'] ?? [];
+        if (isset($items[$index])) {
+            $items[$index]['resolved'] = true;
+        }
+        $reason['items'] = $items;
+
+        $car->update(['rejection_reason' => $reason]);
+        $this->record->load(['cars.series', 'cars.detail', 'cars.images', 'cars.options', 'dealer']);
+        $this->syncRejectionState();
+
+        Notification::make()->title('項目指摘を完了にしました')->success()->send();
+    }
+
+    /**
+     * DBの最新状態をLivewireのStateに同期
+     */
+    private function syncRejectionState(): void
+    {
+        foreach ($this->record->cars as $car) {
+            if ($car->rejection_reason && is_array($car->rejection_reason)) {
+                $this->generalComments[$car->id] = $car->rejection_reason['general_comment'] ?? '';
+                $this->flaggedImages[$car->id]   = $car->rejection_reason['flagged_images'] ?? [];
+                $this->rejectionItems[$car->id]  = $car->rejection_reason['items'] ?? [];
+            }
+        }
     }
 }
