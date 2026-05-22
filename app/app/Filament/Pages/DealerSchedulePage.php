@@ -6,6 +6,7 @@ use App\Constants\NavigationGroup;
 use App\Constants\NavigationSort;
 use App\Domain\DealerSchedule\Services\DealerScheduleService;
 use App\Infrastructure\Eloquent\User\StkDealerSchedule;
+use App\Infrastructure\Eloquent\User\StkCarDealer;
 use App\Infrastructure\Eloquent\User\StkDealerReservationTypes;
 use App\Infrastructure\Eloquent\Opr\OprReservationTypes;
 use Carbon\Carbon;
@@ -790,12 +791,16 @@ class DealerSchedulePage extends Page
      * 時間帯セレクトの選択肢（15分単位）
      * ディーラーの営業時間が設定されている場合はその範囲に絞る
      */
+    // 定数を変えるだけで全セレクトに反映される
+    private const TIME_INTERVAL = ScheduleTimeInterval::SELECT_TIME;
+
     public function getTimeOptions(): array
     {
         if ($this->cachedTimeOptions !== null) return $this->cachedTimeOptions;
 
-        $dealerId = Auth::user()->dealer_id;
-        $dealer   = \App\Infrastructure\Eloquent\User\StkCarDealer::find($dealerId);
+        $dealerId  = Auth::user()->dealer_id;
+        $dealer    = StkCarDealer::find($dealerId);
+        $interval  = self::TIME_INTERVAL->value;
 
         $fromStr = $dealer?->business_hours_from;
         $toStr   = $dealer?->business_hours_to;
@@ -811,12 +816,8 @@ class DealerSchedulePage extends Page
         }
 
         $options = [];
-        for ($h = 0; $h < 24; $h++) {
-            foreach ([0, 15, 30, 45] as $m) {
-                $total = $h * 60 + $m;
-                if ($total < $fromTotal || $total > $toTotal) continue;
-                $options[] = sprintf('%02d:%02d', $h, $m);
-            }
+        for ($total = $fromTotal; $total <= $toTotal; $total += $interval) {
+            $options[] = sprintf('%02d:%02d', intdiv($total, 60), $total % 60);
         }
 
         return $this->cachedTimeOptions = $options;
