@@ -25,11 +25,11 @@ class MstImportService
 
             // バージョンレコード作成
             $mstVersion = MstVersion::create([
-                'version'     => $version,
-                'description' => $description,
-                'status'      => 'active',
-                'uploaded_by' => Auth::id(),
-                'uploaded_at' => now(),
+                'version'      => $version,
+                'description'  => $description,
+                'status'       => 'active',
+                'uploaded_by'  => Auth::id(),
+                'uploaded_at'  => now(),
                 'activated_by' => Auth::id(),
                 'activated_at' => now(),
             ]);
@@ -70,7 +70,7 @@ class MstImportService
                     }
 
                     // DELETE前にバックアップ
-                    $this->backupTable($tableName);
+                    $this->backupTable($tableName, $mstVersion->id);
 
                     DB::connection('mst')->table($tableName)->delete();
 
@@ -94,7 +94,12 @@ class MstImportService
         });
     }
 
-    private function backupTable(string $tableName): void
+    /**
+     * バックアップ
+     * 同じversion_idのデータが既にある場合は先に削除して上書き
+     * （途中失敗→再実行時の重複エラーを防ぐ）
+     */
+    private function backupTable(string $tableName, int $newVersionId): void
     {
         $backupTable = $tableName . '_backups';
 
@@ -103,6 +108,15 @@ class MstImportService
         if (empty($rows)) return;
 
         $insertData = array_map(fn ($row) => (array) $row, $rows);
+
+        // mstテーブルの既存データに含まれるversion_idでバックアップの重複チェック
+        $existingVersionId = $insertData[0]['version_id'] ?? null;
+        if ($existingVersionId) {
+            DB::connection('mst_backup')
+                ->table($backupTable)
+                ->where('version_id', $existingVersionId)
+                ->delete();
+        }
 
         foreach (array_chunk($insertData, 1000) as $chunk) {
             DB::connection('mst_backup')->table($backupTable)->insert($chunk);

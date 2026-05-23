@@ -42,8 +42,8 @@ final class MstTableMap
     public const IMAGE_FOLDERS = [
         'mst_body_type_images'      => 'mst/body_types/',
         'mst_manufacturer_images'   => 'mst/manufacturers/',
-        'mst_featured_body_types'   => 'mst/featured_body_types/',
-        'mst_featured_brands'       => 'mst/featured_brands/',
+        // 'mst_featured_body_types'   => 'mst/featured_body_types/',
+        // 'mst_featured_brands'       => 'mst/featured_brands/',
     ];
 
     public static function getTableName(string $sheetName): ?string
