@@ -36,12 +36,14 @@ final class MstTableMap
         '自動車重量税'            => 'mst_vehicle_weight_taxes',
         '車両年式バージョン'       => 'mst_vehicle_year_versions',
         '車両'                    => 'mst_vehicles',
+        '車種シリーズ画像'          => 'mst_car_series_images',
     ];
 
     // 画像を持つテーブルとS3フォルダの対応
     public const IMAGE_FOLDERS = [
         'mst_body_type_images'      => 'mst/body_types/',
         'mst_manufacturer_images'   => 'mst/manufacturers/',
+        'mst_car_series_images'     => 'mst/car_series/',
         // 'mst_featured_body_types'   => 'mst/featured_body_types/',
         // 'mst_featured_brands'       => 'mst/featured_brands/',
     ];

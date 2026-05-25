@@ -66,8 +66,62 @@ class MstRowTransformer
      */
     public static function resolveSeriesIds(array $rows, string $tableName): array
     {
-        if ($tableName !== 'mst_vehicles') return $rows;
+        if (!in_array($tableName, ['mst_vehicles', 'mst_car_series_images'])) return $rows;
 
+        // mst_car_series_images の場合は file_path のメーカー名 + シリーズ名で特定
+        if ($tableName === 'mst_car_series_images') {
+            $manufacturers = DB::connection('mst')
+                ->table('mst_manufacturers')
+                ->pluck('id', 'name')
+                ->toArray();
+
+            $series = DB::connection('mst')
+                ->table('mst_car_series')
+                ->get()
+                ->mapWithKeys(fn ($s) => ["{$s->manufacturer_id}_{$s->series_name}" => $s->series_id])
+                ->toArray();
+
+            return array_map(function ($row) use ($manufacturers, $series) {
+                $seriesName = trim($row['series_id'] ?? '');
+                $filePath   = trim($row['file_path'] ?? '');
+
+                if (!empty($filePath)) {
+                    // file_path からメーカー名取得して特定
+                    // 例: LEXUS/ct.jpg → LEXUS
+                    $manufacturerName = explode('/', $filePath)[0] ?? '';
+                    $manufacturerId   = $manufacturers[$manufacturerName] ?? null;
+
+                    if (!$manufacturerId) {
+                        Log::warning("MstRowTransformer: manufacturer not found: {$manufacturerName}");
+                        return $row;
+                    }
+
+                    $key = "{$manufacturerId}_{$seriesName}";
+                    if (isset($series[$key])) {
+                        $row['series_id'] = $series[$key];
+                    } else {
+                        Log::warning("MstRowTransformer: series not found: {$manufacturerName} / {$seriesName}");
+                    }
+                } else {
+                    // file_path が空の場合はシリーズ名のみで検索
+                    // 同名が複数ある場合は最初にマッチしたものを使う
+                    $matchedSeries = collect($series)
+                        ->filter(fn ($id, $key) => str_ends_with($key, "_{$seriesName}"))
+                        ->values()
+                        ->first();
+
+                    if ($matchedSeries) {
+                        $row['series_id'] = $matchedSeries;
+                    } else {
+                        Log::warning("MstRowTransformer: series not found: {$seriesName}");
+                    }
+                }
+
+                return $row;
+            }, $rows);
+        }
+
+        // mst_vehicles の場合は既存処理
         $series = DB::connection('mst')
             ->table('mst_car_series')
             ->pluck('series_id', 'series_name')

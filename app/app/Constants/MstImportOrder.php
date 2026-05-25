@@ -46,5 +46,6 @@ class MstImportOrder
         'mst_liability_insurances',
         'mst_loan_plans',
         'mst_vehicle_weight_taxes',
+        'mst_car_series_images',
     ];
 }

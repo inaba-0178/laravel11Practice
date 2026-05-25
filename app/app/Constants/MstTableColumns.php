@@ -256,6 +256,15 @@ final class MstTableColumns
             ['name' => 'country_code',   'label_ja' => '国コード',    'required' => false, 'type' => 'string'],
             ['name' => 'status',         'label_ja' => 'ステータス',  'required' => false, 'type' => 'enum', 'values' => ['active', 'discontinued', 'concept']],
         ],
+        'mst_car_series_images' => [
+            ['name' => 'id',                'label_ja' => 'ID',            'required' => true,  'type' => 'integer'],
+            ['name' => 'series_id',         'label_ja' => 'シリーズ名',     'required' => true,  'type' => 'string'],
+            ['name' => 'file_path',         'label_ja' => 'ファイルパス',   'required' => false,  'type' => 'string', 'is_image' => true],
+            ['name' => 'alt_text',          'label_ja' => 'ALTテキスト',    'required' => false, 'type' => 'string'],
+            ['name' => 'sort_order',        'label_ja' => '表示順',         'required' => false, 'type' => 'integer'],
+            ['name' => 'is_main',           'label_ja' => 'メイン画像',     'required' => false, 'type' => 'boolean'],
+            ['name' => 'is_active',         'label_ja' => '有効フラグ',     'required' => false, 'type' => 'boolean'],
+        ],
     ];
 
     public static function getColumns(string $tableName): array

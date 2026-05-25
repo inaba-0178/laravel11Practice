@@ -131,12 +131,20 @@ class MstUpload extends Page
             $relativePath = $file['relativePath'] ?? '';
             $parts        = explode('/', $relativePath);
 
-            // webkitRelativePath は "親フォルダ/テーブル名フォルダ/ファイル名" の3階層
-            // parts[0] = 親フォルダ名（選択したフォルダ）
-            // parts[1] = テーブル名フォルダ
-            // parts[2] = ファイル名
             $tableName = $parts[1] ?? '';
-            $fileName  = $parts[2] ?? $file['name'];
+            $fileName  = implode('/', array_slice($parts, 2));
+
+            \Log::info('before dedup', ['fileName' => $fileName]);
+
+            // 二重拡張子を除去 例: LEXUS/ct.png.png → LEXUS/ct.png
+            $fileParts = explode('.', $fileName);
+            $lastName  = array_slice($fileParts, -1)[0];
+            $secLast   = array_slice($fileParts, -2, 1)[0] ?? '';
+            if ($lastName === $secLast) {
+                $fileName = implode('.', array_slice($fileParts, 0, -1));
+            }
+
+            \Log::info('after dedup', ['fileName' => $fileName]);
 
             if (!$tableName || !MstTableMap::hasImage($tableName)) {
                 continue;
@@ -157,6 +165,7 @@ class MstUpload extends Page
 
         $this->uploadedImageMap = $map;
     }
+
     /**
      * 全チャンクアップロード完了後に呼ばれる
      * xlsxのfile_pathと突き合わせバリデーション
@@ -258,18 +267,26 @@ class MstUpload extends Page
     {
         foreach ($this->uploadedImageMap as $tableName => $fileNames) {
             $s3Folder = MstTableMap::getImageFolder($tableName);
-
             if (!$s3Folder) continue;
 
             foreach ($fileNames as $fileName) {
                 $localPath = 'mst-image-uploads/' . $tableName . '/' . $fileName;
-                $exists    = Storage::disk('local')->exists($localPath);
-
-                if (!$exists) continue;
+                if (!Storage::disk('local')->exists($localPath)) continue;
 
                 $s3Path   = $s3Folder . $fileName;
                 $contents = Storage::disk('local')->get($localPath);
-                $result   = Storage::disk('s3')->put($s3Path, $contents);
+
+                // 同名ファイルはS3上書きで問題ないが
+                // 二重拡張子の古いファイルを削除
+                // 例: ct.png をアップロードする前に ct.png.png を削除
+                $ext         = pathinfo($fileName, PATHINFO_EXTENSION);
+                $oldFileName = $fileName . '.' . $ext; // ct.png.png
+                $oldS3Path   = $s3Folder . $oldFileName;
+                if (Storage::disk('s3')->exists($oldS3Path)) {
+                    Storage::disk('s3')->delete($oldS3Path);
+                }
+
+                Storage::disk('s3')->put($s3Path, $contents);
             }
         }
     }
