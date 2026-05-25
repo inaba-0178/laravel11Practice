@@ -9,6 +9,7 @@ services:
       dockerfile: docker-config/php/Dockerfile
     volumes:
       - ./app:/var/www
+      - ./docker-config/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
     depends_on:
       mst-db:
         condition: service_healthy

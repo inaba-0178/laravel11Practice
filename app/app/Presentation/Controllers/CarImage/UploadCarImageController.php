@@ -28,7 +28,7 @@ class UploadCarImageController extends Controller
             $request->validate([
                 'car_id'     => 'required|integer|min:1',
                 'image_type' => 'required|string',
-                'file'       => 'required|file|image|max:10240',
+                'file'       => 'required|file|image|max:51200',
             ]);
 
             $input = new UploadCarImageInputData(
