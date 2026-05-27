@@ -30,4 +30,14 @@ class MstCarSeries extends Model
     {
         return $this->hasOne(MstManufacturers::class, 'id', 'manufacturer_id');
     }
+
+    /**
+     * メイン画像（is_main=1 かつ is_active=1 の1件）
+     */
+    public function mainImage()
+    {
+        return $this->hasOne(MstCarSeriesImages::class, 'series_id', 'series_id')
+            ->where('is_main', 1)
+            ->where('is_active', 1);
+    }
 }

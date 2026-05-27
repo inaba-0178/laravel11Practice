@@ -52,11 +52,12 @@ final class MstTableColumns
         ],
 
         'mst_car_series_body_types' => [
-            ['name' => 'id',           'label_ja' => 'ID',             'required' => true,  'type' => 'integer'],
-            ['name' => 'series_id',    'label_ja' => 'シリーズID',     'required' => true,  'type' => 'integer'],
-            ['name' => 'body_type_id', 'label_ja' => 'ボディタイプID', 'required' => true,  'type' => 'integer'],
-            ['name' => 'is_primary',   'label_ja' => '代表フラグ',     'required' => false, 'type' => 'boolean'],
-            ['name' => 'sort_order',   'label_ja' => '表示順',         'required' => false, 'type' => 'integer'],
+            ['name' => 'id',                'label_ja' => 'ID',                 'required' => true,  'type' => 'integer'],
+            ['name' => 'series_id',         'label_ja' => 'シリーズ名',         'required' => true,  'type' => 'string'],
+            ['name' => 'manufacturer_name', 'label_ja' => 'メーカー名',         'required' => true,  'type' => 'string'],
+            ['name' => 'body_type_id',      'label_ja' => 'ボディタイプ名',     'required' => true,  'type' => 'string'],
+            ['name' => 'is_primary',        'label_ja' => '代表フラグ',         'required' => false, 'type' => 'boolean'],
+            ['name' => 'sort_order',        'label_ja' => '表示順',             'required' => false, 'type' => 'integer'],
         ],
 
         'mst_car_type_options' => [
@@ -247,14 +248,24 @@ final class MstTableColumns
         ],
 
         'mst_vehicles' => [
-            ['name' => 'id',             'label_ja' => 'ID',          'required' => true,  'type' => 'integer'],
-            ['name' => 'series_id',      'label_ja' => 'シリーズID',  'required' => true,  'type' => 'string'],
-            ['name' => 'manufacturer_id','label_ja' => 'メーカーID',  'required' => true,  'type' => 'integer'],
-            ['name' => 'name',           'label_ja' => '名称',        'required' => true,  'type' => 'string'],
-            ['name' => 'model_code',     'label_ja' => 'モデルコード','required' => false, 'type' => 'string'],
-            ['name' => 'body_type',      'label_ja' => 'ボディタイプ','required' => false, 'type' => 'string'],
-            ['name' => 'country_code',   'label_ja' => '国コード',    'required' => false, 'type' => 'string'],
-            ['name' => 'status',         'label_ja' => 'ステータス',  'required' => false, 'type' => 'enum', 'values' => ['active', 'discontinued', 'concept']],
+            ['name' => 'id',               'label_ja' => 'ID',             'required' => true,  'type' => 'integer'],
+            ['name' => 'series_id',        'label_ja' => 'シリーズ名',     'required' => true,  'type' => 'string'],
+            ['name' => 'manufacturer_id',  'label_ja' => 'メーカー名',     'required' => true,  'type' => 'string'],
+            ['name' => 'name',             'label_ja' => '名称',           'required' => true,  'type' => 'string'],
+            ['name' => 'model_code',       'label_ja' => 'モデルコード',   'required' => false, 'type' => 'string'],
+            ['name' => 'body_type',        'label_ja' => 'ボディタイプ名', 'required' => false, 'type' => 'string'],
+            ['name' => 'country_code',     'label_ja' => '国コード',       'required' => false, 'type' => 'string'],
+            ['name' => 'status',           'label_ja' => 'ステータス',     'required' => false, 'type' => 'enum', 'values' => ['active', 'discontinued', 'concept']],
+        ],
+
+        'mst_car_series_images' => [
+            ['name' => 'id',                'label_ja' => 'ID',            'required' => true,  'type' => 'integer'],
+            ['name' => 'series_id',         'label_ja' => 'シリーズ名',     'required' => true,  'type' => 'string'],
+            ['name' => 'file_path',         'label_ja' => 'ファイルパス',   'required' => false,  'type' => 'string', 'is_image' => true],
+            ['name' => 'alt_text',          'label_ja' => 'ALTテキスト',    'required' => false, 'type' => 'string'],
+            ['name' => 'sort_order',        'label_ja' => '表示順',         'required' => false, 'type' => 'integer'],
+            ['name' => 'is_main',           'label_ja' => 'メイン画像',     'required' => false, 'type' => 'boolean'],
+            ['name' => 'is_active',         'label_ja' => '有効フラグ',     'required' => false, 'type' => 'boolean'],
         ],
     ];
 

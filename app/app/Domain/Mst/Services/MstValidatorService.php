@@ -13,7 +13,25 @@ class MstValidatorService
 {
     private array $errors = [];
 
+    /**
+     * 通常バリデーション（S3画像チェックあり）
+     * ※ 既存の呼び出し元との後方互換のため残す
+     */
     public function validate(array $sheets): array
+    {
+        return $this->runValidation($sheets, checkImages: true);
+    }
+
+    /**
+     * 画像チェックなしバリデーション（STEP1で使用）
+     * 画像はSTEP2で別途チェックするためここではスキップ
+     */
+    public function validateWithoutImages(array $sheets): array
+    {
+        return $this->runValidation($sheets, checkImages: false);
+    }
+
+    private function runValidation(array $sheets, bool $checkImages): array
     {
         $this->errors = [];
 
@@ -27,10 +45,10 @@ class MstValidatorService
             $tableName      = MstTableMap::getTableName($sheetName);
             $mappedRows     = MstRowTransformer::mapHeaders($rows, $tableName);
             $normalizedRows = MstRowTransformer::normalizeNumbers($mappedRows);
-            $resolvedRows   = MstRowTransformer::resolveVehicleIds($normalizedRows, $tableName);
+            // $resolvedRows   = MstRowTransformer::resolveVehicleIds($normalizedRows, $tableName); ← 削除
             $columns        = MstTableColumns::getColumns($tableName);
 
-            foreach ($resolvedRows as $rowIndex => $row) { 
+            foreach ($normalizedRows as $rowIndex => $row) { 
                 $lineNumber = $rowIndex + 2;
 
                 foreach ($columns as $column) {
@@ -52,7 +70,8 @@ class MstValidatorService
                         default   => null,
                     };
 
-                    if ($column['is_image'] ?? false) {
+                    // 画像チェックは $checkImages フラグで制御
+                    if ($checkImages && ($column['is_image'] ?? false)) {
                         $this->validateImageExists($sheetName, $lineNumber, $column['label_ja'], $value, $tableName);
                     }
                 }
@@ -139,5 +158,4 @@ class MstValidatorService
             $this->addError($sheet, $line, "{$column}は0または1でなければなりません（値：{$value}）");
         }
     }
-
 }
