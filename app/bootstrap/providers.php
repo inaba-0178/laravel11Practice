@@ -66,4 +66,5 @@ return [
     App\Providers\StoreDealerReviewServiceProvider::class,
     App\Providers\SelectDealerAffiliatedDataServiceProvider::class,
     App\Providers\SelectDealerListServiceProvider::class,
+    App\Providers\OprTopViewListsServiceProvider::class,
 ];
