@@ -27,9 +27,10 @@ class MstImportOrder
         'mst_featured_body_types',
         'mst_featured_brands',
         'mst_car_series',
+        'mst_car_series_images',
         'mst_car_series_body_types',
         'mst_vehicles',
-        'mst_vehicle_year_versions', // mst_vehiclesの後
+        'mst_vehicle_year_versions',
         'mst_basic_options',
         'mst_car_type_options',
         'mst_color_options',
@@ -46,6 +47,5 @@ class MstImportOrder
         'mst_liability_insurances',
         'mst_loan_plans',
         'mst_vehicle_weight_taxes',
-        'mst_car_series_images',
     ];
 }

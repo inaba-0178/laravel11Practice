@@ -45,10 +45,10 @@ class MstValidatorService
             $tableName      = MstTableMap::getTableName($sheetName);
             $mappedRows     = MstRowTransformer::mapHeaders($rows, $tableName);
             $normalizedRows = MstRowTransformer::normalizeNumbers($mappedRows);
-            $resolvedRows   = MstRowTransformer::resolveVehicleIds($normalizedRows, $tableName);
+            // $resolvedRows   = MstRowTransformer::resolveVehicleIds($normalizedRows, $tableName); ← 削除
             $columns        = MstTableColumns::getColumns($tableName);
 
-            foreach ($resolvedRows as $rowIndex => $row) {
+            foreach ($normalizedRows as $rowIndex => $row) { 
                 $lineNumber = $rowIndex + 2;
 
                 foreach ($columns as $column) {

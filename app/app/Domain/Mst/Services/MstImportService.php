@@ -8,22 +8,21 @@ use App\Constants\MstImportOrder;
 use App\Constants\MstTableMap;
 use App\Domain\Mst\DataTransformers\MstRowTransformer;
 use App\Infrastructure\Eloquent\Mst\MstVersion;
+use App\Infrastructure\Eloquent\Mst\MstManufacturers;
+use App\Infrastructure\Eloquent\Mst\MstCarSeries;
+use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
+use App\Infrastructure\Eloquent\Mst\MstVehicles;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class MstImportService
 {
-    /**
-     * データ投入
-     */
     public function import(array $sheets, string $version, string $description, ?callable $onProgress = null): MstVersion
     {
         return DB::connection('mst')->transaction(function () use ($sheets, $version, $description, $onProgress) {
 
-            // 既存のactiveをarchivedに変更
             MstVersion::where('status', 'active')->update(['status' => 'archived']);
 
-            // バージョンレコード作成
             $mstVersion = MstVersion::create([
                 'version'      => $version,
                 'description'  => $description,
@@ -34,11 +33,18 @@ class MstImportService
                 'activated_at' => now(),
             ]);
 
-            // 外部キー制約を一時無効
             DB::connection('mst')->statement('SET FOREIGN_KEY_CHECKS=0');
 
             try {
-                // 投入順序に従ってシートを並び替え
+                // マスターデータ取得（変換用）
+                $manufacturers = MstManufacturers::query()->pluck('id', 'name')->toArray();
+                $bodyTypes     = MstBodyTypes::query()->pluck('id', 'name')->toArray();
+                $vehicles      = MstVehicles::query()->pluck('id', 'name')->toArray();
+                $series        = MstCarSeries::query()
+                    ->get()
+                    ->mapWithKeys(fn ($s) => ["{$s->manufacturer_id}_{$s->series_name}" => $s->series_id])
+                    ->toArray();
+
                 $orderedSheets = [];
                 foreach (MstImportOrder::ORDER as $tableName) {
                     $sheetName = MstTableMap::getSheetName($tableName);
@@ -46,7 +52,6 @@ class MstImportService
                         $orderedSheets[$sheetName] = $sheets[$sheetName];
                     }
                 }
-                // IMPORT_ORDERに含まれないシートも追加
                 foreach ($sheets as $sheetName => $rows) {
                     if (!isset($orderedSheets[$sheetName])) {
                         $orderedSheets[$sheetName] = $rows;
@@ -58,18 +63,29 @@ class MstImportService
                     $tableName = MstTableMap::getTableName($sheetName);
                     if (!$tableName) continue;
 
+                    // 全マスターデータを都度取得
+                    $manufacturers = MstManufacturers::query()->pluck('id', 'name')->toArray();
+                    $bodyTypes     = MstBodyTypes::query()->pluck('id', 'name')->toArray();
+
+                    $series   = MstCarSeries::query()
+                        ->get()
+                        ->mapWithKeys(fn ($s) => ["{$s->manufacturer_id}_{$s->series_name}" => $s->series_id])
+                        ->toArray();
+                    $vehicles = MstVehicles::query()->pluck('id', 'name')->toArray();
+                    
                     $mappedRows     = MstRowTransformer::mapHeaders($rows, $tableName);
                     $normalizedRows = MstRowTransformer::normalizeBoolean($mappedRows);
                     $numberedRows   = MstRowTransformer::normalizeNumbers($normalizedRows);
-                    $resolvedRows   = MstRowTransformer::resolveSeriesIds($numberedRows, $tableName);
-                    $finalRows      = MstRowTransformer::resolveVehicleIds($resolvedRows, $tableName);
+                    $resolvedRows   = MstRowTransformer::resolveManufacturerIds($numberedRows, $manufacturers);
+                    $resolvedRows   = MstRowTransformer::resolveBodyTypeIds($resolvedRows, $bodyTypes);
+                    $resolvedRows = MstRowTransformer::resolveSeriesIds($resolvedRows, $manufacturers, $series, $tableName);
+                    $finalRows      = MstRowTransformer::resolveVehicleIds($resolvedRows, $vehicles);
 
                     $current++;
                     if ($onProgress) {
                         $onProgress($sheetName, $current);
                     }
 
-                    // DELETE前にバックアップ
                     $this->backupTable($tableName, $mstVersion->id);
 
                     DB::connection('mst')->table($tableName)->delete();
@@ -83,6 +99,7 @@ class MstImportService
                     }
 
                     foreach (array_chunk($insertData, 1000) as $chunk) {
+                          \Log::info('insert data sample', ['tableName' => $tableName, 'row' => $insertData[33] ?? $insertData[0] ?? []]);
                         DB::connection('mst')->table($tableName)->insert($chunk);
                     }
                 }
@@ -94,11 +111,6 @@ class MstImportService
         });
     }
 
-    /**
-     * バックアップ
-     * 同じversion_idのデータが既にある場合は先に削除して上書き
-     * （途中失敗→再実行時の重複エラーを防ぐ）
-     */
     private function backupTable(string $tableName, int $newVersionId): void
     {
         $backupTable = $tableName . '_backups';
@@ -109,7 +121,6 @@ class MstImportService
 
         $insertData = array_map(fn ($row) => (array) $row, $rows);
 
-        // mstテーブルの既存データに含まれるversion_idでバックアップの重複チェック
         $existingVersionId = $insertData[0]['version_id'] ?? null;
         if ($existingVersionId) {
             DB::connection('mst_backup')
@@ -123,9 +134,6 @@ class MstImportService
         }
     }
 
-    /**
-     * テーブルごとの件数を取得（プレビュー用）
-     */
     public function getPreviewCounts(array $sheets): array
     {
         $counts = [];
