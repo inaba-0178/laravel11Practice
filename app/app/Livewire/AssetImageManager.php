@@ -6,6 +6,7 @@ namespace App\Livewire;
 
 use App\Infrastructure\Eloquent\User\StkDealerStaff;
 use App\Infrastructure\Eloquent\User\StkDealerContent;
+use App\Infrastructure\Eloquent\Opr\OprMainView;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
@@ -39,9 +40,10 @@ class AssetImageManager extends Component
     private function findRecord(): ?object
     {
         return match($this->type) {
-            'staff'   => StkDealerStaff::whereNull('deleted_at')->find($this->recordId),
-            'content' => StkDealerContent::whereNull('deleted_at')->find($this->recordId),
-            default   => null,
+            'staff'         => StkDealerStaff::whereNull('deleted_at')->find($this->recordId),
+            'content'       => StkDealerContent::whereNull('deleted_at')->find($this->recordId),
+            'opr_main_view' => OprMainView::whereNull('deleted_at')->find($this->recordId),
+            default         => null,
         };
     }
 

@@ -40,7 +40,7 @@ class EloquentOprMainViewRepository extends BaseRepository implements OprMainVie
             $model->title,
             $model->sub,
             $model->label,
-            $model->image_path,
+            $model->image_path ? \Storage::disk('s3')->url($model->image_path) : null,
             $model->link_url,
             $model->sort_order,
             $model->is_active,
