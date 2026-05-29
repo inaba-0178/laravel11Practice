@@ -24,16 +24,12 @@ class ManufacturerListController extends Controller
             $ids = $request->get('ManufacturerIds');
             
             if (empty($ids)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'ManufacturerIdsパラメータが必要です',
-                ], 400);
+                // IDなし → 全件取得
+                $outputData = $this->useCase->executeAll();
+            } else {
+                $manufacturerIds = new ManufacturerIds($ids);
+                $outputData = $this->useCase->execute($manufacturerIds);
             }
-            
-            Log::info('ManufacturerIds received:', ['ids' => $ids]);
-            
-            $manufacturerIds = new ManufacturerIds($ids);
-            $outputData = $this->useCase->execute($manufacturerIds);
             
             return response()->json($outputData->toArray());
             

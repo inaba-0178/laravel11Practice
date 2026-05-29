@@ -17,6 +17,7 @@ enum NavigationSort :int
 
     //opr系
     case OPR_MAIL_TEMPLATE          = 1;
+    case OPR_MAIN_VIEW              = 2;
 
     // ディーラー管理系
     case DEALER_RESERVATION_LIST    = 1;

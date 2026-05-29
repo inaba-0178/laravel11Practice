@@ -32,4 +32,10 @@ class ManufacturerListUseCase
             throw new Exception('メーカー一覧データの取得に失敗しました: ' . $e->getMessage());
         }
     }
+
+    public function executeAll(): ManufacturerListOutputData
+    {
+        $manufacturers = $this->manufacturerRepository->findAll();
+        return new ManufacturerListOutputData($manufacturers);
+    }
 }

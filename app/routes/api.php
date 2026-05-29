@@ -63,6 +63,7 @@ use App\Presentation\Controllers\SelectDealerAffiliatedData\SelectDealerAffiliat
 use App\Presentation\Controllers\SelectDealerList\SelectDealerListController;
 use App\Presentation\Controllers\Maintenance\MaintenanceController;
 use App\Presentation\Controllers\OprMainViewLists\OprMainViewController;
+use App\Presentation\Controllers\ManufacturerListAll\ManufacturerListAllController;
 
 /*
 |--------------------------------------------------------------------------
@@ -151,6 +152,7 @@ Route::prefix('SelectBodyTypeLists')->group(function () {
 // Manufacturer関連のルート
 Route::prefix('Manufacturers')->group(function () {
     Route::get('/', ManufacturerListController::class)->name('Manufacturers.list');
+    Route::get('/All', ManufacturerListAllController::class)->name('Manufacturers.all');
 });
 
 // BodyTypeInfo関連のルート

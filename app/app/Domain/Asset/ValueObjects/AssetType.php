@@ -8,14 +8,16 @@ use InvalidArgumentException;
 
 final class AssetType
 {
-    public const STAFF   = 'staff';
-    public const CONTENT = 'content';
-    public const MEMBER  = 'member';
+    public const STAFF          = 'staff';
+    public const CONTENT        = 'content';
+    public const MEMBER         = 'member';
+    public const OPR_MAIN_VIEW  = 'opr_main_view';
 
     private const ALLOWED = [
         self::STAFF,
         self::CONTENT,
         self::MEMBER,
+        self::OPR_MAIN_VIEW,
     ];
 
     private readonly string $value;
@@ -48,5 +50,10 @@ final class AssetType
     public function isMember(): bool
     {
         return $this->value === self::MEMBER;
+    }
+
+    public function isOprMainView(): bool
+    {
+        return $this->value === self::OPR_MAIN_VIEW;
     }
 }

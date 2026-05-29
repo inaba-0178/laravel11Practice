@@ -39,10 +39,11 @@ final class UploadAssetUseCase
     private function resolvePath(AssetType $type, object $record, int $recordId): string
     {
         return match(true) {
-            $type->isStaff()   => 'staffs/' . $record->dealer_id . '/' . ($record->user_id ?? 'no_account'),
-            $type->isContent() => 'contents/' . $record->dealer_id,
-            $type->isMember()  => 'members/' . $recordId,
-            default            => 'assets/' . $recordId,
+            $type->isStaff()        => 'staffs/' . $record->dealer_id . '/' . ($record->user_id ?? 'no_account'),
+            $type->isContent()      => 'contents/' . $record->dealer_id,
+            $type->isMember()       => 'members/' . $recordId,
+            $type->isOprMainView()  => 'opr/main_views',
+            default                 => 'assets/' . $recordId,
         };
     }
 }

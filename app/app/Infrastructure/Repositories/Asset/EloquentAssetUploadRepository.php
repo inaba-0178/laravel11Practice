@@ -9,6 +9,7 @@ use App\Domain\Asset\Repositories\AssetUploadRepositoryInterface;
 use App\Domain\Asset\ValueObjects\AssetType;
 use App\Infrastructure\Eloquent\User\StkDealerStaff;
 use App\Infrastructure\Eloquent\User\StkDealerContent;
+use App\Infrastructure\Eloquent\Opr\OprMainView;
 
 class EloquentAssetUploadRepository implements AssetUploadRepositoryInterface
 {
@@ -17,6 +18,7 @@ class EloquentAssetUploadRepository implements AssetUploadRepositoryInterface
         return match(true) {
             $type->isStaff()   => StkDealerStaff::whereNull('deleted_at')->find($recordId),
             $type->isContent() => StkDealerContent::whereNull('deleted_at')->find($recordId),
+            $type->isOprMainView() => OprMainView::whereNull('deleted_at')->find($recordId),
             default            => null,
         };
     }
