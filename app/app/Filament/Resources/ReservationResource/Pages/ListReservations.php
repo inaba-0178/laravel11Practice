@@ -6,6 +6,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use App\Infrastructure\Eloquent\User\StkReservation;
+use Illuminate\Support\Facades\Auth;
 
 class ListReservations extends ListRecords
 {

@@ -6,6 +6,7 @@ use App\Domain\CreateReservation\Repositories\DealerScheduleRepositoryInterface;
 use App\Domain\CreateReservation\Entities\DealerSchedule;
 use App\Infrastructure\Eloquent\User\StkDealerSchedule;
 use App\Infrastructure\Repositories\BaseRepository;
+use Carbon\Carbon;
 
 class EloquentDealerScheduleRepository extends BaseRepository implements DealerScheduleRepositoryInterface
 {
@@ -33,7 +34,7 @@ class EloquentDealerScheduleRepository extends BaseRepository implements DealerS
             id                  : $model->id,
             dealerId            : $model->dealer_id,
             reservationTypeId   : $model->reservation_type_id,
-            date                : $model->date,
+            date                : Carbon::parse($model->date)->format('Y-m-d'),
             timeFrom            : $model->time_from,
             timeTo              : $model->time_to,
             maxReservations     : $model->max_reservations,

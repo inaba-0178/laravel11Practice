@@ -13,6 +13,10 @@ use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Auth;
 use Filament\Infolists\Components\Actions as InfolistActions;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
+use App\Infrastructure\Eloquent\Mst\MstCarSeries;
+use App\Application\Services\MailService;
+use App\Domain\Shared\Constants\MailTemplateKey;
+use Carbon\Carbon;
 
 class ViewReservation extends ViewRecord
 {
@@ -134,7 +138,7 @@ class ViewReservation extends ViewRecord
                             ->label('車両名')
                             ->getStateUsing(function ($record) {
                                 if (!$record->car) return '---';
-                                $series = \App\Infrastructure\Eloquent\Mst\MstCarSeries::find($record->car->series_id);
+                                $series = MstCarSeries::find($record->car->series_id);
                                 return $series ? $series->series_name : '---';
                             }),
 
@@ -193,8 +197,8 @@ class ViewReservation extends ViewRecord
                                 ]);
                                     $email = $this->getEmailAddress($record);
                                     if ($email) {
-                                        app(\App\Application\Services\MailService::class)->send(
-                                            templateKey:  \App\Domain\Shared\Constants\MailTemplateKey::RESERVATION_DENIAL,
+                                        app(MailService::class)->send(
+                                            templateKey:  MailTemplateKey::RESERVATION_DENIAL,
                                             toEmail:      $email,
                                             placeholders: $this->getPlaceholders($record),
                                         );
@@ -205,7 +209,7 @@ class ViewReservation extends ViewRecord
                         ->visible(fn($record) => 
                             $record->status === 'pending' &&
                             $record->schedule &&
-                            \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
+                            Carbon::parse($record->schedule->date->format('Y-m-d') . ' ' . $record->schedule->time_from)->isFuture()
                         ),
 
                     InfolistAction::make('approve_bottom')
@@ -220,9 +224,9 @@ class ViewReservation extends ViewRecord
                             if ($otherReservations->isEmpty()) return [];
 
                             $options = [
-                                $this->record->id => $this->record->schedule->date . ' ' . $this->record->schedule->time_from . ' ~ ' . $this->record->schedule->time_to . '（この予約）',
-                                    ...$otherReservations->mapWithKeys(fn($r) => [
-                                     $r->id => $r->schedule->date . ' ' . $r->schedule->time_from . ' ~ ' . $r->schedule->time_to
+                                $this->record->id => $this->record->schedule->date->format('Y-m-d') . ' ' . $this->record->schedule->time_from . ' ~ ' . $this->record->schedule->time_to . '（この予約）',
+                                ...$otherReservations->mapWithKeys(fn($r) => [
+                                    $r->id => $r->schedule->date->format('Y-m-d') . ' ' . $r->schedule->time_from . ' ~ ' . $r->schedule->time_to
                                 ])->toArray(),
                             ];
 
@@ -284,7 +288,7 @@ class ViewReservation extends ViewRecord
                         ->visible(fn($record) => 
                             $record->status === 'pending' &&
                             $record->schedule &&
-                            \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
+                            \Carbon\Carbon::parse($record->schedule->date->format('Y-m-d') . ' ' . $record->schedule->time_from)->isFuture()
                         ),
 
                     InfolistAction::make('dealer_trouble')
@@ -317,7 +321,7 @@ class ViewReservation extends ViewRecord
                         ->visible(fn($record) => 
                             $record->status === 'confirmed' &&
                             $record->schedule &&
-                            \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
+                            \Carbon\Carbon::parse($record->schedule->date->format('Y-m-d') . ' ' . $record->schedule->time_from)->isFuture()
                         ),
                     InfolistAction::make('dealer_car_sold')
                         ->label('車両成約によるキャンセル')
@@ -327,7 +331,7 @@ class ViewReservation extends ViewRecord
                         ->visible(fn($record) =>
                             $record->status === 'confirmed' &&
                             $record->schedule &&
-                            \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
+                            \Carbon\Carbon::parse($record->schedule->date->format('Y-m-d') . ' ' . $record->schedule->time_from)->isFuture()
                         )
                         ->requiresConfirmation()
                         ->modalHeading('問い合わせいただいた車両がすでにご成約が決まったためキャンセルしますか？')
@@ -363,7 +367,7 @@ class ViewReservation extends ViewRecord
                         ->visible(fn($record) =>
                             $record->status === 'confirmed' &&
                             $record->schedule &&
-                            \Carbon\Carbon::parse($record->schedule->date . ' ' . $record->schedule->time_from)->isFuture()
+                            \Carbon\Carbon::parse($record->schedule->date->format('Y-m-d') . ' ' . $record->schedule->time_from)->isFuture()
                         )
                         ->requiresConfirmation()
                         ->modalHeading('お客様都合でキャンセルしますか？')
@@ -414,7 +418,7 @@ class ViewReservation extends ViewRecord
             'dealer_name'      => $dealer?->name ?? '',
             'staff_name'       => $handledUser?->name ?? '',
             'reservation_date' => $record->schedule
-                ? $record->schedule->date . ' ' . $record->schedule->time_from . ' ～ ' . $record->schedule->time_to
+                ? $record->schedule->date->format('Y-m-d') . ' ' . $record->schedule->time_from . ' ～ ' . $record->schedule->time_to
                 : '',
             'reservation_type' => $record->reservationType?->name ?? '',
             'car_name'         => $record->car
