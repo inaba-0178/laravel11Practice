@@ -43,23 +43,4 @@ class EloquentBodyTypeImagesRepository extends BaseRepository implements BodyTyp
             $model->is_active,
         );
     }
-
-    /**
-     * DBに保存されたファイル名（例: suv.jpg）から
-     * MinIO/S3のフルURLを生成する
-     *
-     * DBには管理しやすいようファイル名のみ保存しており、
-     * テーブル名からS3フォルダパスを解決してURLを組み立てる
-     *
-     * 例: suv.jpg → http://localhost:9000/car-images/mst/body_types/suv.jpg
-     */
-    private function buildS3Url(string $tableName, string $filePath): string
-    {
-        if (empty($filePath)) return '';
-
-        $folder  = MstTableMap::getImageFolder($tableName);
-        $baseUrl = rtrim(config('filesystems.disks.s3.url'), '/');
-
-        return "{$baseUrl}/{$folder}{$filePath}";
-    }
 }

@@ -32,6 +32,7 @@ class StkDealerReview extends Model
 
     protected $casts = [
         'dealer_id'         => 'integer',
+        'member_id'         => 'integer',
         'rating'            => 'integer',
         'rating_service'    => 'integer',
         'rating_atmosphere' => 'integer',
