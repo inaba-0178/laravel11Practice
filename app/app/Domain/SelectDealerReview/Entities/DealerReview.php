@@ -9,7 +9,7 @@ final class DealerReview
     public function __construct(
         public readonly int                $id,
         public readonly int                $dealerId,
-        public readonly int                $memberId,
+        public readonly ?int               $memberId,
         public readonly int                $rating,
         public readonly ?string            $comment,
         public readonly ?DateTimeImmutable $createdAt,
@@ -17,7 +17,7 @@ final class DealerReview
 
     public function getId(): int { return $this->id; }
     public function getDealerId(): int { return $this->dealerId; }
-    public function getMemberId(): int { return $this->memberId; }
+    public function getMemberId(): ?int { return $this->memberId; }
     public function getRating(): int { return $this->rating; }
     public function getComment(): ?string { return $this->comment; }
     public function getCreatedAt(): ?DateTimeImmutable { return $this->createdAt; }

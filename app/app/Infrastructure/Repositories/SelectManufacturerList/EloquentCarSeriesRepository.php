@@ -5,7 +5,6 @@ use App\Domain\SelectManufacturerList\Entities\CarSerie;
 use App\Domain\SelectManufacturerList\Repositories\CarSerieRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstCarSeries;
 use App\Infrastructure\Repositories\BaseRepository;
-use App\Constants\MstTableMap;
 
 class EloquentCarSeriesRepository extends BaseRepository implements CarSerieRepositoryInterface
 {
@@ -39,19 +38,4 @@ class EloquentCarSeriesRepository extends BaseRepository implements CarSerieRepo
         );
     }
 
-    /**
-     * DBに保存されたファイル名（例: LEXUS/ct.jpg）から
-     * MinIO/S3のフルURLを生成する
-     *
-     * 例: LEXUS/ct.jpg → http://localhost:9000/car-images/mst/car_series/LEXUS/ct.jpg
-     */
-    private function buildS3Url(string $tableName, string $filePath): string
-    {
-        if (empty($filePath)) return '';
-
-        $folder  = MstTableMap::getImageFolder($tableName);
-        $baseUrl = rtrim((string) config('filesystems.disks.s3.url'), '/');
-
-        return "{$baseUrl}/{$folder}{$filePath}";
-    }
 }
