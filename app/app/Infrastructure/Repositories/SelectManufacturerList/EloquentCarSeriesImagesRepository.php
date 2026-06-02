@@ -44,22 +44,4 @@ class EloquentCarSeriesImagesRepository extends BaseRepository implements CarSer
         );
     }
 
-    /**
-     * DBに保存されたファイル名（例: LEXUS/ct.jpg）から
-     * MinIO/S3のフルURLを生成する
-     *
-     * DBには管理しやすいようファイル名のみ保存しており、
-     * テーブル名からS3フォルダパスを解決してURLを組み立てる
-     *
-     * 例: LEXUS/ct.jpg → http://localhost:9000/car-images/mst/car_series/LEXUS/ct.jpg
-     */
-    private function buildS3Url(string $tableName, string $filePath): string
-    {
-        if (empty($filePath)) return '';
-
-        $folder  = MstTableMap::getImageFolder($tableName);
-        $baseUrl = rtrim((string) config('filesystems.disks.s3.url'), '/');
-
-        return "{$baseUrl}/{$folder}{$filePath}";
-    }
 }
