@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Exception;
 use App\Domain\CreateReservation\Exceptions\PastTimeException;
+use App\Infrastructure\Eloquent\User\UsrUser;
 
 class CreateReservationController extends Controller
 {
@@ -49,6 +50,23 @@ class CreateReservationController extends Controller
                 }
             }
 
+            // 会員の場合はUsrUserから情報を取得
+            $guestName    = $validated['guest_name'] ?? null;
+            $guestPhone   = $validated['guest_phone'] ?? null;
+            $guestEmail   = $validated['guest_email'] ?? null;
+            $guestAddress = $validated['guest_address'] ?? null;
+
+            if ($memberId) {
+                $user = UsrUser::find($memberId);
+                if ($user) {
+                    $guestName    = $user->full_name;
+                    $guestPhone   = $user->phone_number;
+                    $guestEmail   = $user->email;
+                    $guestAddress = $user->prefecture . $user->city . $user->address_line1;
+                }
+            }
+
+
             $reservationData = new ReservationData(
                 dealerId          : (int)$validated['dealer_id'],
                 carId             : (int)$validated['car_id'],
@@ -57,10 +75,10 @@ class CreateReservationController extends Controller
                 scheduleId        : (int)$validated['schedule_id'],
                 maxReservations   : (int)$validated['max_reservations'],
                 memo              : $validated['memo'] ?? null,
-                guestName         : $validated['guest_name'] ?? null,
-                guestPhone        : $validated['guest_phone'] ?? null,
-                guestEmail        : $validated['guest_email'] ?? null,
-                guestAddress      : $validated['guest_address'] ?? null,
+                guestName         : $guestName,
+                guestPhone        : $guestPhone,
+                guestEmail        : $guestEmail,
+                guestAddress      : $guestAddress,
             );
 
             $outputData = $this->useCase->execute($reservationData);

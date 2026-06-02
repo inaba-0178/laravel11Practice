@@ -79,6 +79,10 @@ class ReservationResource extends Resource
                 TextColumn::make('guest_name')
                     ->label('お名前')
                     ->formatStateUsing(function ($state, $record) {
+                        \Log::info('member check', [
+                            'member_id' => $record->member_id,
+                            'member'    => $record->member?->full_name,
+                        ]);
                         if ($record->member) {
                             return $record->member->full_name;
                         }
