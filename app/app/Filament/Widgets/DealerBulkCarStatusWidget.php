@@ -7,12 +7,13 @@ use App\Infrastructure\Eloquent\User\StkCar;
 use App\Constants\CarStatus;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Auth;
+use App\Constants\DashboardLayout;
 
 class DealerBulkCarStatusWidget extends Widget
 {
-    protected static string $view = 'filament.widgets.dealer-bulk-car-status-widget';
-    protected static ?int $sort = 2;
-    protected int | string | array $columnSpan = 4;
+    protected static string         $view       = 'filament.widgets.dealer-bulk-car-status-widget';
+    protected static ?int           $sort       = DashboardLayout::SORT_BULK_CAR_STATUS;
+    protected int | string | array  $columnSpan = DashboardLayout::SPAN_BULK_CAR_STATUS;
 
     // 最大表示件数（変更する場合はここを修正）
     const MAX_DISPLAY = 100;

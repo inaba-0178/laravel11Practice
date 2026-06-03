@@ -12,13 +12,19 @@ use Carbon\Carbon;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
+use App\Constants\DashboardLayout;
 
 class DealerReservationCalendarWidget extends Widget
 {
-    protected static string $view = 'filament.widgets.dealer-reservation-calendar-widget';
-    protected static ?int $sort = 3;
-    protected int | string | array $columnSpan = 8;
-    protected int | string | array $columnStart = [];
+    protected static string         $view           = 'filament.widgets.dealer-reservation-calendar-widget';
+    protected static ?int           $sort           = DashboardLayout::SORT_CALENDAR;
+    protected int | string | array  $columnSpan     = DashboardLayout::SPAN_CALENDAR;
+    protected int | string | array  $columnStart    = [];
+
+    public function getColumnStart(): int | string | array
+    {
+        return DashboardLayout::START_CALENDAR;
+    }
 
     public static function canView(): bool
     {

@@ -50,7 +50,11 @@
                                 $rowClass    = $isRejected ? 'is-rejected' : ($isApproved ? 'is-approved' : '');
                                 $statusClass = $isRejected ? 'is-danger' : ($isApproved ? 'is-success' : 'is-warning');
                             @endphp
-                            <tr class="dbs-table__row {{ $rowClass }}">
+                            <tr
+                                class="dbs-table__row {{ $rowClass }}"
+                                onclick="window.location.href='{{ $batch['detailUrl'] }}'"
+                                style="cursor: pointer;"
+                            >
                                 <td class="dbs-table__td">{{ $batch['updatedAt'] ?? '---' }}</td>
                                 <td class="dbs-table__td">
                                     <span class="dbs-badge dbs-badge--{{ $statusClass }}">
@@ -134,6 +138,7 @@
             max-height: 300px;
             border: 1px solid #374151; /* ← 枠線追加 */
             border-radius: 8px;        /* ← 角丸追加 */
+            max-height: calc(10 * 41px);
         }
         .dbs-table {
             width: 100%;
@@ -154,6 +159,7 @@
         .dbs-table__row {
             border-bottom: 1px solid #1a1a2e;
             transition: background 0.1s;
+            cursor: pointer;
         }
         .dbs-table__row:hover       { background: #1f2937; }
         .dbs-table__row.is-rejected { background: rgba(239,68,68,0.08); }
