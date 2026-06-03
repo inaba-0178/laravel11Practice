@@ -32,7 +32,7 @@ class DealerBulkCarStatusWidget extends Widget
         return [
             'total'    => $batches->count(),
             'pending'  => $batches->filter(fn($b) => $b->pending_count > 0)->count(),
-            'rejected' => $batches->filter(fn($b) => $b->rejected_count > 0 && $b->pending_count === 0)->count(),
+            'rejected' => $batches->filter(fn($b) => $b->rejected_count > 0)->count(),
         ];
     }
 
