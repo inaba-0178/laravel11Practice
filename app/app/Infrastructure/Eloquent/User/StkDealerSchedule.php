@@ -28,7 +28,7 @@ class StkDealerSchedule extends Model
     ];
 
     protected $casts = [
-        'date'             => 'date',
+        'date'             => 'date:Y-m-d',
         'is_available'     => 'boolean',
         'is_closed'        => 'boolean',
         'max_reservations' => 'integer',

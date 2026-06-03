@@ -6,6 +6,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use App\Infrastructure\Eloquent\User\StkReservation;
+use Illuminate\Support\Facades\Auth;
 
 class ListReservations extends ListRecords
 {
@@ -30,12 +31,7 @@ class ListReservations extends ListRecords
             $query->where('stk_reservations.dealer_id', $user->dealer_id);
         }
 
-        return $query
-            ->with(['schedule', 'car', 'member'])
-            ->join('stk_dealer_schedules', 'stk_reservations.schedule_id', '=', 'stk_dealer_schedules.id')
-            ->orderBy('stk_dealer_schedules.date', 'asc')
-            ->orderBy('stk_dealer_schedules.time_from', 'asc')
-            ->select('stk_reservations.*');
+        return $query->with(['schedule', 'car', 'member', 'dealer']);
     }
 
     // タブで未来・過去を切り替え

@@ -8,6 +8,7 @@ use App\Infrastructure\Eloquent\User\StkDealerSchedule;
 use App\Infrastructure\Repositories\BaseRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 
 class EloquentDealerScheduleRepository extends BaseRepository implements DealerScheduleRepositoryInterface
 {
@@ -32,6 +33,7 @@ class EloquentDealerScheduleRepository extends BaseRepository implements DealerS
             ->where('stk_dealer_schedules.dealer_id', $dealerId)
             ->where('stk_dealer_schedules.reservation_type_id', $reservationTypeId)
             ->where('stk_dealer_schedules.is_available', 1)
+            ->whereNot('stk_dealer_schedules.is_closed', 1)
             ->whereRaw("DATE_FORMAT(stk_dealer_schedules.date, '%Y-%m') = ?", [$month])
             ->where('stk_dealer_schedules.date', '>=', now()->toDateString())
             ->groupBy(
@@ -43,8 +45,11 @@ class EloquentDealerScheduleRepository extends BaseRepository implements DealerS
                 'stk_dealer_schedules.time_to',
                 'stk_dealer_schedules.max_reservations',
                 'stk_dealer_schedules.is_available',
+                'stk_dealer_schedules.is_closed',
                 'stk_dealer_schedules.created_at',
                 'stk_dealer_schedules.updated_at',
+                'stk_dealer_schedules.deleted_at',
+                'stk_dealer_schedules.delete_reason',
             )
             ->orderBy('stk_dealer_schedules.date')
             ->orderBy('stk_dealer_schedules.time_from')
@@ -59,7 +64,7 @@ class EloquentDealerScheduleRepository extends BaseRepository implements DealerS
             id                  : $model->id,
             dealerId            : $model->dealer_id,
             reservationTypeId   : $model->reservation_type_id,
-            date                : $model->date,
+            date                : Carbon::parse($model->date)->format('Y-m-d'),
             timeFrom            : $model->time_from,
             timeTo              : $model->time_to,
             maxReservations     : $model->max_reservations,
