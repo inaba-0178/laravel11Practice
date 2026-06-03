@@ -18,6 +18,7 @@ class DealerReservationCalendarWidget extends Widget
     protected static string $view = 'filament.widgets.dealer-reservation-calendar-widget';
     protected static ?int $sort = 3;
     protected int | string | array $columnSpan = 8;
+    protected int | string | array $columnStart = [];
 
     public static function canView(): bool
     {
