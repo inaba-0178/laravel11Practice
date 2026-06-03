@@ -4,6 +4,8 @@ namespace App\Infrastructure\Eloquent\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
+use App\Infrastructure\Eloquent\Opr\OprReservationTypes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StkReservation extends Model
 {
@@ -70,5 +72,10 @@ class StkReservation extends Model
     public function response()
     {
         return $this->hasOne(StkReservationResponse::class, 'reservation_id');
+    }
+
+    public function reservationType(): BelongsTo
+    {
+        return $this->belongsTo(OprReservationTypes::class, 'reservation_type_id');
     }
 }
