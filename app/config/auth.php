@@ -34,15 +34,14 @@ return [
     | Supported: "session"
     |
     */
-
     'guards' => [
         'web' => [
-            'driver' => 'session',
+            'driver'   => 'session',
             'provider' => 'users',
         ],
         'members' => [
-            'driver' => 'eloquent',
-            'model'  => App\Infrastructure\Eloquent\User\UsrUser::class,
+            'driver'   => 'sanctum',
+            'provider' => 'members', // ← 追加
         ],
     ],
 
@@ -70,7 +69,7 @@ return [
         ],
         'members' => [
             'driver' => 'eloquent',
-            'model'  => App\Infrastructure\Eloquent\User\Member::class,
+            'model'  => App\Infrastructure\Eloquent\User\UsrUser::class,
         ],
 
         // 'users' => [

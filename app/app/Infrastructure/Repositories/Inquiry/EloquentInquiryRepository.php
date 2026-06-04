@@ -18,6 +18,7 @@ class EloquentInquiryRepository
             'status'       => 'new',
             'inquiry_type' => $data->inquiryType->getValue(),
             'name'         => $data->name?->getValue(),
+            'nickname'     => $data->nickname?->getValue(),
             'email'        => $data->email?->getValue(),
             'phone'        => $data->phone?->getValue(),
             'postal_code'  => $data->postalCode?->getValue(),

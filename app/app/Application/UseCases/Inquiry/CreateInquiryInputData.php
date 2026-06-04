@@ -8,6 +8,7 @@ use App\Domain\Inquiry\ValueObjects\DealerId;
 use App\Domain\Inquiry\ValueObjects\CarId;
 use App\Domain\Inquiry\ValueObjects\InquiryType;
 use App\Domain\Inquiry\ValueObjects\InquiryName;
+use App\Domain\Inquiry\ValueObjects\InquiryNickname;
 use App\Domain\Inquiry\ValueObjects\InquiryEmail;
 use App\Domain\Inquiry\ValueObjects\InquiryPhone;
 use App\Domain\Inquiry\ValueObjects\InquiryPostalCode;
@@ -21,6 +22,7 @@ final class CreateInquiryInputData
         public readonly InquiryType        $inquiryType,
         public readonly ?string            $memberId,
         public readonly ?InquiryName       $name,
+        public readonly ?InquiryNickname   $nickname,
         public readonly ?InquiryEmail      $email,
         public readonly ?InquiryPhone      $phone,
         public readonly ?InquiryPostalCode $postalCode,
