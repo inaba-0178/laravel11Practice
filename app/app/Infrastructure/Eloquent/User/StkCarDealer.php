@@ -9,10 +9,12 @@ use App\Infrastructure\Eloquent\User\StkDealerLoanPlan;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Constants\AffiliatedStoreStatus;
+use Illuminate\Notifications\Notifiable;
 
 class StkCarDealer extends Model
 {
     use SoftDeletes;
+    use Notifiable;
 
     protected $connection = 'user';
     protected $table      = 'stk_car_dealers';

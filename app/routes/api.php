@@ -64,6 +64,7 @@ use App\Presentation\Controllers\SelectDealerList\SelectDealerListController;
 use App\Presentation\Controllers\Maintenance\MaintenanceController;
 use App\Presentation\Controllers\OprMainViewLists\OprMainViewController;
 use App\Presentation\Controllers\ManufacturerListAll\ManufacturerListAllController;
+use App\Presentation\Controllers\Inquiry\CreateInquiryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -285,3 +286,6 @@ Route::get('/SelectDealerList', SelectDealerListController::class);
 Route::get('/Maintenance/status', [MaintenanceController::class, 'status']);
 
 Route::get('/MainViewList', [OprMainViewController::class, 'index']);
+
+//問い合わせ
+Route::post('/Inquiry/create', CreateInquiryController::class);
