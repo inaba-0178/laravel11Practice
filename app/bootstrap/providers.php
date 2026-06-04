@@ -69,4 +69,5 @@ return [
     App\Providers\OprTopViewListsServiceProvider::class,
     App\Providers\ManufacturerListAllServiceProvider::class,
     App\Providers\InquiryServiceProvider::class,
+    App\Providers\AnalyticsServiceProvider::class,
 ];
