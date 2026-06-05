@@ -66,6 +66,7 @@ use App\Presentation\Controllers\OprMainViewLists\OprMainViewController;
 use App\Presentation\Controllers\ManufacturerListAll\ManufacturerListAllController;
 use App\Presentation\Controllers\Inquiry\CreateInquiryController;
 use App\Presentation\Controllers\Analytics\RecordViewCountController;
+use App\Presentation\Controllers\DealerAnalytics\DealerAnalyticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -293,3 +294,5 @@ Route::post('/Inquiry/create', CreateInquiryController::class);
 
 Route::post('/Analytics/recordView', RecordViewCountController::class);
 Route::get('/Analytics/viewDelay',   [RecordViewCountController::class, 'getDelay']);
+
+Route::get('/Analytics/dealer', DealerAnalyticsController::class)->middleware('auth');
