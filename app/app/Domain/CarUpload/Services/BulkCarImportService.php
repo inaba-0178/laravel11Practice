@@ -6,7 +6,7 @@ namespace App\Domain\CarUpload\Services;
 
 use App\Domain\CarUpload\DataTransformers\BulkCarRowTransformer;
 use App\Infrastructure\Eloquent\User\StkCar;
-use App\Infrastructure\Eloquent\User\StkCarDetails;
+use App\Infrastructure\Eloquent\User\StkCarDetail;
 use App\Infrastructure\Eloquent\User\StkCarOptions;
 use App\Constants\CarStatus;
 use App\Models\User;
@@ -223,7 +223,7 @@ class BulkCarImportService
         // stk_car_details登録
         $detailData           = $this->transformer->transformDetailData($row);
         $detailData['car_id'] = $car->id;
-        StkCarDetails::create($detailData);
+        StkCarDetail::create($detailData);
 
         // stk_car_options登録
         $options = $this->transformer->transformOptionsData($row);

@@ -10,6 +10,7 @@ use App\Infrastructure\Eloquent\Mst\MstVehicleYearVersions;
 use App\Domain\Common\Constants\InsuranceConstants;
 use App\Domain\Common\Constants\TaxConstants;
 use Illuminate\Support\Collection;
+use App\Infrastructure\Eloquent\Mst\MstVehicleTax;
 
 class TotalPriceCalculator
 {
@@ -72,7 +73,8 @@ class TotalPriceCalculator
         // 自賠責保険料
         $liabilityInsurance = $this->resolveLiabilityInsurance($car, $vehicleType);
 
-        return $recycleFee + $dealerTotal + $weightTax + $liabilityInsurance;
+        $vehicleTax = $this->resolveVehicleTax($car);
+        return $recycleFee + $dealerTotal + $weightTax + $liabilityInsurance + $vehicleTax;
     }
 
     /**
@@ -90,7 +92,7 @@ class TotalPriceCalculator
     /**
      * 軽自動車判定
      */
-    private function isLightVehicle(?int $bodyTypeId): bool
+    public function isLightVehicle(?int $bodyTypeId): bool
     {
         if (!$bodyTypeId) return false;
         $bodyType = MstBodyTypes::find($bodyTypeId);
@@ -100,7 +102,7 @@ class TotalPriceCalculator
     /**
      * 自動車重量税を解決
      */
-    private function resolveWeightTax(object $car, bool $isLight): int
+    public function resolveWeightTax(object $car, bool $isLight): int
     {
         if (!$car->vehicle_id || !$car->model_year) return 0;
 
@@ -111,27 +113,48 @@ class TotalPriceCalculator
 
         if (!$version?->weight_kg) return 0;
 
-        $tax = $this->repository->findWeightTax((int)$version->weight_kg, $isLight);
-        return (int)($tax?->amount ?? 0);
+        $tax = app(DealerFeeRepositoryInterface::class)
+            ->findWeightTax((int) $version->weight_kg, $isLight);
+
+        return (int) ($tax?->amount ?? 0);
     }
 
     /**
      * 自賠責保険料を解決
      */
-    private function resolveLiabilityInsurance(object $car, string $vehicleType): int
+    public function resolveLiabilityInsurance(object $car, string $vehicleType): int
     {
         $inspectionExpire = $car->detail?->inspection_expire_date;
 
         if ($inspectionExpire) {
-            $months = (int) now()->diffInMonths($inspectionExpire, false);
-            $months = max(0, $months);
+            $months = max(0, (int) now()->diffInMonths($inspectionExpire, false));
         } else {
             $months = InsuranceConstants::DEFAULT_LIABILITY_MONTHS;
         }
 
         if ($months === 0) return 0;
 
-        $insurance = $this->repository->findLiabilityInsurance($vehicleType, $months);
-        return (int)($insurance?->amount ?? 0);
+        $insurance = app(DealerFeeRepositoryInterface::class)
+            ->findLiabilityInsurance($vehicleType, $months);
+
+        return (int) ($insurance?->amount ?? 0);
+    }
+
+    public function resolveVehicleTax(object $car): int
+    {
+        $displacement = $car->detail?->displacement;
+        if (!$displacement) return 0;
+
+        $isLight = $this->isLightVehicle($car->body_type_id);
+
+        $tax = MstVehicleTax::whereHas('displacementList', function ($q) use ($displacement) {
+            $q->where('min_amount', '<=', $displacement)
+            ->where(function ($q2) use ($displacement) {
+                $q2->where('max_amount', '>=', $displacement)
+                    ->orWhere('is_unlimited', 1);
+            });
+        })->where('is_light', $isLight)->first();
+
+        return (int) ($tax?->amount ?? 0);
     }
 }

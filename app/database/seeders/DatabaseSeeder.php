@@ -40,6 +40,7 @@ use Database\Seeders\Mst\MstDetailOptionSeeder;
 use Database\Seeders\Mst\MstPriceListsSeeder;
 use Database\Seeders\Mst\MstDisplacementListsSeeder;
 use Database\Seeders\Mst\MstRidingCapacityListsSeeder;
+use Database\Seeders\Mst\MstVehicaleTextsSeeder;
 
 
 class DatabaseSeeder extends Seeder
@@ -94,8 +95,10 @@ class DatabaseSeeder extends Seeder
             // MstBodyTypeImagesSeeder::class,
             //StkDealerFeeSeeder::class,
 
-            MstFeaturedBrandsSeeder::class,
+            //MstFeaturedBrandsSeeder::class,
             //MstFeaturedBodyTypesSeeder::class,
+
+            MstVehicaleTextsSeeder::class,
         ]);
     }
 }

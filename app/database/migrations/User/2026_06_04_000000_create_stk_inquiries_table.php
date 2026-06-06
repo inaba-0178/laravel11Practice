@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('dealer_id')->comment('ディーラーID');
             $table->unsignedBigInteger('car_id')->comment('車両ID');
             $table->string('member_id', 36)->nullable()->comment('会員ID（未ログイン時はNULL）');
-            $table->enum('status', ['new', 'replied', 'closed'])->default('new')->comment('ステータス');
+            $table->enum('status', ['new', 'replied', 'closed', 'phone_replied'])->default('new')->comment('ステータス');
             $table->enum('inquiry_type', [
                 'stock_check',
                 'estimate',

@@ -6,7 +6,7 @@ namespace App\Filament\Resources\CarRegistrationResource\Pages;
 
 use App\Filament\Resources\CarRegistrationResource;
 use App\Infrastructure\Eloquent\User\StkCar;
-use App\Infrastructure\Eloquent\User\StkCarDetails;
+use App\Infrastructure\Eloquent\User\StkCarDetail;
 use App\Infrastructure\Eloquent\User\StkCarOptions;
 use App\Infrastructure\Eloquent\Mst\MstEquipmentSafety;
 use App\Infrastructure\Eloquent\Mst\MstEquipmentBasic;
@@ -154,7 +154,7 @@ class CreateCarRegistration extends CreateRecord
             ]);
 
             // ===== stk_car_details 登録 =====
-            StkCarDetails::create([
+            StkCarDetail::create([
                 'car_id'                  => $car->id,
                 'first_registration_date' => $data['first_registration_date'] ?? null,
                 'inspection_expire_date'  => $data['inspection_expire_date'] ?? null,

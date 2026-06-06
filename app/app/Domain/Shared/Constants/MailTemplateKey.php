@@ -12,10 +12,12 @@ final class MailTemplateKey
     public const RESERVATION_CANCELLED_CUSTOMER         = 'reservation_cancelled_customer';
     public const RESERVATION_CANCELLED_DEALER_TROUBLE   = 'reservation_cancelled_dealer_trouble';
     // 車両登録承認：ディーラー担当者へ
-    public const CAR_REGISTRATION_APPROVED_DEALER              = 'car_registration_approved_dealer';
+    public const CAR_REGISTRATION_APPROVED_DEALER       = 'car_registration_approved_dealer';
     // 車両登録差し戻し：ディーラー担当者へ
-    public const CAR_REGISTRATION_REJECTED_DEALER              = 'car_registration_rejected_dealer';
+    public const CAR_REGISTRATION_REJECTED_DEALER       = 'car_registration_rejected_dealer';
 
-    public const USER_CREATED = 'user_created';
+    public const USER_CREATED                           = 'user_created';
 
+    // 問い合わせ返答：問い合わせ者へ
+    public const INQUIRY_REPLIED                        = 'inquiry_replied';
 }

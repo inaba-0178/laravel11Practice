@@ -65,7 +65,7 @@ class StkCar extends Model
 
     public function detail()
     {
-        return $this->hasOne(StkCarDetails::class, 'car_id');
+        return $this->hasOne(StkCarDetail::class, 'car_id');
     }
 
     public function images()
