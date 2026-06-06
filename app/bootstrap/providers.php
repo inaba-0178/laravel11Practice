@@ -70,4 +70,5 @@ return [
     App\Providers\ManufacturerListAllServiceProvider::class,
     App\Providers\InquiryServiceProvider::class,
     App\Providers\AnalyticsServiceProvider::class,
+    App\Providers\EstimateServiceProvider::class,
 ];

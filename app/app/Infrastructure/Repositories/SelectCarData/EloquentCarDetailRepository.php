@@ -4,12 +4,12 @@ namespace App\Infrastructure\Repositories\SelectCarData;
 use App\Domain\SelectCarData\Repositories\CarDetailRepositoryInterface;
 use App\Domain\SelectCarData\Entities\CarDetail;
 use App\Domain\SelectCarData\Exceptions\CarNotFoundException;
-use App\Infrastructure\Eloquent\User\StkCarDetails;
+use App\Infrastructure\Eloquent\User\StkCarDetail;
 use App\Infrastructure\Repositories\BaseRepository;
 
 class EloquentCarDetailRepository extends BaseRepository implements CarDetailRepositoryInterface
 {
-    public function __construct(StkCarDetails $model)
+    public function __construct(StkCarDetail $model)
     {
         parent::__construct($model);
     }
@@ -30,7 +30,7 @@ class EloquentCarDetailRepository extends BaseRepository implements CarDetailRep
         return $this->toEntity($carDetail);
     }
 
-    private function toEntity(StkCarDetails $model): CarDetail
+    private function toEntity(StkCarDetail $model): CarDetail
     {
         return new CarDetail(
             id                      : $model->id,

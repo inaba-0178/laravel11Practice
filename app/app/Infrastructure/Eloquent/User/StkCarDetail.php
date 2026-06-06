@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Infrastructure\Eloquent\User\StkDealerReview;
 
-class StkCarDetails extends Model
+class StkCarDetail extends Model
 {
     use HasFactory;
 
