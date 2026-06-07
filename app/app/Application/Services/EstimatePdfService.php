@@ -201,4 +201,12 @@ class EstimatePdfService
             $estimate->estimate_number,
         );
     }
+
+    /**
+     * PDFのバイナリデータを返す（メール添付用）
+     */
+    public function generateContent(StkEstimate $estimate): string
+    {
+        return $this->generate($estimate)->output();
+    }
 }

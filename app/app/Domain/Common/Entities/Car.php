@@ -105,8 +105,10 @@ final class Car
             'body_type_id'  => $this->bodyTypeId,
             'recycle_fee'   => $this->recycleFee,
             'dealer_fee_id' => $this->dealerFeeId,
+            'is_light'      => false,
             'detail'        => (object)[
                 'inspection_expire_date' => $this->inspectionExpireDate,
+                'displacement'           => $this->displacement,
             ],
         ];
     }

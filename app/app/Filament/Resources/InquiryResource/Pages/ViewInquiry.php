@@ -22,9 +22,13 @@ use Illuminate\Support\Facades\Storage;
 use App\Application\Services\MailService;
 use App\Domain\Shared\Constants\MailTemplateKey;
 use App\Constants\TaxConstants;
+use Illuminate\Mail\Mailables\Attachment;
+use Livewire\WithFileUploads;
 
 class ViewInquiry extends Page
 {
+    use WithFileUploads;
+
     protected static string $resource = InquiryResource::class;
     protected static string $view     = 'filament.pages.inquiry-view';
 
@@ -62,6 +66,18 @@ class ViewInquiry extends Page
 
     /** 値引き種別（tax_excluded=税抜き・tax_included=税込み） */
     public string $discountType = 'tax_excluded';
+
+    /** 送信確認モーダル表示フラグ */
+    public bool $showReplyConfirm = false;
+
+    /** 添付ファイル（見積PDF） */
+    public ?StkEstimate $attachedEstimate = null;
+
+    /** 追加添付ファイル（ドラッグ&ドロップ） */
+    public array $uploadedAttachments = [];
+
+    /** 一時アップロードファイル */
+    public $tempAttachment = null;
 
     public function getTitle(): string
     {
@@ -290,6 +306,9 @@ class ViewInquiry extends Page
 
         $output = $useCase->execute($data);
 
+        // 見積を添付にセット
+        $this->attachedEstimate = $output->estimate;
+
         Notification::make()->title('見積を作成しました')->success()->send();
 
         // PDFダウンロード
@@ -367,6 +386,24 @@ class ViewInquiry extends Page
         $toEmail = $this->getReplyToEmail();
         if (!$toEmail) return;
 
+        $attachments = [];
+
+        // 見積PDF添付
+        if ($this->attachedEstimate) {
+            $pdfContent = app(EstimatePdfService::class)->generateContent($this->attachedEstimate);
+            $attachments[] = Attachment::fromData(
+                fn() => $pdfContent,
+                "見積書_{$this->attachedEstimate->estimate_number}.pdf"
+            )->withMime('application/pdf');
+        }
+
+        // アップロードファイル添付
+        foreach ($this->uploadedAttachments as $file) {
+            $attachments[] = Attachment::fromStorage($file['path'])
+                ->as($file['name'])
+                ->withMime($file['mime']);
+        }
+
         try {
             app(MailService::class)->send(
                 templateKey:  MailTemplateKey::INQUIRY_REPLIED,
@@ -377,6 +414,7 @@ class ViewInquiry extends Page
                     'reply'         => $this->replyText,
                     'dealer_name'   => $this->record->dealer?->name ?? '',
                 ],
+                attachments: $attachments,
             );
         } catch (\Throwable $e) {
             \Log::error('Inquiry reply mail error', ['error' => $e->getMessage()]);
@@ -439,5 +477,63 @@ class ViewInquiry extends Page
         $accessoriesTotal = collect($this->accessories)->sum(fn($a) => (int)($a['price'] ?? 0));
 
         return $priceWithTax + $misc + $accessoriesTotal;
+    }
+
+    /** 見積添付を外す */
+    public function removeEstimateAttachment(): void
+    {
+        $this->attachedEstimate = null;
+    }
+
+    /** ファイルがアップロードされたら一時保存 */
+    public function updatedTempAttachment(): void
+    {
+        if ($this->tempAttachment) {
+            // 一時ディレクトリに保存してパスを記録
+            $path = $this->tempAttachment->store('temp-attachments', 'local');
+            $this->uploadedAttachments[] = [
+                'path' => $path,
+                'name' => $this->tempAttachment->getClientOriginalName(),
+                'mime' => $this->tempAttachment->getMimeType(),
+            ];
+            $this->tempAttachment = null;
+        }
+    }
+
+    /** アップロードファイルを削除 */
+    public function removeUploadedAttachment(int $index): void
+    {
+        // 一時ファイルも削除
+        if (isset($this->uploadedAttachments[$index])) {
+            \Storage::disk('local')->delete($this->uploadedAttachments[$index]['path']);
+        }
+        array_splice($this->uploadedAttachments, $index, 1);
+    }
+
+    /** 送信確認モーダルを開く */
+    public function openReplyConfirm(): void
+    {
+        if (empty(trim($this->replyText))) {
+            Notification::make()->title('返答内容を入力してください')->danger()->send();
+            return;
+        }
+        $this->showReplyConfirm = true;
+    }
+
+    /** 送信確認モーダルから送信 */
+    public function confirmAndSendReply(): void
+    {
+        $this->sendReplyMail();
+
+        $this->record->update([
+            'reply'      => $this->replyText,
+            'status'     => InquiryStatus::REPLIED,
+            'replied_at' => now(),
+            'replied_by' => Auth::id(),
+        ]);
+
+        $this->showReplyConfirm = false;
+        Notification::make()->title('返信しました')->success()->send();
+        $this->redirect(ListInquiries::getUrl());
     }
 }

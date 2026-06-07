@@ -17,6 +17,7 @@ final class CommonMail extends Mailable
     public function __construct(
         private readonly string $mailSubject,
         private readonly string $body,
+        private readonly array  $mailAttachments = [],  // ← 名前変更
     ) {}
 
     public function envelope(): Envelope
@@ -34,5 +35,10 @@ final class CommonMail extends Mailable
                 'body' => $this->body,
             ],
         );
+    }
+
+    public function attachments(): array
+    {
+        return $this->mailAttachments;  // ← 名前変更
     }
 }

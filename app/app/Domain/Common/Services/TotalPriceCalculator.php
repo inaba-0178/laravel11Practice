@@ -10,6 +10,7 @@ use App\Infrastructure\Eloquent\Mst\MstVehicleYearVersions;
 use App\Domain\Common\Constants\InsuranceConstants;
 use App\Domain\Common\Constants\TaxConstants;
 use Illuminate\Support\Collection;
+use App\Infrastructure\Eloquent\Mst\MstDisplacementList;
 use App\Infrastructure\Eloquent\Mst\MstVehicleTax;
 
 class TotalPriceCalculator
@@ -142,19 +143,30 @@ class TotalPriceCalculator
 
     public function resolveVehicleTax(object $car): int
     {
-        $displacement = $car->detail?->displacement;
-        if (!$displacement) return 0;
+        $displacement = $car->detail?->displacement ?? $car->displacement ?? null;
+        $isLight      = $car->is_light ?? false;
 
-        $isLight = $this->isLightVehicle($car->body_type_id);
+        if (!$displacement) {
+            return 0;
+        }
 
-        $tax = MstVehicleTax::whereHas('displacementList', function ($q) use ($displacement) {
-            $q->where('min_amount', '<=', $displacement)
-            ->where(function ($q2) use ($displacement) {
-                $q2->where('max_amount', '>=', $displacement)
-                    ->orWhere('is_unlimited', 1);
-            });
-        })->where('is_light', $isLight)->first();
+        // 排気量からdisplacement_list_idを取得
+        $displacementList = MstDisplacementList::where('min_amount', '<=', $displacement)
+            ->where(function ($q) use ($displacement) {
+                $q->where('max_amount', '>=', $displacement)
+                ->orWhere('is_unlimited', 1);
+            })
+            ->first();
 
-        return (int) ($tax?->amount ?? 0);
+        if (!$displacementList) {
+            return 0;
+        }
+
+        // displacement_list_idとis_lightで自動車税を取得
+        $tax = MstVehicleTax::where('displacement_list_id', $displacementList->id)
+            ->where('is_light', $isLight ? 1 : 0)
+            ->value('amount');
+
+        return (int)($tax ?? 0);
     }
 }
