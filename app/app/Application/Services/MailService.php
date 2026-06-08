@@ -23,6 +23,11 @@ final class MailService
     ): void {
         $template = $this->mailTemplateRepository->findByKey($templateKey);
 
+         \Log::info('MailService send', [
+        'templateKey' => $templateKey,
+        'template'    => $template ? 'found' : 'not found',
+    ]);
+
         if (!$template) {
             throw new RuntimeException('メールテンプレートが見つかりません。');
         }
