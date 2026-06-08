@@ -15,6 +15,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 
 class CarStockResource extends Resource
 {
@@ -171,6 +172,99 @@ class CarStockResource extends Resource
                         'status'  => CarStatus::SOLD,
                         'sold_at' => now(),
                     ])),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkAction::make('bulk_publish_now')
+                    ->label('今すぐ公開')
+                    ->color('success')
+                    ->icon('heroicon-o-eye')
+                    ->requiresConfirmation()
+                    ->modalHeading('選択した車両を今すぐ公開しますか？')
+                    ->modalDescription('※承認済み公開前の車両のみ公開されます。他のステータスの車両はスキップされます。')
+                    ->modalSubmitActionLabel('公開する')
+                    ->modalCancelActionLabel('キャンセル')
+                    ->action(fn (Collection $records) => $records
+                        ->where('status', CarStatus::APPROVED_PENDING)
+                        ->each(fn (StkCar $car) => $car->update([
+                            'status'         => CarStatus::AVAILABLE,
+                            'published_at'   => now(),
+                            'publish_end_at' => null,
+                        ]))
+                    ),
+
+                Tables\Actions\BulkAction::make('bulk_schedule')
+                    ->label('公開日時を設定')
+                    ->color('info')
+                    ->icon('heroicon-o-clock')
+                    ->modalHeading('公開日時を一括設定します')
+                    ->modalSubmitActionLabel('設定して公開日時指定に移動')
+                    ->modalCancelActionLabel('キャンセル')
+                    ->form([
+                        \Filament\Forms\Components\DateTimePicker::make('published_at')
+                            ->label('公開開始日時')
+                            ->required()
+                            ->minDate(now())
+                            ->seconds(false)
+                            ->default(fn () => now()->startOfMinute()),
+
+                        \Filament\Forms\Components\DateTimePicker::make('publish_end_at')
+                            ->label('公開終了日時（任意）')
+                            ->minDate(now())
+                            ->seconds(false)
+                            ->after('published_at')  // バリデーション：開始より後
+                            ->default(fn () => now()->addHour()->endOfMinute()),
+
+                        \Filament\Forms\Components\Placeholder::make('confirmation')
+                            ->label('')
+                            ->content('※承認済み公開前・公開中の車両のみ設定されます。設定後はステータスが「公開日時指定」に変わり、開始日時になると自動で公開されます。'),
+                    ])
+                    ->action(fn ($records, array $data) => $records
+                        ->whereIn('status', [
+                            CarStatus::APPROVED_PENDING,
+                            CarStatus::AVAILABLE,
+                        ])
+                        ->each(fn (StkCar $car) => $car->update([
+                            'status'         => CarStatus::SCHEDULED,
+                            'published_at'   => \Carbon\Carbon::parse($data['published_at'])->startOfMinute(),
+                            'publish_end_at' => isset($data['publish_end_at'])
+                                ? \Carbon\Carbon::parse($data['publish_end_at'])->endOfMinute()
+                                : null,
+                        ]))
+                    ),
+
+                Tables\Actions\BulkAction::make('bulk_unpublish')
+                    ->label('一括公開中止')
+                    ->color('warning')
+                    ->icon('heroicon-o-eye-slash')
+                    ->requiresConfirmation()
+                    ->modalHeading('選択した車両の公開を中止しますか？')
+                    ->modalDescription('※公開中の車両のみ中止されます。他のステータスの車両はスキップされます。')
+                    ->modalSubmitActionLabel('中止する')
+                    ->modalCancelActionLabel('キャンセル')
+                    ->action(fn (Collection $records) => $records
+                        ->where('status', CarStatus::AVAILABLE)
+                        ->each(fn (StkCar $car) => $car->update([
+                            'status'         => CarStatus::APPROVED_PENDING,
+                            'published_at'   => null,
+                            'publish_end_at' => null,
+                        ]))
+                    ),
+
+                Tables\Actions\BulkAction::make('bulk_sold')
+                    ->label('一括販売終了')
+                    ->color('danger')
+                    ->icon('heroicon-o-check-circle')
+                    ->requiresConfirmation()
+                    ->modalHeading('選択した車両を販売終了にしますか？')
+                    ->modalDescription('販売終了にすると公開が停止されます。この操作は取り消せません。')
+                    ->modalSubmitActionLabel('販売終了にする')
+                    ->modalCancelActionLabel('キャンセル')
+                    ->action(fn (Collection $records) => $records
+                        ->each(fn (StkCar $car) => $car->update([
+                            'status'  => CarStatus::SOLD,
+                            'sold_at' => now(),
+                        ]))
+                    ),
             ])
             ->defaultSort('created_at', 'desc')
             ->recordUrl(fn (StkCar $record) => ViewCarStock::getUrl(['record' => $record]));
