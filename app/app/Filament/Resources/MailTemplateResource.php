@@ -29,6 +29,12 @@ class MailTemplateResource extends Resource
     {
         return $form
             ->schema([
+                TextInput::make('template_key')
+                    ->label('テンプレートキー')
+                    ->required()
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true),
+
                 TextInput::make('template_name')
                     ->label('テンプレート名')
                     ->required()
@@ -67,6 +73,10 @@ class MailTemplateResource extends Resource
                 TextColumn::make('id')
                     ->label('ID')
                     ->sortable(),
+
+                TextColumn::make('template_key')
+                    ->label('テンプレートキー')
+                    ->searchable(),
 
                 TextColumn::make('template_name')
                     ->label('テンプレート名')
