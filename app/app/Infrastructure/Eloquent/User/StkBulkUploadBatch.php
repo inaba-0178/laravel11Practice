@@ -55,8 +55,9 @@ class StkBulkUploadBatch extends Model
         if ($this->cars->contains('status', CarStatus::AVAILABLE)) {
             return 'published';
         }
-        if ($this->approved_at) {
-            return 'approved';
+        // approved_pendingの車両があってpendingとrejectedが0なら承認済み公開前
+        if ($this->approved_count > 0 && $this->pending_count === 0 && $this->rejected_count === 0) {
+            return 'approved_pending';
         }
         if ($this->rejected_count > 0 && $this->pending_count === 0) {
             return 'rejected';
@@ -64,8 +65,8 @@ class StkBulkUploadBatch extends Model
         if ($this->rejected_count > 0 && $this->pending_count > 0) {
             return 'partial_rejected';
         }
-        if ($this->approved_count > 0 && $this->pending_count === 0 && $this->rejected_count === 0) {
-            return 'approved_pending';
+        if ($this->approved_at) {
+            return 'approved';
         }
         return 'pending';
     }

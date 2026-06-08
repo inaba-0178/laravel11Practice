@@ -54,6 +54,8 @@ class CreateCarRegistration extends CreateRecord
                 ->label('承認依頼')
                 ->color('primary')
                 ->requiresConfirmation()
+                ->disabled(true)
+                ->tooltip('先に保存、画像をアップロードしてください')
                 ->modalHeading('承認依頼を管理者に送ります')
                 ->modalDescription('入力内容や画像アップロードに問題ありませんか？')
                 ->modalSubmitActionLabel('承認依頼')

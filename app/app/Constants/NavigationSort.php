@@ -33,6 +33,7 @@ enum NavigationSort :int
     case BULK_CAR_UPLOAD            = 10;
     case DEALER_SCHEDULE            = 11;
     case INQUIRY_LIST               = 12;
+    case CAR_STOCK                  = 13;
 
     // 管理者機能
     case CAR_APPROVAL               = 1;

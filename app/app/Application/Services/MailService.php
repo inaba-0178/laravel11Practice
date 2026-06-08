@@ -15,23 +15,27 @@ final class MailService
         private readonly MailTemplateRepositoryInterface $mailTemplateRepository,
     ) {}
 
-    public function send(string $templateKey, string $toEmail, array $placeholders = []): void
-    {
+    public function send(
+        string $templateKey,
+        string $toEmail,
+        array  $placeholders = [],
+        array  $attachments = [],
+    ): void {
         $template = $this->mailTemplateRepository->findByKey($templateKey);
 
         if (!$template) {
             throw new RuntimeException('メールテンプレートが見つかりません。');
         }
 
-        // プレースホルダーの置換
         $body = $template->body;
         foreach ($placeholders as $key => $value) {
             $body = str_replace('{{' . $key . '}}', $value, $body);
         }
 
         Mail::to($toEmail)->send(new CommonMail(
-            mailSubject: $template->subject,
-            body:        $body,
+            mailSubject:     $template->subject,
+            body:            $body,
+            mailAttachments: $attachments,  // ← 名前変更
         ));
     }
 }

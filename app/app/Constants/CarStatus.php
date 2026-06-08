@@ -14,6 +14,8 @@ class CarStatus
     const SOLD              = 'sold';
     const REJECTED          = 'rejected';
     const DELETED           = 'deleted';
+    const SCHEDULED         = 'scheduled';
+    const PUBLISH_ENDED     = 'publish_ended';
 
     const LABELS = [
         self::DRAFT             => '下書き',
@@ -24,6 +26,8 @@ class CarStatus
         self::SOLD              => '売却済み',
         self::REJECTED          => '差し戻し',
         self::DELETED           => '削除済み',
+        self::SCHEDULED         => '公開日時指定済み',
+        self::PUBLISH_ENDED     => '公開終了',
     ];
 
     const COLORS = [
@@ -35,6 +39,8 @@ class CarStatus
         self::SOLD              => 'gray',
         self::REJECTED          => 'danger',
         self::DELETED           => 'gray',
+        self::SCHEDULED         => 'info',
+        self::PUBLISH_ENDED     => 'gray',
     ];
 
     // 承認依頼ボタンを表示するステータス
@@ -92,6 +98,22 @@ class CarStatus
             'border'      => '#bfdbfe',
             'icon'        => '🔒',
             'description' => '承認済みです。管理者が公開処理を行うまでお待ちください。',
+        ],
+        self::SCHEDULED => [
+            'label'       => '公開日時指定済み',
+            'bg'          => '#f0f9ff',
+            'color'       => '#0369a1',
+            'border'      => '#bae6fd',
+            'icon'        => '🕐',
+            'description' => '公開日時が設定されています。指定日時になると自動で公開されます。',
+        ],
+        self::PUBLISH_ENDED => [
+            'label'       => '公開終了',
+            'bg'          => '#f3f4f6',
+            'color'       => '#374151',
+            'border'      => '#d1d5db',
+            'icon'        => '🔚',
+            'description' => '公開期間が終了しました。再公開する場合は期間設定または公開ボタンを押してください。',
         ],
     ];
 }

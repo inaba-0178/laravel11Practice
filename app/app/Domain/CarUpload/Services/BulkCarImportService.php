@@ -297,12 +297,15 @@ class BulkCarImportService
             ->withTrashed()
             ->get();
 
-        $approvedCount = $cars->filter(fn ($c) => in_array($c->status, [
+        // 削除済みを除外して集計
+        $activeCars = $cars->filter(fn ($c) => $c->deleted_at === null);
+
+        $approvedCount = $activeCars->filter(fn ($c) => in_array($c->status, [
             CarStatus::AVAILABLE,
             CarStatus::APPROVED_PENDING,
         ]))->count();
-        $rejectedCount = $cars->filter(fn ($c) => $c->status === CarStatus::REJECTED)->count();
-        $pendingCount  = $cars->filter(fn ($c) => $c->status === CarStatus::PENDING)->count();
+        $rejectedCount = $activeCars->filter(fn ($c) => $c->status === CarStatus::REJECTED)->count();
+        $pendingCount  = $activeCars->filter(fn ($c) => $c->status === CarStatus::PENDING)->count();
 
         $batch->update([
             'approved_count' => $approvedCount,

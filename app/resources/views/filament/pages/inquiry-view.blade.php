@@ -112,33 +112,23 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">お名前</label>
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">
-                                {{ $this->estimateForm['customer_name'] ?? '-' }}
-                            </p>
+                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $this->estimateForm['customer_name'] ?? '-' }}</p>
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">ニックネーム</label>
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">
-                                {{ $this->estimateForm['customer_nickname'] ?? '-' }}
-                            </p>
+                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $this->estimateForm['customer_nickname'] ?? '-' }}</p>
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">電話番号</label>
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">
-                                {{ $this->estimateForm['customer_phone'] ?? '-' }}
-                            </p>
+                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $this->estimateForm['customer_phone'] ?? '-' }}</p>
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">郵便番号</label>
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">
-                                {{ $this->estimateForm['customer_postal_code'] ?? '-' }}
-                            </p>
+                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $this->estimateForm['customer_postal_code'] ?? '-' }}</p>
                         </div>
                         <div class="col-span-2">
                             <label class="text-xs text-gray-500 dark:text-gray-400">住所</label>
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">
-                                {{ $this->estimateForm['customer_address'] ?? '-' }}
-                            </p>
+                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $this->estimateForm['customer_address'] ?? '-' }}</p>
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">生年月日</label>
@@ -188,12 +178,10 @@
                             <label class="text-xs text-gray-500 dark:text-gray-400">記録簿</label>
                             <div class="mt-2 flex gap-4">
                                 <label class="flex items-center gap-2 text-sm text-gray-900 dark:text-white cursor-pointer">
-                                    <input type="radio" wire:model="estimateForm.has_service_record" value="1" />
-                                    有
+                                    <input type="radio" wire:model="estimateForm.has_service_record" value="1" /> 有
                                 </label>
                                 <label class="flex items-center gap-2 text-sm text-gray-900 dark:text-white cursor-pointer">
-                                    <input type="radio" wire:model="estimateForm.has_service_record" value="0" />
-                                    無
+                                    <input type="radio" wire:model="estimateForm.has_service_record" value="0" /> 無
                                 </label>
                             </div>
                         </div>
@@ -205,8 +193,6 @@
                     <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
                         価格情報
                     </h4>
-
-                    {{-- 自動取得項目サマリー --}}
                     <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-4 space-y-2">
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-500 dark:text-gray-400">車両本体価格</span>
@@ -246,7 +232,6 @@
                         </div>
                     </div>
 
-                    {{-- 金額調整トグル --}}
                     <button
                         wire:click="$set('showPriceAdjust', {{ $this->showPriceAdjust ? 'false' : 'true' }})"
                         class="text-xs text-primary-600 hover:text-primary-500 font-medium mb-4 block"
@@ -254,78 +239,57 @@
                         {{ $this->showPriceAdjust ? '▲ 金額調整を閉じる' : '▼ 金額を調整する' }}
                     </button>
 
-                    {{-- 金額調整フォーム --}}
                     @if($this->showPriceAdjust)
                     <div class="grid grid-cols-3 gap-4 mb-4">
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">車両本体価格（円）</label>
-                            <input type="number" wire:model.live="estimateForm.vehicle_price"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.vehicle_price" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">リサイクル料金（円）</label>
-                            <input type="number" wire:model.live="estimateForm.recycle_fee"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.recycle_fee" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">自動車税（円）</label>
-                            <input type="number" wire:model.live="estimateForm.vehicle_tax"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.vehicle_tax" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">重量税（円）</label>
-                            <input type="number" wire:model.live="estimateForm.weight_tax"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.weight_tax" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">自賠責保険料（円）</label>
-                            <input type="number" wire:model.live="estimateForm.liability_insurance"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.liability_insurance" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">登録費用（円）</label>
-                            <input type="number" wire:model.live="estimateForm.registration_fee"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.registration_fee" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">車庫証明手続費用（円）</label>
-                            <input type="number" wire:model.live="estimateForm.garage_cert_fee"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.garage_cert_fee" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">納車費用（円）</label>
-                            <input type="number" wire:model.live="estimateForm.delivery_fee"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.delivery_fee" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">整備費用（円）</label>
-                            <input type="number" wire:model.live="estimateForm.maintenance_fee"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.maintenance_fee" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                     </div>
                     @endif
 
-                    {{-- 値引き・有効期限 --}}
                     <div class="grid grid-cols-2 gap-4">
                         <div class="col-span-2">
                             <label class="text-xs text-gray-500 dark:text-gray-400 mb-1 block">値引き種別</label>
                             <div class="flex gap-2 mb-2">
-                                <button
-                                    wire:click="$set('discountType', 'tax_excluded')"
-                                    class="px-3 py-1 text-xs rounded-lg border transition-all
-                                        {{ $this->discountType === 'tax_excluded'
-                                            ? 'bg-primary-600 text-white border-primary-600'
-                                            : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600' }}"
-                                >
+                                <button wire:click="$set('discountType', 'tax_excluded')"
+                                    class="px-3 py-1 text-xs rounded-lg border transition-all {{ $this->discountType === 'tax_excluded' ? 'bg-primary-600 text-white border-primary-600' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600' }}">
                                     税抜き値引き
                                 </button>
-                                <button
-                                    wire:click="$set('discountType', 'tax_included')"
-                                    class="px-3 py-1 text-xs rounded-lg border transition-all
-                                        {{ $this->discountType === 'tax_included'
-                                            ? 'bg-primary-600 text-white border-primary-600'
-                                            : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600' }}"
-                                >
+                                <button wire:click="$set('discountType', 'tax_included')"
+                                    class="px-3 py-1 text-xs rounded-lg border transition-all {{ $this->discountType === 'tax_included' ? 'bg-primary-600 text-white border-primary-600' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600' }}">
                                     税込み値引き
                                 </button>
                             </div>
@@ -348,132 +312,99 @@
                         </div>
                     </div>
 
-                    {{-- 合計金額プレビュー --}}
                     <div class="mt-4 flex justify-end">
                         <div class="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700 rounded-lg px-6 py-3">
-                            <span class="text-sm text-primary-700 dark:text-primary-400 font-medium">
-                                お見積金額：
-                            </span>
-                            <span class="text-xl font-bold text-primary-700 dark:text-primary-400">
-                                {{ number_format($this->getEstimateTotal()) }}円
-                            </span>
+                            <span class="text-sm text-primary-700 dark:text-primary-400 font-medium">お見積金額：</span>
+                            <span class="text-xl font-bold text-primary-700 dark:text-primary-400">{{ number_format($this->getEstimateTotal()) }}円</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- 諸費用追加項目 --}}
                 <div>
-                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
-                        諸費用（追加）
-                    </h4>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">諸費用（追加）</h4>
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">環境性能割（円）</label>
-                            <input type="number" wire:model.live="estimateForm.environmental_performance_tax"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.environmental_performance_tax" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">検査/登録/届出・課税（円）</label>
-                            <input type="number" wire:model.live="estimateForm.inspection_registration_fee"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.inspection_registration_fee" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">検査/登録/届出・非課税（円）</label>
-                            <input type="number" wire:model.live="estimateForm.inspection_registration_fee_exempt"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.inspection_registration_fee_exempt" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">下取車諸手続き（円）</label>
-                            <input type="number" wire:model.live="estimateForm.trade_in_handling_fee"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.trade_in_handling_fee" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">査定料（円）</label>
-                            <input type="number" wire:model.live="estimateForm.assessment_fee"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.assessment_fee" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                     </div>
                 </div>
 
                 {{-- 下取車情報 --}}
                 <div>
-                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
-                        下取車情報
-                    </h4>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">下取車情報</h4>
                     <div class="grid grid-cols-3 gap-4">
                         <div class="col-span-2">
                             <label class="text-xs text-gray-500 dark:text-gray-400">車名（型式等）</label>
-                            <input type="text" wire:model="estimateForm.trade_in_name"
-                                placeholder="例：アクセラ"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="text" wire:model="estimateForm.trade_in_name" placeholder="例：アクセラ" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">年式</label>
-                            <input type="text" wire:model="estimateForm.trade_in_model_year"
-                                placeholder="例：H30"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="text" wire:model="estimateForm.trade_in_model_year" placeholder="例：H30" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">車検日</label>
-                            <input type="date" wire:model="estimateForm.trade_in_inspection_date"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="date" wire:model="estimateForm.trade_in_inspection_date" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">走行距離（km）</label>
-                            <input type="number" wire:model="estimateForm.trade_in_mileage"
-                                placeholder="例：98520"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model="estimateForm.trade_in_mileage" placeholder="例：98520" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">車体色</label>
-                            <input type="text" wire:model="estimateForm.trade_in_color"
-                                placeholder="例：シルバーM"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="text" wire:model="estimateForm.trade_in_color" placeholder="例：シルバーM" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">下取価格（円）</label>
-                            <input type="number" wire:model.live="estimateForm.trade_in_price"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.trade_in_price" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                     </div>
                 </div>
 
                 {{-- 支払い情報 --}}
                 <div>
-                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
-                        支払い情報
-                    </h4>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">支払い情報</h4>
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">頭金/現金/他（円）</label>
-                            <input type="number" wire:model.live="estimateForm.down_payment"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.down_payment" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">残金/所要資金（円）</label>
-                            <input type="number" wire:model.live="estimateForm.remaining_amount"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model.live="estimateForm.remaining_amount" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">支払回数</label>
-                            <input type="number" wire:model="estimateForm.credit_months"
-                                placeholder="例：60"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model="estimateForm.credit_months" placeholder="例：60" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">分割手数料（円）</label>
-                            <input type="number" wire:model="estimateForm.credit_fee"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model="estimateForm.credit_fee" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">月払（円）</label>
-                            <input type="number" wire:model="estimateForm.monthly_payment"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model="estimateForm.monthly_payment" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 dark:text-gray-400">賞与払（円）</label>
-                            <input type="number" wire:model="estimateForm.bonus_payment"
-                                class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <input type="number" wire:model="estimateForm.bonus_payment" class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                     </div>
                 </div>
@@ -481,30 +412,18 @@
                 {{-- 付属品 --}}
                 <div>
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                            付属品
-                        </h4>
-                        <button wire:click="addAccessory"
-                            class="text-xs text-primary-600 hover:text-primary-500 font-medium">
-                            ＋ 付属品を追加
-                        </button>
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300">付属品</h4>
+                        <button wire:click="addAccessory" class="text-xs text-primary-600 hover:text-primary-500 font-medium">＋ 付属品を追加</button>
                     </div>
                     @if(count($this->accessories) > 0)
                     <div class="space-y-2">
                         @foreach($this->accessories as $index => $accessory)
                         <div class="flex items-center gap-3">
-                            <input type="text"
-                                wire:model="accessories.{{ $index }}.name"
-                                placeholder="例：フロアマット"
+                            <input type="text" wire:model="accessories.{{ $index }}.name" placeholder="例：フロアマット"
                                 class="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
-                            <input type="number"
-                                wire:model="accessories.{{ $index }}.price"
-                                placeholder="金額"
+                            <input type="number" wire:model="accessories.{{ $index }}.price" placeholder="金額"
                                 class="w-32 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
-                            <button wire:click="removeAccessory({{ $index }})"
-                                class="text-danger-600 hover:text-danger-500 text-sm font-medium">
-                                削除
-                            </button>
+                            <button wire:click="removeAccessory({{ $index }})" class="text-danger-600 hover:text-danger-500 text-sm font-medium">削除</button>
                         </div>
                         @endforeach
                     </div>
@@ -516,24 +435,15 @@
                 {{-- 必要書類 --}}
                 <div>
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                            必要書類
-                        </h4>
-                        <button wire:click="addDocument"
-                            class="text-xs text-primary-600 hover:text-primary-500 font-medium">
-                            ＋ 書類を追加
-                        </button>
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300">必要書類</h4>
+                        <button wire:click="addDocument" class="text-xs text-primary-600 hover:text-primary-500 font-medium">＋ 書類を追加</button>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         @foreach($this->documents as $index => $document)
                         <div class="flex items-center gap-2">
-                            <input type="text"
-                                wire:model="documents.{{ $index }}.name"
+                            <input type="text" wire:model="documents.{{ $index }}.name"
                                 class="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" />
-                            <button wire:click="removeDocument({{ $index }})"
-                                class="text-danger-600 hover:text-danger-500 text-sm font-medium flex-shrink-0">
-                                削除
-                            </button>
+                            <button wire:click="removeDocument({{ $index }})" class="text-danger-600 hover:text-danger-500 text-sm font-medium flex-shrink-0">削除</button>
                         </div>
                         @endforeach
                     </div>
@@ -541,22 +451,16 @@
 
                 {{-- 備考 --}}
                 <div>
-                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
-                        備考
-                    </h4>
-                    <textarea wire:model="estimateForm.notes" rows="3"
-                        placeholder="備考があれば入力してください"
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">備考</h4>
+                    <textarea wire:model="estimateForm.notes" rows="3" placeholder="備考があれば入力してください"
                         class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
                     </textarea>
                 </div>
 
                 {{-- 作成ボタン --}}
                 <div class="flex justify-end">
-                    <button
-                        wire:click="createEstimate"
-                        wire:confirm="見積書を作成してダウンロードしますか？"
-                        class="fi-btn relative inline-grid items-center justify-center gap-1.5 font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg px-4 py-2 text-sm bg-primary-600 text-white hover:bg-primary-500"
-                    >
+                    <button wire:click="createEstimate" wire:confirm="見積書を作成してダウンロードしますか？"
+                        class="fi-btn relative inline-grid items-center justify-center gap-1.5 font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg px-4 py-2 text-sm bg-primary-600 text-white hover:bg-primary-500">
                         見積書を作成してダウンロード
                     </button>
                 </div>
@@ -564,42 +468,92 @@
         </div>
         @endif
 
-        {{-- 対応エリア --}}
+        {{-- ===== 対応エリア（未対応・下書き） ===== --}}
         @if(!in_array($this->record->status, ['replied', 'phone_replied']))
             @if($this->hasEmail())
             <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                 <div class="fi-section-header px-6 py-4 border-b border-gray-200 dark:border-white/10">
-                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white">
-                        返答を作成
-                    </h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        返信先：{{ $this->getReplyToEmail() }}
-                    </p>
+                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white">返答を作成</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">返信先：{{ $this->getReplyToEmail() }}</p>
                 </div>
                 <div class="px-6 py-4 space-y-4">
-                    <textarea wire:model="replyText" rows="8"
-                        placeholder="返答内容を入力してください"
-                        class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
-                    </textarea>
+
+                    {{-- 添付ファイルエリア --}}
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-2">添付ファイル</label>
+
+                        {{-- 見積PDF --}}
+                        @if($this->attachedEstimate)
+                        <div class="flex items-center gap-3 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700 rounded-lg px-4 py-2 mb-2">
+                            <svg class="w-5 h-5 text-primary-600 dark:text-primary-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="text-sm text-primary-700 dark:text-primary-400 flex-1">
+                                見積書_{{ $this->attachedEstimate->estimate_number }}.pdf
+                            </span>
+                            <button wire:click="removeEstimateAttachment" class="text-xs text-danger-600 hover:text-danger-500 font-medium">削除</button>
+                        </div>
+                        @endif
+
+                        {{-- アップロード済みファイル --}}
+                        @foreach($this->uploadedAttachments as $index => $file)
+                        <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 mb-2">
+                            <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="text-sm text-gray-700 dark:text-gray-300 flex-1">{{ $file['name'] }}</span>
+                            <button wire:click="removeUploadedAttachment({{ $index }})" class="text-xs text-danger-600 hover:text-danger-500 font-medium">削除</button>
+                        </div>
+                        @endforeach
+
+                        {{-- ドラッグ&ドロップエリア --}}
+                        <div
+                            x-data="{ dragging: false }"
+                            x-on:dragover.prevent="dragging = true"
+                            x-on:dragleave.prevent="dragging = false"
+                            x-on:drop.prevent="
+                                dragging = false;
+                                $refs.fileInput.files = $event.dataTransfer.files;
+                                $refs.fileInput.dispatchEvent(new Event('change'));
+                            "
+                            :class="dragging ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-gray-300 dark:border-gray-600'"
+                            class="border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer"
+                            x-on:click="$refs.fileInput.click()"
+                        >
+                            <svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">クリックまたはドラッグ&ドロップでファイルを追加</p>
+                            <input x-ref="fileInput" type="file" class="hidden" wire:model="tempAttachment" />
+                        </div>
+                    </div>
+
+                    {{-- 返答テキスト --}}
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-1">返答内容</label>
+                        <textarea wire:model="replyText" rows="8" placeholder="返答内容を入力してください"
+                            class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        </textarea>
+                    </div>
+
                     <div class="flex items-center gap-3 justify-end">
                         <button wire:click="saveDraft"
                             class="fi-btn relative inline-grid items-center justify-center gap-1.5 font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
                             一時保存
                         </button>
-                        <button wire:click="sendReply"
-                            wire:confirm="この内容で送信してよろしいですか？"
+                        <button wire:click="openReplyConfirm"
                             class="fi-btn relative inline-grid items-center justify-center gap-1.5 font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg px-3 py-2 text-sm bg-primary-600 text-white hover:bg-primary-500">
                             送信する
                         </button>
                     </div>
                 </div>
             </div>
+
             @else
+            {{-- 電話対応 --}}
             <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                 <div class="fi-section-header px-6 py-4 border-b border-gray-200 dark:border-white/10">
-                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white">
-                        電話対応
-                    </h3>
+                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white">電話対応</h3>
                 </div>
                 <div class="px-6 py-4 space-y-4">
                     <div class="flex items-start gap-3 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-700 p-4">
@@ -616,17 +570,13 @@
                         </div>
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            電話対応メモ
-                        </label>
-                        <textarea wire:model="phoneMemo" rows="6"
-                            placeholder="電話対応の内容をメモしてください"
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">電話対応メモ</label>
+                        <textarea wire:model="phoneMemo" rows="6" placeholder="電話対応の内容をメモしてください"
                             class="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
                         </textarea>
                     </div>
                     <div class="flex justify-end">
-                        <button wire:click="savePhoneMemo"
-                            wire:confirm="電話対応済みとして保存しますか？"
+                        <button wire:click="savePhoneMemo" wire:confirm="電話対応済みとして保存しますか？"
                             class="fi-btn relative inline-grid items-center justify-center gap-1.5 font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg px-3 py-2 text-sm bg-primary-600 text-white hover:bg-primary-500">
                             電話対応済みとして保存
                         </button>
@@ -636,13 +586,70 @@
             @endif
         @endif
 
-        {{-- 返信済みの場合 --}}
+        {{-- ===== 送信確認モーダル ===== --}}
+        @if($this->showReplyConfirm)
+        <div class="fixed inset-0 z-50 flex items-center justify-center">
+            <div class="absolute inset-0 bg-black/50" wire:click="$set('showReplyConfirm', false)"></div>
+            <div class="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 z-10">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-base font-semibold text-gray-950 dark:text-white">送信確認</h3>
+                </div>
+                <div class="px-6 py-4 space-y-4">
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">送信先</p>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $this->getReplyToEmail() }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">添付ファイル</p>
+                        @if(!$this->attachedEstimate && count($this->uploadedAttachments) === 0)
+                            <p class="text-sm text-gray-400 dark:text-gray-500">なし</p>
+                        @else
+                            <div class="space-y-1">
+                                @if($this->attachedEstimate)
+                                <div class="flex items-center gap-2 text-sm text-primary-700 dark:text-primary-400">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                    見積書_{{ $this->attachedEstimate->estimate_number }}.pdf
+                                </div>
+                                @endif
+                                @foreach($this->uploadedAttachments as $file)
+                                <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                    {{ $file['name'] }}
+                                </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">返信内容</p>
+                        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 text-sm text-gray-900 dark:text-white whitespace-pre-wrap max-h-48 overflow-y-auto">
+                            {{ $this->replyText }}
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+                    <button wire:click="$set('showReplyConfirm', false)"
+                        class="fi-btn relative inline-grid items-center justify-center gap-1.5 font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                        キャンセル
+                    </button>
+                    <button wire:click="confirmAndSendReply"
+                        class="fi-btn relative inline-grid items-center justify-center gap-1.5 font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg px-3 py-2 text-sm bg-primary-600 text-white hover:bg-primary-500">
+                        送信する
+                    </button>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- ===== 返信済みの場合は返答内容を表示 ===== --}}
         @if($this->record->status === 'replied' && $this->record->reply)
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="fi-section-header px-6 py-4 border-b border-gray-200 dark:border-white/10">
-                <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white">
-                    返答内容
-                </h3>
+                <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white">返答内容</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {{ $this->record->replied_at?->format('Y/m/d H:i') }} に送信済み
                 </p>
@@ -655,13 +662,11 @@
         </div>
         @endif
 
-        {{-- 電話対応済みの場合 --}}
+        {{-- ===== 電話対応済みの場合は対応メモを表示 ===== --}}
         @if($this->record->status === 'phone_replied' && $this->record->phone_memo)
         <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="fi-section-header px-6 py-4 border-b border-gray-200 dark:border-white/10">
-                <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white">
-                    電話対応メモ
-                </h3>
+                <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white">電話対応メモ</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {{ $this->record->replied_at?->format('Y/m/d H:i') }} に対応済み
                 </p>

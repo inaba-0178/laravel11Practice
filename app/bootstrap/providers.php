@@ -71,4 +71,5 @@ return [
     App\Providers\InquiryServiceProvider::class,
     App\Providers\AnalyticsServiceProvider::class,
     App\Providers\EstimateServiceProvider::class,
+    App\Providers\CarStockServiceProvider::class,
 ];

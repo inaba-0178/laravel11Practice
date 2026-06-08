@@ -285,6 +285,23 @@ class CarImageManager extends Component
     #[\Livewire\Attributes\On('images-uploaded')]
     public function refreshImages(): void
     {
+        // メイン画像が未設定なら先頭をメインに自動設定
+        $hasMain = StkCarImages::where('car_id', $this->carId)
+            ->where('is_main', 1)
+            ->exists();
+
+        if (!$hasMain) {
+            $first = StkCarImages::where('car_id', $this->carId)
+                ->orderBy('display_order')
+                ->first();
+
+            if ($first) {
+                $first->update(['is_main' => 1]);
+                StkCar::where('id', $this->carId)
+                    ->update(['main_image_url' => $first->image_url]);
+            }
+        }
+
         $this->loadImages();
         $this->loadPendingResponses();
         $this->dispatch('notify', type: 'success', message: '画像をアップロードしました');
