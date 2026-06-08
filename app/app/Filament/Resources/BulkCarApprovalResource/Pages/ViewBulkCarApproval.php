@@ -109,16 +109,16 @@ class ViewBulkCarApproval extends Page
                 ->color('danger')
                 ->action(fn () => $this->rejectAll()),
 
-            \Filament\Actions\Action::make('publishAll')
-                ->label('公開')
-                ->modalHeading('公開の確認')
-                ->modalDescription('承認済みの全車両を公開します。公開するとユーザーに表示されます。よろしいですか？')
-                ->modalSubmitActionLabel('公開する')
-                ->color('info')
-                ->disabled(fn () => !$this->record->cars->every(
-                    fn($c) => $c->status === \App\Constants\CarStatus::APPROVED_PENDING
-                ))
-                ->action(fn () => $this->publishAll()),
+            // \Filament\Actions\Action::make('publishAll')
+            //     ->label('公開')
+            //     ->modalHeading('公開の確認')
+            //     ->modalDescription('承認済みの全車両を公開します。公開するとユーザーに表示されます。よろしいですか？')
+            //     ->modalSubmitActionLabel('公開する')
+            //     ->color('info')
+            //     ->disabled(fn () => !$this->record->cars->every(
+            //         fn($c) => $c->status === \App\Constants\CarStatus::APPROVED_PENDING
+            //     ))
+            //     ->action(fn () => $this->publishAll()),
         ];
     }
 
@@ -305,26 +305,26 @@ class ViewBulkCarApproval extends Page
     }
 
     // ===== 一括公開 =====
-    public function publishAll(): void
-    {
-        $targetCars = $this->record->cars->where('status', CarStatus::APPROVED_PENDING);
+    // public function publishAll(): void
+    // {
+    //     $targetCars = $this->record->cars->where('status', CarStatus::APPROVED_PENDING);
 
-        if ($targetCars->isEmpty()) {
-            Notification::make()->title('公開できる車両がありません')->warning()->send();
-            return;
-        }
+    //     if ($targetCars->isEmpty()) {
+    //         Notification::make()->title('公開できる車両がありません')->warning()->send();
+    //         return;
+    //     }
 
-        foreach ($targetCars as $car) {
-            $car->update([
-                'status'       => CarStatus::AVAILABLE,
-                'published_at' => now(),
-            ]);
-        }
+    //     foreach ($targetCars as $car) {
+    //         $car->update([
+    //             'status'       => CarStatus::AVAILABLE,
+    //             'published_at' => now(),
+    //         ]);
+    //     }
 
-        app(BulkCarImportService::class)->updateBatchCounts($this->record->id);
-        $this->record->load(['cars.series', 'cars.detail', 'cars.images', 'cars.options', 'dealer']);
-        Notification::make()->title('一括公開しました')->success()->send();
-    }
+    //     app(BulkCarImportService::class)->updateBatchCounts($this->record->id);
+    //     $this->record->load(['cars.series', 'cars.detail', 'cars.images', 'cars.options', 'dealer']);
+    //     Notification::make()->title('一括公開しました')->success()->send();
+    // }
 
     private function rejectCar(StkCar $car): void
     {
