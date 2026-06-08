@@ -93,6 +93,7 @@ class CarRegistrationResource extends Resource
                             $set('series_id', null);
                             $set('vehicle_id', null);
                             $set('year_version_id', null);
+                            $set('model_year', null);
                         }),
 
                     Select::make('series_id')
@@ -112,6 +113,7 @@ class CarRegistrationResource extends Resource
                         ->afterStateUpdated(function (Set $set) {
                             $set('vehicle_id', null);
                             $set('year_version_id', null);
+                            $set('model_year', null);
                         })
                         ->disabled(fn (Get $get) => !$get('manufacturer_id')),
 
@@ -132,37 +134,35 @@ class CarRegistrationResource extends Resource
                         ->afterStateUpdated(function (Get $get, Set $set) {
                             // 年式選択リセット
                             $set('year_version_id', null);
+                            $set('model_year', null);
                         })
                         ->disabled(fn (Get $get) => !$get('series_id')),
 
                     Select::make('model_year')
                         ->label('年式')
                         ->options(function (Get $get) {
-                            $versionId = $get('year_version_id');
-                            if (!$versionId) return [];
+                            $vehicleId = $get('vehicle_id');
+                            if (!$vehicleId) return [];
 
-                            $version = MstVehicleYearVersions::find($versionId);
+                            $version = MstVehicleYearVersions::where('vehicle_id', $vehicleId)->first();
                             if (!$version) return [];
 
-                            return collect(range($version->year_from, $version->year_to))
+                            $yearTo = $version->year_to ?? now()->year;
+
+                            return collect(range($version->year_from, $yearTo))
                                 ->mapWithKeys(fn ($year) => [$year => "{$year}年"])
                                 ->toArray();
                         })
                         ->required()
                         ->live()
-                        ->disabled(fn (Get $get) => !$get('year_version_id'))
+                        ->disabled(fn (Get $get) => !$get('vehicle_id'))
                         ->afterStateUpdated(function (Get $get, Set $set) {
-                            // カタログスペック自動補完
-                            $versionId = $get('year_version_id');
-                            if (!$versionId)
-                            {
-                                return;
-                            }
-                            $version = MstVehicleYearVersions::find($versionId);
-                            if (!$version)
-                            {
-                                return;
-                            }
+                            $vehicleId = $get('vehicle_id');
+                            if (!$vehicleId) return;
+
+                            $version = MstVehicleYearVersions::where('vehicle_id', $vehicleId)->first();
+                            if (!$version) return;
+
                             $set('displacement', $version->displacement_cc);
                             $set('drive_system', $version->drive_type);
                             $set('transmission', $version->transmission_type);
@@ -318,12 +318,6 @@ class CarRegistrationResource extends Resource
             // ===== ③車両詳細・スペック（stk_car_details） =====
             Section::make('車両スペック')
                 ->schema([
-                    TextInput::make('model_year')
-                        ->label('年式')
-                        ->numeric()
-                        ->minValue(1900)
-                        ->maxValue(now()->year),
-
                     DatePicker::make('first_registration_date')
                         ->label('初回登録日'),
 
@@ -398,8 +392,8 @@ class CarRegistrationResource extends Resource
             Section::make('ローン設定')
                 ->collapsible()
                 ->schema(function () {
-                    $dealer      = \App\Infrastructure\Eloquent\User\StkCarDealer::find(auth()->user()->dealer_id);
-                    $defaultPlan = \App\Infrastructure\Eloquent\Mst\MstLoanPlan::getDefault();
+                    $dealer      = StkCarDealer::find(auth()->user()->dealer_id);
+                    $defaultPlan = MstLoanPlan::getDefault();
             
                     // システムデフォルトは 'mst_{id}' をキーにして区別
                     $defaultOption = $defaultPlan
@@ -409,7 +403,7 @@ class CarRegistrationResource extends Resource
                     // 許可ありの場合はディーラープランも追加 'dealer_{uuid}' をキーにして区別
                     $dealerOptions = [];
                     if ($dealer && $dealer->loan_setting_enabled) {
-                        $dealerOptions = \App\Infrastructure\Eloquent\User\StkDealerLoanPlan::where('dealer_id', $dealer->id)
+                        $dealerOptions = StkDealerLoanPlan::where('dealer_id', $dealer->id)
                             ->where('is_active', 1)
                             ->whereNull('deleted_at')
                             ->get()
@@ -422,22 +416,22 @@ class CarRegistrationResource extends Resource
                     $planOptions = array_merge($defaultOption, $dealerOptions);
             
                     return [
-                        \Filament\Forms\Components\Repeater::make('loans')
+                        Repeater::make('loans')
                             ->label('ローンプラン')
                             ->relationship('loans')
                             ->schema([
-                                \Filament\Forms\Components\Select::make('dealer_loan_plan_id')
-                                ->label('プランを選択')
-                                ->options($planOptions)
-                                ->required()
-                                ->columnSpanFull()
-                                ->afterStateHydrated(function ($state, $set) use ($defaultPlan) {
-                                    // dealer_loan_plan_idがnullの場合はシステムデフォルトキーに変換
-                                    if ($state === null && $defaultPlan) {
-                                        $set('dealer_loan_plan_id', "mst_{$defaultPlan->id}");
-                                    }
-                                }),
-                            ])
+                                Select::make('dealer_loan_plan_id')
+                                    ->label('プランを選択')
+                                    ->options($planOptions)
+                                    ->required()
+                                    ->columnSpanFull()
+                                    ->afterStateHydrated(function ($state, $set) use ($defaultPlan) {
+                                        // dealer_loan_plan_idがnullの場合はシステムデフォルトキーに変換
+                                        if ($state === null && $defaultPlan) {
+                                            $set('dealer_loan_plan_id', "mst_{$defaultPlan->id}");
+                                        }
+                                    }),
+                                ])
                             ->addActionLabel('＋ プランを追加')
                             ->maxItems(3)
                             ->columnSpanFull(),

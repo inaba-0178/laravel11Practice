@@ -41,6 +41,7 @@ class StkCar extends Model
         'repair_history',
         'main_image_url',
         'published_at',
+        'publish_end_at',
         'sold_at',
         'rejection_reason',
         'dealer_fee_id',
@@ -54,6 +55,7 @@ class StkCar extends Model
         'model_year'        => 'integer',
         'mileage'           => 'integer',
         'published_at'      => 'datetime',
+        'publish_end_at'    => 'datetime',
         'sold_at'           => 'datetime',
         'rejection_reason'  => 'array',
     ];

@@ -39,3 +39,6 @@ Schedule::call(function () {
         \Log::error('scheduler error', ['message' => $e->getMessage()]);
     }
 })->everyMinute();
+
+// 既存のメンテナンスSchedule::callの下に追加
+Schedule::command('cars:publish-scheduled')->everyMinute();
