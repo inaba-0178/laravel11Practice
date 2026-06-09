@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domain\Message\Repositories;
 
 use Illuminate\Support\Collection;

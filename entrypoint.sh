@@ -22,7 +22,7 @@ echo "Setting permissions..."
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# ストレージディレクトリ作成（storage配下は上記で権限設定済みのため mkdir のみ）
+# ストレージディレクトリ作成
 echo "Creating storage directories..."
 mkdir -p /var/www/storage/app/private/mst-uploads
 
@@ -30,6 +30,10 @@ mkdir -p /var/www/storage/app/private/mst-uploads
 echo "Starting cron..."
 crontab /etc/cron.d/laravel-cron
 service cron start
+
+# Reverb起動（バックグラウンド）
+echo "Starting Laravel Reverb..."
+php /var/www/artisan reverb:start --host=0.0.0.0 --port=8085 &
 
 # php-fpm起動
 exec "$@"

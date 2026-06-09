@@ -8,12 +8,14 @@ use Illuminate\Support\Collection;
 
 class RoomRepository implements RoomRepositoryInterface
 {
-    public function findByUserId(int $userId): Collection
+    public function findByUserId(string $userId, string $userType): Collection
     {
-        return Room::whereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
+        return Room::whereHas('roomUsers', function ($query) use ($userId, $userType) {
+                $query->where('user_id', $userId)
+                      ->where('user_type', $userType);
             })
-            ->with(['users', 'messages' => function ($query) {
+            ->where('is_active', 1)
+            ->with(['roomUsers', 'messages' => function ($query) {
                 $query->latest()->limit(1);
             }])
             ->get();
@@ -21,7 +23,7 @@ class RoomRepository implements RoomRepositoryInterface
 
     public function findById(int $roomId): ?object
     {
-        return Room::with('users')->find($roomId);
+        return Room::with('roomUsers')->find($roomId);
     }
 
     public function create(array $data): object
@@ -29,8 +31,14 @@ class RoomRepository implements RoomRepositoryInterface
         return Room::create($data);
     }
 
-    public function attachUsers(int $roomId, array $userIds): void
+    public function attachUsers(int $roomId, array $users): void
     {
-        Room::find($roomId)->users()->attach($userIds);
+        $room = Room::find($roomId);
+        foreach ($users as $user) {
+            $room->roomUsers()->create([
+                'user_id'   => $user['id'],
+                'user_type' => $user['user_type'],
+            ]);
+        }
     }
 }

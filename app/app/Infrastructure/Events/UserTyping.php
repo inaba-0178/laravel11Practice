@@ -13,7 +13,8 @@ class UserTyping implements ShouldBroadcast
 
     public function __construct(
         public readonly int    $roomId,
-        public readonly int    $userId,
+        public readonly string $userId,
+        public readonly string $userType,
         public readonly string $userName,
         public readonly bool   $isTyping,
     ) {}

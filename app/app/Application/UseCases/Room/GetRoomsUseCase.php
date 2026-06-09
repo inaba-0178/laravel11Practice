@@ -11,8 +11,8 @@ class GetRoomsUseCase
         private readonly RoomRepositoryInterface $roomRepository
     ) {}
 
-    public function execute(int $userId): Collection
+    public function execute(string $userId, string $userType): Collection
     {
-        return $this->roomRepository->findByUserId($userId);
+        return $this->roomRepository->findByUserId($userId, $userType);
     }
 }
