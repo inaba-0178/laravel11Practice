@@ -26,7 +26,8 @@ class ChatResource extends Resource
 
     public static function canAccess(): bool
     {
-        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
+        $role = Auth::user()?->role;
+        return in_array($role, ['dealer', 'dealer_staff', 'super', 'admin']);
     }
 
     public static function table(Table $table): Table

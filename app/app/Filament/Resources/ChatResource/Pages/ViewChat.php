@@ -85,12 +85,13 @@ class ViewChat extends Page
             ->map(function ($roomUser) {
                 $sender = $this->getSender($roomUser->user_id, $roomUser->user_type);
                 return [
-                    'id'        => $roomUser->user_id,
-                    'user_type' => $roomUser->user_type,
-                    'name'      => $roomUser->user_type === 'staff'
+                    'id'         => $roomUser->user_id,
+                    'user_type'  => $roomUser->user_type,
+                    'role'       => $roomUser->user_type === 'staff' ? ($sender?->role ?? 'dealer') : 'member',
+                    'name'       => $roomUser->user_type === 'staff'
                         ? ($sender?->name ?? '不明')
                         : ($sender ? $sender->sei . ' ' . $sender->mei : '不明'),
-                    'email'     => $sender?->email ?? '-',
+                    'email'      => $sender?->email ?? '-',
                     'type_label' => $roomUser->user_type === 'staff' ? 'ディーラー' : 'ユーザー',
                 ];
             })

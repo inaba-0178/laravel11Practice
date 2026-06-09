@@ -9,8 +9,16 @@
         <p style="font-size: 12px; font-weight: 500; color: #374151; margin: 0 0 10px; padding-left: 10px; border-left: 3px solid #185FA5;">参加者</p>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
             @foreach($participants as $participant)
+            @php
+            $badgeColor = match(true) {
+                $participant['role'] === 'super'  => '#d97706',
+                $participant['role'] === 'admin'  => '#dc2626',
+                $participant['user_type'] === 'staff' => '#185FA5',
+                default => '#dc5078',
+            };
+            @endphp
             <div style="background: #f9fafb; border: 0.5px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px;">
-                <div style="background: {{ $participant['user_type'] === 'staff' ? '#185FA5' : '#dc5078' }}; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0;">
+                <div style="background: {{ $badgeColor }}; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0;">
                     {{ mb_substr($participant['name'], 0, 1) }}
                 </div>
                 <div>
