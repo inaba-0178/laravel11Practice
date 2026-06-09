@@ -30,6 +30,11 @@ class ChatResource extends Resource
         return in_array($role, ['dealer', 'dealer_staff', 'super', 'admin']);
     }
 
+    public static function canCreate(): bool
+    {
+        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
+    }
+
     public static function table(Table $table): Table
     {
         return $table

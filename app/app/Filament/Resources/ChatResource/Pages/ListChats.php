@@ -27,6 +27,13 @@ class ListChats extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        $role = Auth::user()?->role;
+        $canCreate = in_array($role, ['dealer', 'dealer_staff']);
+
+        if (!$canCreate) {
+            return [];
+        }
+
         return [
             Action::make('create_room')
                 ->label('新規ルーム作成')
