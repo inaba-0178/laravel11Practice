@@ -72,4 +72,5 @@ return [
     App\Providers\AnalyticsServiceProvider::class,
     App\Providers\EstimateServiceProvider::class,
     App\Providers\CarStockServiceProvider::class,
+    App\Providers\RoomInviteServiceProvider::class,
 ];
