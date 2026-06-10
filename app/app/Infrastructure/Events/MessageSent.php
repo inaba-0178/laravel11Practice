@@ -21,6 +21,7 @@ class MessageSent implements ShouldBroadcast
     public readonly string $message;
     public readonly string $createdAt;
     public readonly array  $user;
+    public readonly ?array $attachment;
 
     public function __construct(
         int    $roomId,
@@ -30,14 +31,16 @@ class MessageSent implements ShouldBroadcast
         string $message,
         string $createdAt,
         object $userModel,
+        ?array $attachment = null,
     ) {
-        $this->roomId    = $roomId;
-        $this->userId    = $userId;
-        $this->userType  = $userType;
-        $this->id        = $id;
-        $this->message   = $message;
-        $this->createdAt = $createdAt;
-        $this->user      = [
+        $this->roomId     = $roomId;
+        $this->userId     = $userId;
+        $this->userType   = $userType;
+        $this->id         = $id;
+        $this->message    = $message;
+        $this->createdAt  = $createdAt;
+        $this->attachment = $attachment;
+        $this->user       = [
             'id'        => (string) $userModel->id,
             'name'      => UserType::getDisplayName($userModel, $userType),
             'user_type' => $userType,

@@ -23,8 +23,11 @@ class Message extends Model
         'user_id',
         'user_type',
         'message',
+        'attachment_url',
+        'attachment_type',
+        'attachment_name',
+        'attachment_size',
     ];
-
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);

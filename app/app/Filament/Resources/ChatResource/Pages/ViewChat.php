@@ -25,19 +25,22 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Application\Services\AttachmentService;
 
 class ViewChat extends Page
 {
     protected static string $resource = ChatResource::class;
     protected static string $view     = 'filament.pages.view-chat';
 
-    public Room    $record;
-    public string  $newMessage          = '';
-    public array   $messages            = [];
-    public ?int    $deletingRoomUserId  = null;
-    public string  $deleteReason        = '';
-    public ?string $deleteReasonDetail  = null;
-    public bool    $showDeletionLogs    = false;
+    public Room     $record;
+    public string   $newMessage             = '';
+    public array    $messages               = [];
+    public ?int     $deletingRoomUserId     = null;
+    public string   $deleteReason           = '';
+    public ?string  $deleteReasonDetail     = null;
+    public bool     $showDeletionLogs       = false;
+    public array    $attachments            = [];
+
 
     // ロール定数
     private const EDITABLE_ROLES = ['dealer', 'dealer_staff'];
@@ -226,18 +229,22 @@ class ViewChat extends Page
         $this->messages = $messages->map(function ($message) use ($authId) {
             $sender = $this->getSender($message->user_id, $message->user_type);
             return [
-                'id'         => $message->id,
-                'message'    => $message->message,
-                'user_id'    => $message->user_id,
-                'user_type'  => $message->user_type,
-                'role'       => UserType::getRole($message->user_type, $sender?->role),
-                'user_name'  => UserType::getDisplayName($sender, $message->user_type),
-                'created_at' => $message->created_at->format('H:i'),
-                'date'       => $message->created_at->format('Y/m/d'), // 追加
-                'is_mine'    => $message->user_id === $authId && $message->user_type === UserType::STAFF,
-                'read_count' => $message->messageReads
+                'id'              => $message->id,
+                'message'         => $message->message,
+                'user_id'         => $message->user_id,
+                'user_type'       => $message->user_type,
+                'role'            => UserType::getRole($message->user_type, $sender?->role),
+                'user_name'       => UserType::getDisplayName($sender, $message->user_type),
+                'created_at'      => $message->created_at->format('H:i'),
+                'date'            => $message->created_at->format('Y/m/d'),
+                'is_mine'         => $message->user_id === $authId && $message->user_type === UserType::STAFF,
+                'read_count'      => $message->messageReads
                     ->filter(fn ($r) => $r->user_id !== $message->user_id)
                     ->count(),
+                'attachment_url'  => $message->attachment_url,
+                'attachment_type' => $message->attachment_type,
+                'attachment_name' => $message->attachment_name,
+                'attachment_size' => $message->attachment_size,
             ];
         })->toArray();
 
@@ -340,28 +347,65 @@ class ViewChat extends Page
             return;
         }
 
-        if (empty(trim($this->newMessage))) return;
+        if (empty(trim($this->newMessage)) && empty($this->attachments)) return;
 
-        $message = Message::create([
-            'room_id'   => $this->record->id,
-            'user_id'   => (string) Auth::id(),
-            'user_type' => UserType::STAFF,
-            'message'   => $this->newMessage,
-        ]);
+        $attachmentService = app(AttachmentService::class);
 
-        broadcast(new MessageSent(
-            roomId:    $this->record->id,
-            userId:    (string) Auth::id(),
-            userType:  UserType::STAFF,
-            id:        $message->id,
-            message:   $this->newMessage,
-            createdAt: now()->toISOString(),
-            userModel: Auth::user(),
-        ));
+        // 添付ファイルがある場合は1ファイル1メッセージで送信
+        if (!empty($this->attachments)) {
+            foreach ($this->attachments as $file) {
+                $error = $attachmentService->validate($file);
+                if ($error) {
+                    Notification::make()->title($error)->danger()->send();
+                    return;
+                }
+
+                $attachment = $attachmentService->upload($file, $this->record->id);
+
+                $message = Message::create([
+                    'room_id'          => $this->record->id,
+                    'user_id'          => (string) Auth::id(),
+                    'user_type'        => UserType::STAFF,
+                    'message'          => $this->newMessage ?? '',
+                    'attachment_url'   => $attachment['attachment_url'],
+                    'attachment_type'  => $attachment['attachment_type'],
+                    'attachment_name'  => $attachment['attachment_name'],
+                    'attachment_size'  => $attachment['attachment_size'],
+                ]);
+
+                broadcast(new MessageSent(
+                    roomId:     $this->record->id,
+                    userId:     (string) Auth::id(),
+                    userType:   UserType::STAFF,
+                    id:         $message->id,
+                    message:    $this->newMessage ?? '',
+                    createdAt:  now()->toISOString(),
+                    userModel:  Auth::user(),
+                    attachment: $attachment,
+                ));
+            }
+            $this->attachments = [];
+        } else {
+            $message = Message::create([
+                'room_id'   => $this->record->id,
+                'user_id'   => (string) Auth::id(),
+                'user_type' => UserType::STAFF,
+                'message'   => $this->newMessage,
+            ]);
+
+            broadcast(new MessageSent(
+                roomId:    $this->record->id,
+                userId:    (string) Auth::id(),
+                userType:  UserType::STAFF,
+                id:        $message->id,
+                message:   $this->newMessage,
+                createdAt: now()->toISOString(),
+                userModel: Auth::user(),
+            ));
+        }
 
         $this->newMessage = '';
         $this->loadMessages();
-
         Notification::make()->title('送信しました')->success()->send();
     }
 
@@ -375,5 +419,40 @@ class ViewChat extends Page
         return [
             "echo:room.{$this->record->id},.message.sent" => 'onMessageReceived',
         ];
+    }
+
+    public function removeAttachment(int $index): void
+    {
+        array_splice($this->attachments, $index, 1);
+    }
+
+    public function sendMessageWithAttachment(array $attachmentData): void
+    {
+        if (!$this->canSend()) return;
+
+        $message = Message::create([
+            'room_id'          => $this->record->id,
+            'user_id'          => (string) Auth::id(),
+            'user_type'        => UserType::STAFF,
+            'message'          => $this->newMessage ?? '',
+            'attachment_url'   => $attachmentData['attachment_url'],
+            'attachment_type'  => $attachmentData['attachment_type'],
+            'attachment_name'  => $attachmentData['attachment_name'],
+            'attachment_size'  => $attachmentData['attachment_size'],
+        ]);
+
+        broadcast(new MessageSent(
+            roomId:     $this->record->id,
+            userId:     (string) Auth::id(),
+            userType:   UserType::STAFF,
+            id:         $message->id,
+            message:    $this->newMessage ?? '',
+            createdAt:  now()->toISOString(),
+            userModel:  Auth::user(),
+            attachment: $attachmentData,
+        ));
+
+        $this->newMessage = '';
+        $this->loadMessages();
     }
 }

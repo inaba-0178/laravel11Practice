@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Presentation\Controllers\Message;
 
+use App\Application\Services\AttachmentService;
 use App\Application\UseCases\Message\GetMessagesUseCase;
 use App\Application\UseCases\Message\ReadMessagesUseCase;
 use App\Application\UseCases\Message\SendMessageUseCase;
+use App\Domain\Shared\Constants\AttachmentLimits;
 use App\Domain\Shared\Constants\UserType;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Eloquent\User\UsrUser;
@@ -22,6 +24,7 @@ class MessageController extends Controller
         private readonly GetMessagesUseCase  $getMessagesUseCase,
         private readonly SendMessageUseCase  $sendMessageUseCase,
         private readonly ReadMessagesUseCase $readMessagesUseCase,
+        private readonly AttachmentService  $attachmentService,
     ) {}
 
     public function index(int $roomId): JsonResponse
@@ -34,17 +37,62 @@ class MessageController extends Controller
     public function store(Request $request, int $roomId): JsonResponse
     {
         $request->validate([
-            'message' => 'required|string|max:1000',
+            'message'     => 'nullable|string|max:1000',
+            'attachments' => 'nullable|array|max:' . AttachmentLimits::MAX_FILES,
+            'attachments.*' => 'file',
         ]);
+
+        // メッセージか添付ファイルのどちらかは必須
+        if (empty($request->message) && empty($request->file('attachments'))) {
+            return response()->json(['message' => 'メッセージまたはファイルを入力してください'], 422);
+        }
 
         $userId   = (string) $request->user()->id;
         $userType = $this->getUserType($request);
 
+        $attachments = [];
+        foreach ($request->file('attachments') ?? [] as $file) {
+            $error = $this->attachmentService->validate($file);
+            if ($error) {
+                return response()->json(['message' => $error], 422);
+            }
+            $attachments[] = $this->attachmentService->upload($file, $roomId);
+        }
+
+        // 添付ファイルがある場合は1ファイル1メッセージで送信
+        if (!empty($attachments)) {
+            $messages = [];
+            foreach ($attachments as $attachment) {
+                $message = $this->sendMessageUseCase->execute(
+                    $roomId,
+                    $userId,
+                    $userType,
+                    $request->message ?? '',
+                    $attachment,
+                );
+
+                broadcast(new MessageSent(
+                    roomId:    $roomId,
+                    userId:    $userId,
+                    userType:  $userType,
+                    id:        $message->id,
+                    message:   $request->message ?? '',
+                    createdAt: $message->created_at->toISOString(),
+                    userModel: $request->user(),
+                    attachment: $attachment,
+                ));
+
+                $messages[] = $message;
+            }
+            return response()->json($messages, 201);
+        }
+
+        // テキストのみ
         $message = $this->sendMessageUseCase->execute(
             $roomId,
             $userId,
             $userType,
-            $request->message
+            $request->message,
         );
 
         broadcast(new MessageSent(
