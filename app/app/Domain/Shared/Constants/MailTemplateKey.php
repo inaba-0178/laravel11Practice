@@ -20,4 +20,11 @@ final class MailTemplateKey
 
     // 問い合わせ返答：問い合わせ者へ
     public const INQUIRY_REPLIED                        = 'inquiry_replied';
+
+    // チャット招待：ユーザーへ
+    public const CHAT_INVITED                           = 'chat_invited';
+    // チャット招待拒否：ディーラー担当者へ
+    public const CHAT_INVITE_REJECTED                   = 'chat_invite_rejected';
+    // チャット招待期限切れ：ディーラー担当者へ
+    public const CHAT_INVITE_EXPIRED                    = 'chat_invite_expired';
 }

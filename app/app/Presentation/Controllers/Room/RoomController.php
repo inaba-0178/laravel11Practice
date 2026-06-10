@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Presentation\Controllers\Room;
 
-use App\Application\UseCases\Room\GetRoomsUseCase;
 use App\Application\UseCases\Room\CreateRoomUseCase;
 use App\Application\UseCases\Room\GetRoomUseCase;
+use App\Application\UseCases\Room\GetRoomsUseCase;
+use App\Domain\Shared\Constants\UserType;
 use App\Http\Controllers\Controller;
+use App\Infrastructure\Eloquent\User\UsrUser;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class RoomController extends Controller
@@ -16,47 +21,46 @@ class RoomController extends Controller
         private readonly GetRoomUseCase    $getRoomUseCase,
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $userId   = (string) $request->user()->id;
-        $userType = $this->getUserType($request);
+        $rooms = $this->getRoomsUseCase->execute(
+            (string) $request->user()->id,
+            $this->getUserType($request),
+        );
 
-        $rooms = $this->getRoomsUseCase->execute($userId, $userType);
         return response()->json($rooms);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'name'     => 'nullable|string|max:255',
-            'type'     => 'required|in:direct,group',
-            'users'    => 'required|array',
+            'name'              => 'nullable|string|max:255',
+            'type'              => 'required|in:direct,group',
+            'users'             => 'required|array',
             'users.*.id'        => 'required|string',
             'users.*.user_type' => 'required|in:staff,member',
         ]);
 
-        $authUserId   = (string) $request->user()->id;
-        $authUserType = $this->getUserType($request);
-
         $room = $this->createRoomUseCase->execute(
             $request->only(['name', 'type', 'users']),
-            $authUserId,
-            $authUserType,
+            (string) $request->user()->id,
+            $this->getUserType($request),
         );
 
         return response()->json($room, 201);
     }
 
-    public function show(int $roomId)
+    public function show(int $roomId): JsonResponse
     {
-        $room = $this->getRoomUseCase->execute($roomId);
-        return response()->json($room);
+        return response()->json(
+            $this->getRoomUseCase->execute($roomId)
+        );
     }
 
     private function getUserType(Request $request): string
     {
-        return $request->user() instanceof \App\Infrastructure\Eloquent\User\UsrUser
-            ? 'member'
-            : 'staff';
+        return $request->user() instanceof UsrUser
+            ? UserType::MEMBER
+            : UserType::STAFF;
     }
 }

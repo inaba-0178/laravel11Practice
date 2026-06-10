@@ -66,4 +66,8 @@ class UsrUser extends Authenticatable
         return $this->hasMany(StkDealerReview::class, 'member_id');
     }
 
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->nickname ?? $this->sei . ' ' . $this->mei;
+    }
 }

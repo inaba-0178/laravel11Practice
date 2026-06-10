@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Eloquent\User;
 
+use App\Domain\Shared\Constants\UserType;
 use App\Models\User;
-use App\Infrastructure\Eloquent\User\UsrUser;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Message extends Model
 {
     use HasFactory;
 
     protected $connection = 'user';
-    protected $table = 'messages';
+    protected $table      = 'messages';
 
     protected $fillable = [
         'room_id',
@@ -21,28 +25,25 @@ class Message extends Model
         'message',
     ];
 
-    public function room()
+    public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
     }
 
-    // user_typeに応じて適切なモデルを返す
-    public function getSenderAttribute(): ?object
-    {
-        if ($this->user_type === 'staff') {
-            return User::find($this->user_id);
-        }
-        return UsrUser::find($this->user_id);
-    }
-
-    // 後方互換性のためuserも残す
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function messageReads()
+    public function messageReads(): HasMany
     {
         return $this->hasMany(MessageRead::class);
+    }
+
+    public function getSenderAttribute(): ?object
+    {
+        return $this->user_type === UserType::STAFF
+            ? User::find($this->user_id)
+            : UsrUser::find($this->user_id);
     }
 }

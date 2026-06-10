@@ -1,15 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Presentation\Controllers\Message;
 
 use App\Application\UseCases\Message\GetMessagesUseCase;
-use App\Application\UseCases\Message\SendMessageUseCase;
 use App\Application\UseCases\Message\ReadMessagesUseCase;
+use App\Application\UseCases\Message\SendMessageUseCase;
+use App\Domain\Shared\Constants\UserType;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Infrastructure\Events\UserTyping;
-use App\Infrastructure\Events\MessageSent;
+use App\Infrastructure\Eloquent\User\UsrUser;
 use App\Infrastructure\Events\MessageRead;
+use App\Infrastructure\Events\MessageSent;
+use App\Infrastructure\Events\UserTyping;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
@@ -19,13 +24,14 @@ class MessageController extends Controller
         private readonly ReadMessagesUseCase $readMessagesUseCase,
     ) {}
 
-    public function index(int $roomId)
+    public function index(int $roomId): JsonResponse
     {
-        $messages = $this->getMessagesUseCase->execute($roomId);
-        return response()->json($messages);
+        return response()->json(
+            $this->getMessagesUseCase->execute($roomId)
+        );
     }
 
-    public function store(Request $request, int $roomId)
+    public function store(Request $request, int $roomId): JsonResponse
     {
         $request->validate([
             'message' => 'required|string|max:1000',
@@ -54,13 +60,11 @@ class MessageController extends Controller
         return response()->json($message, 201);
     }
 
-    public function typing(Request $request, int $roomId)
+    public function typing(Request $request, int $roomId): JsonResponse
     {
-        $userType = $this->getUserType($request);
         $userId   = (string) $request->user()->id;
-        $userName = $userType === 'staff'
-            ? $request->user()->name
-            : $request->user()->sei . $request->user()->mei;
+        $userType = $this->getUserType($request);
+        $userName = UserType::getDisplayName($request->user(), $userType);
 
         broadcast(new UserTyping(
             roomId:   $roomId,
@@ -73,7 +77,7 @@ class MessageController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    public function read(Request $request, int $roomId)
+    public function read(Request $request, int $roomId): JsonResponse
     {
         $request->validate([
             'message_ids'   => 'required|array',
@@ -101,8 +105,8 @@ class MessageController extends Controller
 
     private function getUserType(Request $request): string
     {
-        return $request->user() instanceof \App\Infrastructure\Eloquent\User\UsrUser
-            ? 'member'
-            : 'staff';
+        return $request->user() instanceof UsrUser
+            ? UserType::MEMBER
+            : UserType::STAFF;
     }
 }

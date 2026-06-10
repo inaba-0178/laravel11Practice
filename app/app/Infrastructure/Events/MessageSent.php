@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Events;
 
+use App\Domain\Shared\Constants\UserType;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -36,9 +39,7 @@ class MessageSent implements ShouldBroadcast
         $this->createdAt = $createdAt;
         $this->user      = [
             'id'        => (string) $userModel->id,
-            'name'      => $userType === 'staff'
-                ? $userModel->name
-                : $userModel->sei . $userModel->mei,
+            'name'      => UserType::getDisplayName($userModel, $userType),
             'user_type' => $userType,
         ];
     }
