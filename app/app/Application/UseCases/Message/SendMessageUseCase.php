@@ -10,12 +10,13 @@ class SendMessageUseCase
         private readonly MessageRepositoryInterface $messageRepository
     ) {}
 
-    public function execute(int $roomId, int $userId, string $message): object
+    public function execute(int $roomId, string $userId, string $userType, string $message): object
     {
         return $this->messageRepository->create([
-            'room_id' => $roomId,
-            'user_id' => $userId,
-            'message' => $message,
+            'room_id'   => $roomId,
+            'user_id'   => $userId,
+            'user_type' => $userType,
+            'message'   => $message,
         ]);
     }
 }

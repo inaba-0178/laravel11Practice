@@ -54,6 +54,25 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->broadcasting()
+            ->renderHook(
+                'panels::head.end',
+                fn () => '<script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        if (window.EchoFactory) {
+                            window.Echo = new window.EchoFactory({
+                                broadcaster: "reverb",
+                                key: "my-app-key",
+                                wsHost: "localhost",
+                                wsPort: 8085,
+                                wssPort: 8085,
+                                forceTLS: false,
+                                enabledTransports: ["ws", "wss"],
+                            });
+                        }
+                    });
+                </script>'
+            )
             ;
     }
 }

@@ -83,26 +83,24 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-
+// usersとusr_users両方
+Route::middleware(['auth:sanctum,members'])->group(function () {
     Route::get('/rooms', [RoomController::class, 'index']);
     Route::post('/rooms', [RoomController::class, 'store']);
     Route::get('/rooms/{roomId}', [RoomController::class, 'show']);
-
     Route::get('/rooms/{roomId}/messages', [MessageController::class, 'index']);
     Route::post('/rooms/{roomId}/messages', [MessageController::class, 'store']);
     Route::post('/rooms/{roomId}/messages/read', [MessageController::class, 'read']);
     Route::post('/rooms/{roomId}/typing', [MessageController::class, 'typing']);
+});
 
+// usr_usersのみ
+Route::middleware('auth:members')->group(function () {
     Route::prefix('EditMembers')->group(function () {
         Route::get('/Profile',  [EditMemberProfileController::class, 'show']);
         Route::put('/Profile',  [EditMemberProfileController::class, 'update']);
     });
-
-    // メールアドレス変更
     Route::post('/EmailChange', [EmailChangeController::class, 'update']);
-
     Route::post('/ChangePassword', ChangePasswordController::class);
 });
 
