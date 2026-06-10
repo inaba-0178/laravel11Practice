@@ -69,6 +69,7 @@ use App\Presentation\Controllers\Analytics\RecordViewCountController;
 use App\Presentation\Controllers\DealerAnalytics\DealerAnalyticsController;
 use App\Presentation\Controllers\RoomInvite\RoomInviteController;
 use App\Presentation\Controllers\Notification\NotificationController;
+use App\Presentation\Controllers\Attachment\AttachmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +95,10 @@ Route::middleware(['auth:sanctum,members'])->group(function () {
     Route::post('/rooms/{roomId}/messages', [MessageController::class, 'store']);
     Route::post('/rooms/{roomId}/messages/read', [MessageController::class, 'read']);
     Route::post('/rooms/{roomId}/typing', [MessageController::class, 'typing']);
+});
+
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::post('/rooms/{roomId}/attachments', [AttachmentController::class, 'upload']);
 });
 
 // usr_usersのみ
