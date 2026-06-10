@@ -67,6 +67,8 @@ use App\Presentation\Controllers\ManufacturerListAll\ManufacturerListAllControll
 use App\Presentation\Controllers\Inquiry\CreateInquiryController;
 use App\Presentation\Controllers\Analytics\RecordViewCountController;
 use App\Presentation\Controllers\DealerAnalytics\DealerAnalyticsController;
+use App\Presentation\Controllers\RoomInvite\RoomInviteController;
+use App\Presentation\Controllers\Notification\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -102,6 +104,7 @@ Route::middleware('auth:members')->group(function () {
     });
     Route::post('/EmailChange', [EmailChangeController::class, 'update']);
     Route::post('/ChangePassword', ChangePasswordController::class);
+    Route::get('/notifications/summary', [NotificationController::class, 'summary']);
 });
 
 // Region関連のルート
@@ -294,3 +297,11 @@ Route::post('/Analytics/recordView', RecordViewCountController::class);
 Route::get('/Analytics/viewDelay',   [RecordViewCountController::class, 'getDelay']);
 
 Route::get('/Analytics/dealer', DealerAnalyticsController::class)->middleware('auth');
+
+
+// チャット招待承認・拒否
+Route::middleware('auth:members')->group(function () {
+    Route::get('/invites/pending',                [RoomInviteController::class, 'pending']);
+    Route::post('/rooms/{roomId}/invite/approve', [RoomInviteController::class, 'approve']);
+    Route::post('/rooms/{roomId}/invite/reject',  [RoomInviteController::class, 'reject']);
+});

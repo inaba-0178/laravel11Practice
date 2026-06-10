@@ -180,9 +180,7 @@
                 @endif
                 <div style="display: flex; flex-direction: column; {{ $message['is_mine'] ? 'align-items: flex-end;' : 'align-items: flex-start;' }}">
                     <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">{{ $message['user_name'] }}</div>
-                    <div style="padding: 8px 12px; border-radius: 12px; font-size: 13px; {{ $message['is_mine'] ? 'background: #185FA5; color: white;' : 'background: #e5e7eb; color: #111827;' }}">
-                        {{ $message['message'] }}
-                    </div>
+                    <div style="padding: 8px 12px; border-radius: 12px; font-size: 13px; white-space: pre-wrap; word-break: break-word; display: inline-block; text-align: left; max-width: 100%; {{ $message['is_mine'] ? 'background: #185FA5; color: white;' : 'background: #e5e7eb; color: #111827;' }}">{{ $message['message'] }}</div>
                     <div style="display: flex; gap: 8px; font-size: 11px; color: #9ca3af; margin-top: 4px;">
                         <span>{{ $message['created_at'] }}</span>
                         @if($message['is_mine'])

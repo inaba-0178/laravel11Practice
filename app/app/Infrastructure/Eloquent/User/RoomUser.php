@@ -27,6 +27,12 @@ class RoomUser extends Model
         'expired_at',
     ];
 
+    protected $casts = [
+        'invited_at'   => 'datetime',
+        'responded_at' => 'datetime',
+        'expired_at'   => 'datetime',
+    ];
+
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
