@@ -20,6 +20,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ListChats extends ListRecords
 {
@@ -67,17 +68,12 @@ class ListChats extends ListRecords
                 ->default('direct'),
 
             Select::make('related_type')
-                ->label('紐づくタイプ')
+                ->label('チャット種別')
                 ->options([
                     'inquiry'         => '問い合わせ',
                     'car_qa'          => '車両Q&A',
                     'dealer_internal' => 'ディーラー内部',
                 ])
-                ->nullable(),
-
-            TextInput::make('related_id')
-                ->label('紐づくID')
-                ->numeric()
                 ->nullable(),
 
             Repeater::make('members')
@@ -124,7 +120,7 @@ class ListChats extends ListRecords
             'name'         => $data['name'] ?? null,
             'type'         => $data['type'],
             'related_type' => $data['related_type'] ?? null,
-            'related_id'   => $data['related_id'] ?? null,
+            'related_id'   => $this->generateRelatedId(),
             'is_active'    => 1,
         ]);
 
@@ -203,5 +199,16 @@ class ListChats extends ListRecords
             ->table('opr_settings')
             ->where('key', 'chat_invite_expire_hours')
             ->value('value') ?? self::DEFAULT_EXPIRE_HOURS;
+    }
+
+    private function generateRelatedId(): string
+    {
+        $dealerId = Auth::user()->dealer_id;
+
+        do {
+            $relatedId = $dealerId . '-' . Str::random(8);
+        } while (Room::where('related_id', $relatedId)->exists());
+
+        return $relatedId;
     }
 }
