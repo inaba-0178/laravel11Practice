@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
     <meta charset="UTF-8">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'ipaexgothic',sans-serif; }
@@ -104,13 +101,12 @@
         .docs-right { display:table-cell; width:50%; vertical-align:top; padding-left:8px; font-size:9px; }
         .docs-table { width:90%; }
     </style>
-</head>
-<body>
+
 
     {{-- ===== ヘッダー ===== --}}
     <div class="section header-wrap">
         <div class="header-title">
-            <div class="title-box">お 見 積 書</div>
+            <div class="title-box">{{ $documentTitle }}</div>
         </div>
         <div class="header-info">
             <table>
@@ -118,7 +114,7 @@
                     <td class="bg-blue tac">日付</td>
                     <td class="bg-blue tac">販売区分</td>
                     <td class="bg-blue tac">担当</td>
-                    <td class="bg-blue tac">見積番号</td>
+                    <td class="bg-blue tac">{{ $documentNumberLabel }}</td>
                 </tr>
                 <tr>
                     <td class="tac">{{ $estimate->created_at->format('Y.m.d') }}</td>
@@ -159,8 +155,8 @@
             <tr>
                 <td class="bg-blue" rowspan="2">ご住所</td>
                 <td rowspan="2">
-                    @if($estimate->customer_postal_code)〒{{ $estimate->customer_postal_code }} @endif
-                    {{ $estimate->customer_address ?? '-' }}
+                    @if($postalCode)〒{{ $postalCode }}<br>@endif
+                    @if($estimate->customer_address){{ $estimate->customer_address }}@endif
                 </td>
                 <td class="bg-blue">勤務先等</td>
                 <td>{{ $estimate->customer_workplace ?? '-' }}</td>
@@ -187,7 +183,7 @@
                 <td class="tac">{{ $maker?->name ?? '-' }}</td>
                 <td class="tac" colspan="3">{{ $series?->series_name ?? '-' }}</td>
                 <td class="tac">{{ $modelYear }}</td>
-                <td class="tac">{{ $detail?->displacement ? number_format($detail->displacement) . 'cc' : '-' }}</td>
+                <td class="tac">{{ $displacementLabel }}</td>
                 <td class="tac">{{ $transmissionLabel }}</td>
                 <td class="tac">{{ $car->color ?? '-' }}</td>
             </tr>
@@ -205,15 +201,10 @@
                 <td class="tac">{{ $estimate->vehicle_model ?? '-' }}</td>
                 <td class="tac">{{ $estimate->chassis_number ?? '-' }}</td>
                 <td class="tac">{{ $estimate->registration_number ?? '-' }}</td>
-                <td class="tac">{{ number_format($car->mileage) }}km</td>
+                <td class="tac">{{ $mileageLabel }}</td>
                 <td class="tac">{{ $detail?->inspection_expire_date?->format('Y.m.d') ?? '-' }}</td>
                 <td class="tac">{{ $repairHistoryLabel }}</td>
-                <td class="tac">
-                    @if($estimate->has_service_record === null)-
-                    @elseif($estimate->has_service_record)● 有 ○ 無
-                    @else ○ 有 ● 無
-                    @endif
-                </td>
+                <td class="tac">{{ $serviceRecordLabel }}</td>
                 <td class="tac">{{ $car->stock_number ?? 'STK-' . $car->id }}</td>
             </tr>
         </table>
@@ -300,7 +291,7 @@
             <tr>
                 <td>付属品/特別仕様</td>
                 <td class="tar">{{ $accessoriesTotal > 0 ? number_format($accessoriesTotal) : '-' }}</td>
-                <td>自賠責（{{ $detail?->inspection_expire_date ? now()->diffInMonths($detail->inspection_expire_date) . 'ヶ月' : '-' }}）</td>
+                <td>自賠責（{{ $liabilityInsuranceMonths }}）</td>
                 <td class="tar">{{ number_format($estimate->liability_insurance) }}</td>
                 <td>{{ $estimate->accessories[3]['name'] ?? '' }}</td>
                 <td class="tar">{{ isset($estimate->accessories[3]) ? number_format($estimate->accessories[3]['price']) : '' }}</td>
@@ -316,7 +307,7 @@
                 <td class="bg-gray bold">車両販売合計</td>
                 <td class="tar bg-gray bold">{{ number_format($discountedPrice + $accessoriesTotal) }}</td>
                 <td class="bg-gray bold tar">税金／保険料計</td>
-                <td class="tar bg-gray bold">{{ number_format($estimate->vehicle_tax + ($estimate->environmental_performance_tax ?? 0) + $estimate->weight_tax + $estimate->liability_insurance) }}</td>
+                <td class="tar bg-gray bold">{{ number_format($taxInsuranceTotal) }}</td>
                 <td></td>
                 <td></td>
             </tr>
@@ -377,7 +368,7 @@
                 <td>頭金/現金/他</td>
                 <td class="tar">{{ $estimate->down_payment ? number_format($estimate->down_payment) : '-' }}</td>
                 <td class="bg-gray bold tar">課税対象計</td>
-                <td class="tar bg-gray bold">{{ number_format(($estimate->inspection_registration_fee ?? 0) + $estimate->garage_cert_fee + ($estimate->trade_in_handling_fee ?? 0) + $estimate->delivery_fee + ($estimate->assessment_fee ?? 0)) }}</td>
+                <td class="tar bg-gray bold">{{ number_format($taxableSubTotal) }}</td>
                 <td class="bg-gray bold tac" colspan="2">付属品／特別仕様合計　{{ number_format($accessoriesTotal) }}</td>
             </tr>
             <tr>
@@ -401,19 +392,19 @@
             </tr>
             <tr>
                 <td>支払回数</td>
-                <td colspan="2">{{ $estimate->credit_months ? $estimate->credit_months . '回　分割手数料　' . number_format($estimate->credit_fee ?? 0) . '円' : '-' }}</td>
+                <td colspan="2">{{ $creditMonthsLabel }}</td>
                 <td class="nb detail-space"></td>
                 <td class="nb"></td>
             </tr>
             <tr>
                 <td>月払</td>
-                <td colspan="2">初回　{{ $estimate->monthly_payment ? number_format($estimate->monthly_payment) . '円' : '-' }}</td>
+                <td colspan="2">{{ $monthlyPaymentLabel }}</td>
                 <td class="bg-gray bold tar">非課税計</td>
-                <td class="tar bg-gray bold">{{ number_format(($estimate->inspection_registration_fee_exempt ?? 0) + $estimate->registration_fee) }}</td>
+                <td class="tar bg-gray bold">{{ number_format($nonTaxableSubTotal) }}</td>
             </tr>
             <tr>
                 <td>賞与　月</td>
-                <td colspan="2">賞与　月　{{ $estimate->bonus_payment ? number_format($estimate->bonus_payment) . '円' : '-' }}</td>
+                <td colspan="2">{{ $bonusPaymentLabel }}</td>
                 <td class="bg-blue tac bold" colspan="3">諸費用合計　{{ number_format($miscTotal) }}</td>
             </tr>
         </table>
@@ -434,7 +425,7 @@
         <div class="dealer-name">{{ $dealer?->name ?? '-' }}</div>
         <div class="dealer-info">
             @if($dealer?->tax_number){{ $dealer->tax_number }}<br>@endif
-            〒{{ $dealer?->postal_code }}　{{ $dealer?->city }}{{ $dealer?->address_detail }}<br>
+            @if($dealerPostalCode)〒{{ $dealerPostalCode }}@endif　{{ $dealer?->city }}{{ $dealer?->address_detail }}<br>
             TEL {{ $dealer?->phone ?? '-' }}
             @if($dealer?->fax)　FAX {{ $dealer->fax }}@endif
         </div>
@@ -464,5 +455,24 @@
         </div>
     </div>
 
-</body>
-</html>
+    {{-- ===== 約款誘導テキスト（契約書のみ） ===== --}}
+    @if($showContractNote)
+    <div class="section fs8" style="margin-top:4px; border:1px solid #000; padding:4px 6px;">
+        ※本契約の条項については、次ページ（裏面）の自動車売買注文書特約条項（約款）を必ずご確認ください。
+    </div>
+    @endif
+
+    {{-- ===== 署名捺印欄（契約書のみ） ===== --}}
+    @if($showSignatureArea)
+    <div class="section" style="margin-top:6px;">
+        <table>
+            <tr>
+                <td class="bg-blue bold" style="width:120px;">【注文ご署名捺印欄】</td>
+                <td class="fs8">
+                    上記内容および裏面（または2枚目）の約款に同意のうえ、車両を注文します。<br>
+                    注文日：{{ now()->format('Y') }}年　＿月　＿日　　ご署名：＿＿＿＿＿＿＿＿＿＿＿＿＿（実印）
+                </td>
+            </tr>
+        </table>
+    </div>
+    @endif

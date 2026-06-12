@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Controllers\Estimate;
 
-use App\Application\Services\EstimatePdfService;
+use App\Application\Services\Pdf\EstimatePdfService;
 use App\Infrastructure\Eloquent\User\StkEstimate;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;

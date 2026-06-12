@@ -6,7 +6,7 @@ namespace App\Application\UseCases\Estimate;
 
 use App\Infrastructure\Eloquent\User\StkEstimate;
 use App\Infrastructure\Repositories\Estimate\EloquentEstimateRepository;
-use App\Application\Services\EstimatePdfService;
+use App\Application\Services\Pdf\EstimatePdfService;
 
 /**
  * 見積作成ユースケース

@@ -98,7 +98,7 @@
                     @foreach([
                         ['年式', $car->model_year ? $car->model_year.'年' : '-'],
                         ['走行距離', number_format($car->mileage).'km'],
-                        ['修復歴', \App\Constants\RepairHistory::LABELS[$car->repair_history] ?? '-'],
+                        ['修復歴', \App\Domain\Shared\Enums\RepairHistory::LABELS[$car->repair_history] ?? '-'],
                         ['支払価格', number_format($car->price).'円'],
                         ['リサイクル預託金', $car->recycle_fee ? number_format((int)$car->recycle_fee).'円' : '-'],
                         ['諸費用プラン', $car->dealerFee?->name ?? '-'],

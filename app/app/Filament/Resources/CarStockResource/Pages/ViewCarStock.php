@@ -19,6 +19,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Storage;
 use App\Filament\Resources\CarRegistrationResource;
+use App\Filament\Resources\CarStockResource\Pages\CreateCarDocument;
 
 class ViewCarStock extends Page
 {
@@ -160,6 +161,13 @@ class ViewCarStock extends Page
                     $this->record = $record->fresh();
                     Notification::make()->title('販売終了にしました')->danger()->send();
                 }),
+
+            // getHeaderActions()に追加
+            Action::make('create_document')
+                ->label('見積書／契約書を作成')
+                ->color('primary')
+                ->icon('heroicon-o-document-text')
+                ->url(fn () => CarStockResource::getUrl('create-document', ['record' => $record->id])),
         ];
     }
 
