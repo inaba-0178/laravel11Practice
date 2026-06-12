@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\InquiryResource\Pages;
 
-use App\Application\Services\EstimatePdfService;
+use App\Application\Services\Pdf\EstimatePdfService;
 use App\Application\UseCases\Estimate\CreateEstimateInputData;
 use App\Application\UseCases\Estimate\CreateEstimateUseCase;
 use App\Constants\InquiryStatus;

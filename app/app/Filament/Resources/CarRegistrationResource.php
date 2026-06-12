@@ -46,7 +46,7 @@ use App\Constants\CarOptionCategory;
 use App\Constants\SlideDoor;
 use App\Constants\FuelType;
 use App\Constants\PriceDisplayType;
-use App\Constants\RepairHistory;
+use App\Domain\Shared\Enums\RepairHistory;
 use App\Constants\DriveSystem;
 use App\Constants\InspectionStatus;
 use App\Constants\Transmission;

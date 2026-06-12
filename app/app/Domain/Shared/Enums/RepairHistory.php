@@ -10,9 +10,9 @@ class RepairHistory
     public const UNKNOWN = 'unknown';
 
     public const LABELS = [
-        self::NONE    => '修復歴なし',
-        self::MINOR   => '軽微な修復歴あり',
-        self::MAJOR   => '修復歴あり',
+        self::NONE    => 'なし',
+        self::MINOR   => '軽微あり',
+        self::MAJOR   => 'あり',
         self::UNKNOWN => '不明',
     ];
 

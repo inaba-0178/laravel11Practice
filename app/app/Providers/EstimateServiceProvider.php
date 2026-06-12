@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Application\UseCases\Estimate\CreateEstimateUseCase;
-use App\Application\Services\EstimatePdfService;
+use App\Application\Services\Pdf\EstimatePdfService;
 use App\Infrastructure\Repositories\Estimate\EloquentEstimateRepository;
 use Illuminate\Support\ServiceProvider;
 

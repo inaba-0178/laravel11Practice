@@ -9,6 +9,7 @@ use App\Constants\NavigationGroup;
 use App\Constants\NavigationSort;
 use App\Filament\Resources\CarStockResource\Pages\ListCarStocks;
 use App\Filament\Resources\CarStockResource\Pages\ViewCarStock;
+use App\Filament\Resources\CarStockResource\Pages\CreateCarDocument;
 use App\Infrastructure\Eloquent\User\StkCar;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -273,8 +274,9 @@ class CarStockResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListCarStocks::route('/'),
-            'view'  => ViewCarStock::route('/{record}'),
+            'index'             => ListCarStocks::route('/'),
+            'view'              => ViewCarStock::route('/{record}'),
+            'create-document'   => CreateCarDocument::route('/{record}/create-document'),
         ];
     }
 }
