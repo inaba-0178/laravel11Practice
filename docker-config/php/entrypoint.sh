@@ -20,7 +20,7 @@ fi
 # 毎回起動時に権限設定
 echo "Setting permissions..."
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+chmod -R 777 /var/www/storage /var/www/bootstrap/cache
 
 # cron起動
 echo "Starting cron..."

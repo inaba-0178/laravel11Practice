@@ -3,3 +3,9 @@ docker-config/mariadb/
 app/IPAexfont00401/
 vendor/dompdf/dompdf/lib/fonts/ipaex*
 vendor/dompdf/dompdf/lib/fonts/installed-fonts.json
+
+# developブランチで
+echo "IPAexfont00401/" >> app/.gitignore
+echo "storage/fonts/" >> app/.gitignore
+git add app/.gitignore
+git commit -m "gitignore: add font directories"
