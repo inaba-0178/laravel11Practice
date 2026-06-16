@@ -1,40 +1,19 @@
 <x-filament-panels::page>
-    @php
-        $participants  = $this->getParticipants();
-        $currentUserId = (string) auth()->id();
-        $canEdit       = in_array(auth()->user()?->role, ['dealer', 'dealer_staff']);
-        $isAdmin       = in_array(auth()->user()?->role, ['super', 'admin']);
-        $canViewLog    = in_array(auth()->user()?->role, ['dealer', 'dealer_staff', 'super', 'admin']);
-        $deletionLogs  = $this->getDeletionLogs();
-    @endphp
 
     {{-- 参加者情報 --}}
     <div style="background: white; border-radius: 12px; border: 0.5px solid #e5e7eb; padding: 14px 18px; margin-bottom: 16px;">
         <p style="font-size: 12px; font-weight: 500; color: #374151; margin: 0 0 10px; padding-left: 10px; border-left: 3px solid #185FA5;">参加者</p>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
             @foreach($participants as $participant)
-            @php
-                $badgeColor = match(true) {
-                    $participant['role'] === 'super'      => '#d97706',
-                    $participant['role'] === 'admin'      => '#dc2626',
-                    $participant['user_type'] === 'staff' => '#185FA5',
-                    default                               => '#dc5078',
-                };
-                $statusLabel = match($participant['status']) {
-                    'pending'  => '招待中',
-                    'rejected' => '拒否',
-                    default    => null,
-                };
-            @endphp
             <div style="background: #f9fafb; border: 0.5px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px;">
-                <div style="background: {{ $badgeColor }}; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0;">
+                <div style="background: {{ $participant['badge_color'] }}; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0;">
                     {{ mb_substr($participant['name'], 0, 1) }}
                 </div>
                 <div>
                     <p style="font-size: 13px; font-weight: 500; color: #111827; margin: 0;">
                         {{ $participant['name'] }}
-                        @if($statusLabel)
-                        <span style="background: #fef3c7; color: #92400e; padding: 1px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">{{ $statusLabel }}</span>
+                        @if($participant['status_label'])
+                        <span style="background: #fef3c7; color: #92400e; padding: 1px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">{{ $participant['status_label'] }}</span>
                         @endif
                     </p>
                     <p style="font-size: 11px; color: #6b7280; margin: 2px 0 0;">
@@ -149,17 +128,9 @@
             @php $lastDate = $message['date']; @endphp
             @endif
 
-            @php
-                $msgBadgeColor = match(true) {
-                    $message['role'] === 'super'      => '#d97706',
-                    $message['role'] === 'admin'      => '#dc2626',
-                    $message['user_type'] === 'staff' => '#185FA5',
-                    default                           => '#dc5078',
-                };
-            @endphp
             <div style="display: flex; gap: 8px; max-width: 70%; {{ $message['is_mine'] ? 'align-self: flex-end;' : 'align-self: flex-start;' }}">
                 @if(!$message['is_mine'])
-                <div style="background: {{ $msgBadgeColor }}; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; align-self: flex-start; margin-top: 20px;">
+                <div style="background: {{ $message['badge_color'] }}; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; align-self: flex-start; margin-top: 20px;">
                     {{ mb_substr($message['user_name'], 0, 1) }}
                 </div>
                 @endif
@@ -209,12 +180,7 @@
                                 </div>
                                 <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
                                     <span style="font-size: 12px; font-weight: 500; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;">{{ $message['attachment_name'] }}</span>
-                                    <span style="font-size: 10px; color: #111827; margin-top: 2px;">
-                                        @php
-                                            $size = $message['attachment_size'] ?? 0;
-                                            echo $size < 1024 ? "{$size}B" : ($size < 1048576 ? round($size/1024, 1).'KB' : round($size/1048576, 1).'MB');
-                                        @endphp
-                                    </span>
+                                    <span style="font-size: 10px; color: #111827; margin-top: 2px;">{{ $message['attachment_size_label'] }}</span>
                                 </div>
                             </a>
                         </div>
@@ -228,7 +194,7 @@
                     </div>
                 </div>
                 @if($message['is_mine'])
-                <div style="background: {{ $msgBadgeColor }}; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; align-self: flex-start; margin-top: 20px;">
+                <div style="background: {{ $message['badge_color'] }}; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; align-self: flex-start; margin-top: 20px;">
                     {{ mb_substr($message['user_name'], 0, 1) }}
                 </div>
                 @endif
@@ -240,7 +206,6 @@
         </div>
 
         {{-- 入力欄 --}}
-        @php $canSend = !in_array(auth()->user()?->role, ['super', 'admin']) || auth()->user()?->dealer_id; @endphp
         @if($canSend)
         <div
             x-data="chatAttachment({{ $this->record->id }})"
