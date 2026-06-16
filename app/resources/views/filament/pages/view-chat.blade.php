@@ -195,25 +195,29 @@
 
                     {{-- ファイル --}}
                     @elseif(($message['attachment_type'] ?? '') === 'file')
-                    <div style="margin-top: 4px;">
-                        
-                            href="{{ $message['attachment_url'] }}"
-                            download="{{ $message['attachment_name'] }}"
-                            target="_blank"
-                            style="display: flex; align-items: center; gap: 8px; background: {{ $message['is_mine'] ? 'rgba(255,255,255,0.2)' : '#f0f0f0' }}; border-radius: 8px; padding: 8px 12px; text-decoration: none; color: {{ $message['is_mine'] ? 'white' : '#333' }}; min-width: 180px;"
-                        >
-                            <span style="font-size: 20px;">📄</span>
-                            <div style="display: flex; flex-direction: column;">
-                                <span style="font-size: 12px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px;">{{ $message['attachment_name'] }}</span>
-                                <span style="font-size: 10px; color: {{ $message['is_mine'] ? 'rgba(255,255,255,0.7)' : '#888' }};">
-                                    @php
-                                        $size = $message['attachment_size'] ?? 0;
-                                        echo $size < 1024 ? "{$size}B" : ($size < 1048576 ? round($size/1024, 1).'KB' : round($size/1048576, 1).'MB');
-                                    @endphp
-                                </span>
-                            </div>
-                        </a>
-                    </div>
+                        <div style="margin-top: 4px;">
+                            <a
+                                href="{{ $message['attachment_url'] }}"
+                                target="_blank"
+                                style="display: flex; align-items: center; gap: 10px; background: {{ $message['is_mine'] ? 'rgba(255,255,255,0.15)' : 'white' }}; border: 0.5px solid {{ $message['is_mine'] ? 'rgba(255,255,255,0.3)' : '#e5e7eb' }}; border-radius: 10px; padding: 10px 14px; text-decoration: none; width: 280px;"
+                            >
+                                <div style="width: 36px; height: 36px; background: #f0f4ff; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                    </svg>
+                                </div>
+                                <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
+                                    <span style="font-size: 12px; font-weight: 500; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;">{{ $message['attachment_name'] }}</span>
+                                    <span style="font-size: 10px; color: #111827; margin-top: 2px;">
+                                        @php
+                                            $size = $message['attachment_size'] ?? 0;
+                                            echo $size < 1024 ? "{$size}B" : ($size < 1048576 ? round($size/1024, 1).'KB' : round($size/1048576, 1).'MB');
+                                        @endphp
+                                    </span>
+                                </div>
+                            </a>
+                        </div>
                     @endif
 
                     <div style="display: flex; gap: 8px; font-size: 11px; color: #9ca3af; margin-top: 4px;">

@@ -27,6 +27,10 @@ use App\Constants\SpecialTypeOption;
 use App\Constants\SalesOption;
 use App\Constants\AudioOption;
 use App\Constants\NaviOption;
+use App\Domain\Shared\Enums\RepairHistory;
+use App\Constants\SteeringWheel;
+use App\Infrastructure\Eloquent\User\StkCarLoan;
+use App\Constants\LoanPlanLabel;
 
 class ViewCarApproval extends Page
 {
@@ -244,7 +248,15 @@ class ViewCarApproval extends Page
         $car     = $this->record->load(['series', 'detail', 'options', 'dealer', 'dealerFee']);
         $series  = MstCarSeries::find($car->series_id);
         $vehicle = MstVehicles::find($car->vehicle_id);
-        return ['car' => $car, 'series' => $series, 'vehicle' => $vehicle];
+        
+        return [
+            'car'               => $car,
+            'series'            => $series,
+            'vehicle'           => $vehicle,
+            'status_label'      => CarStatus::LABELS[$car->status] ?? $car->status,
+            'repair_label'      => RepairHistory::LABELS[$car->repair_history] ?? '-',
+            'steering_label'    => SteeringWheel::LABELS[$car->detail?->steering_wheel ?? ''] ?? '-',
+        ];
     }
 
     public function getImages(): array
@@ -338,12 +350,12 @@ class ViewCarApproval extends Page
                 || $loan->dealer_loan_plan_id === 'default';
     
             $planName = $isSystemDefault
-                ? 'システムデフォルト'
-                : ($loan->snapshot_plan_name ?? $loan->dealerLoanPlan?->name ?? 'ディーラープラン');
+                ? LoanPlanLabel::SYSTEM_DEFAULT
+                : ($loan->snapshot_plan_name ?? $loan->dealerLoanPlan?->name ?? LoanPlanLabel::DEALER_PLAN);
     
             return [
                 'plan_name'         => $planName,
-                'type_label'        => \App\Infrastructure\Eloquent\User\StkCarLoan::TYPE_LABELS[$loan->loan_type] ?? '通常ローン',
+                'type_label'        => LoanPlanLabel::TYPE_LABELS[$loan->loan_type] ?? LoanPlanLabel::DEFAULT_TYPE,
                 'rate'              => $rate,
                 'is_default_rate'   => !$loan->snapshot_rate && !$loan->interest_rate,
                 'months_options'    => $monthsOptions,

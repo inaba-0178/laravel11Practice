@@ -56,6 +56,7 @@ use App\Constants\LoanMonths;
 use App\Infrastructure\Eloquent\User\StkCarDealer;
 use App\Infrastructure\Eloquent\User\StkDealerLoanPlan;
 use App\Infrastructure\Eloquent\Mst\MstLoanPlan;
+use App\Constants\LoanPlanLabel;
 
 class CarRegistrationResource extends Resource
 {

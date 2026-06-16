@@ -58,13 +58,7 @@ class StkCarLoan extends Model
         'contracted_at'           => 'datetime',
     ];
 
-    const TYPE_STANDARD = 'standard';
-    const TYPE_RESIDUAL = 'residual';
-
-    const TYPE_LABELS = [
-        self::TYPE_STANDARD => '通常ローン',
-        self::TYPE_RESIDUAL => '残価設定ローン',
-    ];
+    
 
     const DEFAULT_INTEREST_RATE = 3.9;
     const DEFAULT_LOAN_MONTHS   = 60;
