@@ -40,7 +40,12 @@ class ViewChat extends Page
     public ?string  $deleteReasonDetail     = null;
     public bool     $showDeletionLogs       = false;
     public array    $attachments            = [];
-
+    public array    $participants           = [];
+    public array    $deletionLogs           = [];
+    public bool     $canEdit                = false;
+    public bool     $canSend                = false;
+    public bool     $canViewLog             = false;
+    public string   $currentUserId          = '';
 
     // ロール定数
     private const EDITABLE_ROLES = ['dealer', 'dealer_staff'];
@@ -48,8 +53,14 @@ class ViewChat extends Page
 
     public function mount(Room $record): void
     {
-        $this->record = $record->load(['roomUsers']);
+        $this->record        = $record->load(['roomUsers']);
+        $this->currentUserId = (string) Auth::id();
+        $this->canEdit       = in_array(Auth::user()?->role, self::EDITABLE_ROLES);
+        $this->canSend       = !(in_array(Auth::user()?->role, self::READONLY_ROLES) && !Auth::user()?->dealer_id);
+        $this->canViewLog    = in_array(Auth::user()?->role, [...self::EDITABLE_ROLES, ...self::READONLY_ROLES]);
         $this->loadMessages();
+        $this->loadParticipants();
+        $this->loadDeletionLogs();
     }
 
     public function getTitle(): string
@@ -66,7 +77,7 @@ class ViewChat extends Page
                 ->url(ListChats::getUrl()),
         ];
 
-        if ($this->canEdit()) {
+        if ($this->canEdit) {
             $actions[] = $this->addStaffAction();
             $actions[] = $this->addMemberAction();
         }
@@ -74,18 +85,14 @@ class ViewChat extends Page
         return $actions;
     }
 
-    private function canEdit(): bool
+    private static function resolveBadgeColor(string $role, string $userType): string
     {
-        return in_array(Auth::user()?->role, self::EDITABLE_ROLES);
-    }
-
-    private function canSend(): bool
-    {
-        $user = Auth::user();
-        if (in_array($user->role, self::READONLY_ROLES) && !$user->dealer_id) {
-            return false;
-        }
-        return true;
+        return match(true) {
+            $role === 'super'               => '#d97706',
+            $role === 'admin'               => '#dc2626',
+            $userType === UserType::STAFF   => '#185FA5',
+            default                         => '#dc5078',
+        };
     }
 
     private function addStaffAction(): Action
@@ -123,6 +130,7 @@ class ViewChat extends Page
                 ]);
 
                 $this->record->load(['roomUsers']);
+                $this->loadParticipants();
 
                 Notification::make()->title('担当者を追加しました')->success()->send();
             });
@@ -180,6 +188,7 @@ class ViewChat extends Page
                     }
 
                     $this->record->load(['roomUsers']);
+                    $this->loadParticipants();
                 }
 
                 Notification::make()->title('招待メールを送信しました')->success()->send();
@@ -227,24 +236,29 @@ class ViewChat extends Page
         }
 
         $this->messages = $messages->map(function ($message) use ($authId) {
-            $sender = $this->getSender($message->user_id, $message->user_type);
+            $sender   = $this->getSender($message->user_id, $message->user_type);
+            $role     = UserType::getRole($message->user_type, $sender?->role);
+            $userType = $message->user_type;
+            $size     = $message->attachment_size;
             return [
-                'id'              => $message->id,
-                'message'         => $message->message,
-                'user_id'         => $message->user_id,
-                'user_type'       => $message->user_type,
-                'role'            => UserType::getRole($message->user_type, $sender?->role),
-                'user_name'       => UserType::getDisplayName($sender, $message->user_type),
-                'created_at'      => $message->created_at->format('H:i'),
-                'date'            => $message->created_at->format('Y/m/d'),
-                'is_mine'         => $message->user_id === $authId && $message->user_type === UserType::STAFF,
-                'read_count'      => $message->messageReads
+                'id'                    => $message->id,
+                'message'               => $message->message,
+                'user_id'               => $message->user_id,
+                'user_type'             => $userType,
+                'role'                  => $role,
+                'user_name'             => UserType::getDisplayName($sender, $userType),
+                'created_at'            => $message->created_at->format('H:i'),
+                'date'                  => $message->created_at->format('Y/m/d'),
+                'is_mine'               => $message->user_id === $authId && $userType === UserType::STAFF,
+                'read_count'            => $message->messageReads
                     ->filter(fn ($r) => $r->user_id !== $message->user_id)
                     ->count(),
-                'attachment_url'  => $message->attachment_url,
-                'attachment_type' => $message->attachment_type,
-                'attachment_name' => $message->attachment_name,
-                'attachment_size' => $message->attachment_size,
+                'attachment_url'        => $message->attachment_url,
+                'attachment_type'       => $message->attachment_type,
+                'attachment_name'       => $message->attachment_name,
+                'attachment_size'       => $size,
+                'attachment_size_label' => $size === null ? '' : ($size < 1024 ? "{$size}B" : ($size < 1048576 ? round($size / 1024, 1) . 'KB' : round($size / 1048576, 1) . 'MB')),
+                'badge_color'           => self::resolveBadgeColor($role, $userType),
             ];
         })->toArray();
 
@@ -258,25 +272,36 @@ class ViewChat extends Page
             : UsrUser::find($userId);
     }
 
-    public function getParticipants(): array
+    private function loadParticipants(): void
     {
-        return $this->record->roomUsers
-            ->map(fn ($roomUser) => [
-                'id'           => $roomUser->user_id,
-                'room_user_id' => $roomUser->id,
-                'user_type'    => $roomUser->user_type,
-                'role'         => UserType::getRole($roomUser->user_type, $this->getSender($roomUser->user_id, $roomUser->user_type)?->role),
-                'status'       => $roomUser->status ?? 'approved',
-                'name'         => UserType::getDisplayName($this->getSender($roomUser->user_id, $roomUser->user_type), $roomUser->user_type),
-                'email'        => $this->getSender($roomUser->user_id, $roomUser->user_type)?->email ?? '-',
-                'type_label'   => $roomUser->user_type === UserType::STAFF ? 'ディーラー' : 'ユーザー',
-            ])
+        $this->participants = $this->record->roomUsers
+            ->map(function ($roomUser) {
+                $sender = $this->getSender($roomUser->user_id, $roomUser->user_type);
+                $role   = UserType::getRole($roomUser->user_type, $sender?->role);
+                $status = $roomUser->status ?? 'approved';
+                return [
+                    'id'           => $roomUser->user_id,
+                    'room_user_id' => $roomUser->id,
+                    'user_type'    => $roomUser->user_type,
+                    'role'         => $role,
+                    'status'       => $status,
+                    'name'         => UserType::getDisplayName($sender, $roomUser->user_type),
+                    'email'        => $sender?->email ?? '-',
+                    'type_label'   => $roomUser->user_type === UserType::STAFF ? 'ディーラー' : 'ユーザー',
+                    'badge_color'  => self::resolveBadgeColor($role, $roomUser->user_type),
+                    'status_label' => match($status) {
+                        'pending'  => '招待中',
+                        'rejected' => '拒否',
+                        default    => null,
+                    },
+                ];
+            })
             ->toArray();
     }
 
     public function removeParticipant(int $roomUserId): void
     {
-        if (!$this->canEdit()) {
+        if (!$this->canEdit) {
             Notification::make()->title('権限がありません')->danger()->send();
             return;
         }
@@ -305,6 +330,8 @@ class ViewChat extends Page
 
         $roomUser->delete();
         $this->record->load(['roomUsers']);
+        $this->loadParticipants();
+        $this->loadDeletionLogs();
         $this->resetDeleteState();
 
         Notification::make()->title('参加者を削除しました')->success()->send();
@@ -322,9 +349,9 @@ class ViewChat extends Page
         $this->deleteReasonDetail = null;
     }
 
-    public function getDeletionLogs(): array
+    private function loadDeletionLogs(): void
     {
-        return RoomUserDeletionLog::where('room_id', $this->record->id)
+        $this->deletionLogs = RoomUserDeletionLog::where('room_id', $this->record->id)
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(fn ($log) => [
@@ -342,7 +369,7 @@ class ViewChat extends Page
 
     public function sendMessage(): void
     {
-        if (!$this->canSend()) {
+        if (!$this->canSend) {
             Notification::make()->title('送信権限がありません')->danger()->send();
             return;
         }
@@ -428,7 +455,7 @@ class ViewChat extends Page
 
     public function sendMessageWithAttachment(array $attachmentData): void
     {
-        if (!$this->canSend()) return;
+        if (!$this->canSend) return;
 
         $message = Message::create([
             'room_id'          => $this->record->id,

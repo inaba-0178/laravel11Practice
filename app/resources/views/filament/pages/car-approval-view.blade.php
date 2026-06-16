@@ -9,6 +9,9 @@
         $detail     = $car->detail;
         $dealer     = $car->dealer;
         $rejCats    = $this->getRejectionCategories();
+        $status_label   = $carData['status_label'];
+        $repair_label   = $carData['repair_label'];
+        $steering_label = $carData['steering_label'];
     @endphp
 
     <div style="display: grid; grid-template-columns: 1fr 300px 280px; gap: 14px; align-items: start;">
@@ -28,7 +31,7 @@
                     </p>
                 </div>
                 <span style="background: #fef3c7; color: #92400e; font-size: 11px; padding: 3px 10px; border-radius: 8px; font-weight: 500;">
-                    {{ \App\Constants\CarStatus::LABELS[$car->status] ?? $car->status }}
+                    {{ $carData['status_label'] }}
                 </span>
             </div>
 
@@ -98,7 +101,7 @@
                     @foreach([
                         ['年式', $car->model_year ? $car->model_year.'年' : '-'],
                         ['走行距離', number_format($car->mileage).'km'],
-                        ['修復歴', \App\Domain\Shared\Enums\RepairHistory::LABELS[$car->repair_history] ?? '-'],
+                        ['修復歴', $carData['repair_label']],
                         ['支払価格', number_format($car->price).'円'],
                         ['リサイクル預託金', $car->recycle_fee ? number_format((int)$car->recycle_fee).'円' : '-'],
                         ['諸費用プラン', $car->dealerFee?->name ?? '-'],
@@ -108,7 +111,7 @@
                         ['駆動方式', $detail?->drive_system ?? '-'],
                         ['排気量', $detail?->displacement ? number_format($detail->displacement).'cc' : '-'],
                         ['ミッション', $car->transmission ?? '-'],
-                        ['ハンドル', \App\Constants\SteeringWheel::LABELS[$detail?->steering_wheel ?? ''] ?? '-'],
+                        ['ハンドル', $carData['steering_label']],
                         ['ドア数', $detail?->number_of_doors ? $detail->number_of_doors.'ドア' : '-'],
                         ['乗車定員', $detail?->riding_capacity ? $detail->riding_capacity.'名' : '-'],
                     ] as [$label, $value])
