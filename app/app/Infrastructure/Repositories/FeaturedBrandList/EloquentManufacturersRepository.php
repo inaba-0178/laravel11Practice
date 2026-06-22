@@ -5,6 +5,8 @@ use App\Domain\FeaturedBrandList\Entities\Manufacturer;
 use App\Domain\FeaturedBrandList\Repositories\ManufacturerRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
 use App\Infrastructure\Repositories\BaseRepository;
+use App\Domain\Common\Constants\CacheConstants;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentManufacturersRepository extends BaseRepository implements ManufacturerRepositoryInterface
 {
@@ -16,12 +18,13 @@ class EloquentManufacturersRepository extends BaseRepository implements Manufact
 
     public function findByCodes(array $codes, array $conditions = []): array
     {
-        $manufacturers = $this->model
-            ->whereIn('code', $codes)
-            ->orderBy('sort_order')
-            ->get();
-
-        return $this->toEntities($manufacturers, fn($model) => $this->toEntity($model));
+        $cacheKey = CacheConstants::KEY_MANUFACTURERS . ':codes:' . md5(serialize($codes));
+        return Cache::remember($cacheKey, CacheConstants::TTL_MST, function () use ($codes) {
+            return $this->toEntities(
+                $this->model->whereIn('code', $codes)->orderBy('sort_order')->get(),
+                fn($model) => $this->toEntity($model)
+            );
+        });
     }
 
     /**

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Infrastructure\Repositories\SelectConditionCarList;
 
 use App\Domain\SelectConditionCarList\Repositories\CarRepositoryInterface;
+use App\Domain\Common\Constants\CacheConstants;
 use App\Infrastructure\Eloquent\User\StkCar;
 use App\Infrastructure\Repositories\Common\BaseCarRepository;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentCarRepository extends BaseCarRepository implements CarRepositoryInterface
 {
@@ -18,17 +20,23 @@ class EloquentCarRepository extends BaseCarRepository implements CarRepositoryIn
 
     public function findByCondition(int $offset, int $limit, array $searchParams = [], string $sortKey = '', string $sortOrder = ''): array
     {
-        $query     = $this->buildQuery($searchParams);
-        $this->applySorting($query, $sortKey, $sortOrder);
-        $cars      = $query->offset($offset)->limit($limit)->get();
-        $bodyTypes = $this->getBodyTypes($cars);
+        $cacheKey = CacheConstants::KEY_CAR_CONDITION_LIST . ':' . md5(serialize([$offset, $limit, $searchParams, $sortKey, $sortOrder]));
+        return Cache::remember($cacheKey, CacheConstants::TTL_CAR, function () use ($offset, $limit, $searchParams, $sortKey, $sortOrder) {
+            $query     = $this->buildQuery($searchParams);
+            $this->applySorting($query, $sortKey, $sortOrder);
+            $cars      = $query->offset($offset)->limit($limit)->get();
+            $bodyTypes = $this->getBodyTypes($cars);
 
-        return $this->toEntities($cars, fn($car) => $this->toEntity($car, $bodyTypes));
+            return $this->toEntities($cars, fn($car) => $this->toEntity($car, $bodyTypes));
+        });
     }
 
     public function findTotalCount(array $searchParams = []): int
     {
-        return $this->buildQuery($searchParams)->count();
+        $cacheKey = CacheConstants::KEY_CAR_CONDITION_LIST . ':count:' . md5(serialize($searchParams));
+        return Cache::remember($cacheKey, CacheConstants::TTL_CAR, function () use ($searchParams) {
+            return $this->buildQuery($searchParams)->count();
+        });
     }
 
     private function buildQuery(array $searchParams): Builder

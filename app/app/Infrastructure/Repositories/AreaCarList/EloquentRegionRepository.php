@@ -4,6 +4,8 @@ namespace App\Infrastructure\Repositories\AreaCarList;
 use App\Domain\AreaCarList\Entities\Region;
 use App\Domain\AreaCarList\Repositories\RegionRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstRegions;
+use App\Domain\Common\Constants\CacheConstants;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentRegionRepository implements RegionRepositoryInterface
 {
@@ -16,17 +18,19 @@ class EloquentRegionRepository implements RegionRepositoryInterface
 
     public function findAll(): array
     {
-        $regions = $this->model
-            ->orderBy('sort_order')
-            ->get();
-
-        return $regions->map(fn (MstRegions $region) => $this->toEntity($region))->all();
+        return Cache::remember(CacheConstants::KEY_REGIONS . ':area_car', CacheConstants::TTL_MST, function () {
+            return $this->model
+                ->orderBy('sort_order')
+                ->get()
+                ->map(fn (MstRegions $region) => $this->toEntity($region))
+                ->all();
+        });
     }
 
     /**
      * EloquentモデルをEntityに変換
-     * 
-     * @param MstRegions
+     *
+     * @param MstRegions $model
      * @return Region
      */
     private function toEntity(MstRegions $model): Region

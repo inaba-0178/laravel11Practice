@@ -4,7 +4,9 @@ namespace App\Infrastructure\Repositories\AreaCarList;
 use App\Domain\AreaCarList\Repositories\CarRepositoryInterface;
 use App\Domain\AreaCarList\Entities\Car;
 use App\Domain\AreaCarList\Exceptions\AreaCarNotFoundException;
+use App\Domain\Common\Constants\CacheConstants;
 use App\Infrastructure\Eloquent\User\StkCar;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentCarRepository implements CarRepositoryInterface
 {
@@ -17,12 +19,14 @@ class EloquentCarRepository implements CarRepositoryInterface
      */
     public function findBySeriesId(int $seriesId): array
     {
-        $cars = $this->model
-            ->where('series_id', $seriesId)
-            ->where('status', 'available')
-            ->get();
-
-        return $cars->map(fn($car) => $this->toEntity($car))->all();
+        return Cache::remember(CacheConstants::KEY_CAR_LIST . ':area:series:' . $seriesId, CacheConstants::TTL_CAR, function () use ($seriesId) {
+            return $this->model
+                ->where('series_id', $seriesId)
+                ->where('status', 'available')
+                ->get()
+                ->map(fn($car) => $this->toEntity($car))
+                ->all();
+        });
     }
 
     private function toEntity(StkCar $model): Car

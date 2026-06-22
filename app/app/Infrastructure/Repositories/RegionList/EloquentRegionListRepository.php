@@ -6,6 +6,8 @@ use App\Domain\RegionList\Entities\Area;
 use App\Domain\RegionList\Repositories\RegionRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstRegions;
 use App\Infrastructure\Eloquent\Mst\MstAreas;
+use App\Domain\Common\Constants\CacheConstants;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentRegionListRepository implements RegionRepositoryInterface
 {
@@ -18,48 +20,43 @@ class EloquentRegionListRepository implements RegionRepositoryInterface
 
     public function findAll(): array
     {
-        $regions = $this->model
-            ->with('area')
-            ->orderBy('sort_order')
-            ->get();
-
-        return $this->toEntities($regions);
+        return Cache::remember(CacheConstants::KEY_REGIONS . ':all', CacheConstants::TTL_MST, function () {
+            return $this->toEntities($this->model->with('area')->orderBy('sort_order')->get());
+        });
     }
 
-    //地方ごとにグルーピング
     public function findAllGroupedByArea(): array
     {
-        $areas = MstAreas::query()
-            ->with(['regions' => function ($query) {
-                $query->orderBy('sort_order', 'asc');
-            }])
-            ->orderBy('sort_order', 'asc')
-            ->get();
+        return Cache::remember(CacheConstants::KEY_REGIONS . ':grouped', CacheConstants::TTL_MST, function () {
+            $areas = MstAreas::query()
+                ->with(['regions' => function ($query) {
+                    $query->orderBy('sort_order', 'asc');
+                }])
+                ->orderBy('sort_order', 'asc')
+                ->get();
 
-        return $this->toAreaEntities($areas);
+            return $this->toAreaEntities($areas);
+        });
     }
 
     public function findActive(): array
     {
-        $regions = $this->model
-            ->with('area')
-            ->orderBy('sort_order')
-            ->get();
-
-        return $this->toEntities($regions);
+        return Cache::remember(CacheConstants::KEY_REGIONS . ':active', CacheConstants::TTL_MST, function () {
+            return $this->toEntities($this->model->with('area')->orderBy('sort_order')->get());
+        });
     }
 
     public function findById(int $id): ?Region
     {
-        $region = $this->model
-            ->with('area')
-            ->find($id);
+        return Cache::remember(CacheConstants::KEY_REGIONS . ':id:' . $id, CacheConstants::TTL_MST, function () use ($id) {
+            $region = $this->model->with('area')->find($id);
 
-        if (!$region) {
-            return null;
-        }
+            if (!$region) {
+                return null;
+            }
 
-        return $this->toEntity($region);
+            return $this->toEntity($region);
+        });
     }
 
     /**
