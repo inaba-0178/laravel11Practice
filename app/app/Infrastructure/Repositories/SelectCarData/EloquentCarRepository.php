@@ -4,8 +4,10 @@ namespace App\Infrastructure\Repositories\SelectCarData;
 use App\Domain\SelectCarData\Repositories\CarRepositoryInterface;
 use App\Domain\SelectCarData\Entities\Car;
 use App\Domain\SelectCarData\Exceptions\CarNotFoundException;
+use App\Domain\Common\Constants\CacheConstants;
 use App\Infrastructure\Eloquent\User\StkCar;
 use App\Infrastructure\Repositories\BaseRepository;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentCarRepository extends BaseRepository implements CarRepositoryInterface
 {
@@ -19,15 +21,15 @@ class EloquentCarRepository extends BaseRepository implements CarRepositoryInter
      */
     public function findById(int $carId): Car
     {
-        $car = $this->model
-            ->where('id', $carId)
-            ->first();
-        
-        if ($car === null) {
-            throw new CarNotFoundException($carId);
-        }
-        
-        return $this->toEntity($car);
+        return Cache::remember(CacheConstants::KEY_CAR_DETAIL . ':' . $carId, CacheConstants::TTL_CAR, function () use ($carId) {
+            $car = $this->model->where('id', $carId)->first();
+
+            if ($car === null) {
+                throw new CarNotFoundException($carId);
+            }
+
+            return $this->toEntity($car);
+        });
     }
 
     private function toEntity(StkCar $model): Car

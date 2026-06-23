@@ -5,6 +5,8 @@ use App\Domain\SelectManufacturerList\Entities\CarSerie;
 use App\Domain\SelectManufacturerList\Repositories\CarSerieRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstCarSeries;
 use App\Infrastructure\Repositories\BaseRepository;
+use App\Domain\Common\Constants\CacheConstants;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentCarSeriesRepository extends BaseRepository implements CarSerieRepositoryInterface
 {
@@ -15,12 +17,13 @@ class EloquentCarSeriesRepository extends BaseRepository implements CarSerieRepo
 
     public function findByManufacturerId(int $manufacturerId, array $conditions = []): array
     {
-        $carSeries = $this->model
-            ->where('manufacturer_id', $manufacturerId)
-            ->with(['mainImage'])  // ← メイン画像をEager Load
-            ->get();
-
-        return $this->toEntities($carSeries, fn($model) => $this->toEntity($model));
+        $cacheKey = CacheConstants::KEY_CAR_SERIES . ':manufacturer:' . $manufacturerId;
+        return Cache::remember($cacheKey, CacheConstants::TTL_MST, function () use ($manufacturerId) {
+            return $this->toEntities(
+                $this->model->where('manufacturer_id', $manufacturerId)->with(['mainImage'])->get(),
+                fn($model) => $this->toEntity($model)
+            );
+        });
     }
 
     private function toEntity(MstCarSeries $model): CarSerie

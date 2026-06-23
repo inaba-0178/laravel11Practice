@@ -5,7 +5,9 @@ use App\Domain\BodyTypeInfo\Repositories\BodyTypeRepositoryInterface;
 use App\Domain\BodyTypeInfo\Entities\BodyType;
 use App\Domain\BodyTypeInfo\Exceptions\BodyTypeNotFoundException;
 use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
+use App\Domain\Common\Constants\CacheConstants;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentBodyTypeRepository implements BodyTypeRepositoryInterface
 {
@@ -15,8 +17,9 @@ class EloquentBodyTypeRepository implements BodyTypeRepositoryInterface
 
     public function findAll(): array
     {
-        $bodyTypes = $this->model->get();
-        return $this->toEntities($bodyTypes);
+        return Cache::remember(CacheConstants::KEY_BODY_TYPES, CacheConstants::TTL_MST, function () {
+            return $this->toEntities($this->model->get());
+        });
     }
 
     /**
@@ -24,15 +27,17 @@ class EloquentBodyTypeRepository implements BodyTypeRepositoryInterface
      */
     public function findByBodyType(string $code): BodyType
     {
-        $bodyType = $this->model
-            ->where('code', $code)
-            ->first();
-        
-        if ($bodyType === null) {
-            throw new BodyTypeNotFoundException($code);
-        }
-        
-        return $this->toEntity($bodyType);
+        return Cache::remember(CacheConstants::KEY_BODY_TYPES . ':' . $code, CacheConstants::TTL_MST, function () use ($code) {
+            $bodyType = $this->model
+                ->where('code', $code)
+                ->first();
+
+            if ($bodyType === null) {
+                throw new BodyTypeNotFoundException($code);
+            }
+
+            return $this->toEntity($bodyType);
+        });
     }
 
     private function toEntity(MstBodyTypes $model): BodyType

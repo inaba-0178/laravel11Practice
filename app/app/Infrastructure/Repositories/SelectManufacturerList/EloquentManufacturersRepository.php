@@ -4,6 +4,8 @@ namespace App\Infrastructure\Repositories\SelectManufacturerList;
 use App\Domain\SelectManufacturerList\Repositories\ManufacturerRepositoryInterface;
 use App\Domain\SelectManufacturerList\Entities\Manufacturer;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
+use App\Domain\Common\Constants\CacheConstants;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
 {
@@ -16,10 +18,11 @@ class EloquentManufacturersRepository implements ManufacturerRepositoryInterface
 
     public function findByName(string $name): ?Manufacturer
     {
-        $manufacturer = $this->model::where('name', $name)
-            ->first();
-
-        return $manufacturer ? $this->toEntity($manufacturer) : null;
+        $cacheKey = CacheConstants::KEY_MANUFACTURERS . ':name:' . md5($name);
+        return Cache::remember($cacheKey, CacheConstants::TTL_MST, function () use ($name) {
+            $manufacturer = $this->model::where('name', $name)->first();
+            return $manufacturer ? $this->toEntity($manufacturer) : null;
+        });
     }
 
     /**

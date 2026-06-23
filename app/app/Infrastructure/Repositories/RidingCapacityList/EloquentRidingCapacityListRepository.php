@@ -5,6 +5,8 @@ use App\Domain\RidingCapacityList\Entities\RidingCapacity;
 use App\Domain\RidingCapacityList\Repositories\RidingCapacityRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstRidingCapacityLists;
 use App\Infrastructure\Repositories\BaseRepository;
+use App\Domain\Common\Constants\CacheConstants;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentRidingCapacityListRepository extends BaseRepository implements RidingCapacityRepositoryInterface
 {
@@ -16,16 +18,15 @@ class EloquentRidingCapacityListRepository extends BaseRepository implements Rid
 
     public function findActive(): array
     {
-        $ridingCapacities = $this->model
-            ->get();
-        
-        return $this->toEntities($ridingCapacities, fn($model) => $this->toEntity($model));
+        return Cache::remember(CacheConstants::KEY_RIDING_CAPACITY_LIST, CacheConstants::TTL_MST, function () {
+            return $this->toEntities($this->model->get(), fn($model) => $this->toEntity($model));
+        });
     }
 
     /**
      * EloquentモデルをEntityに変換
-     * 
-     * @param MstRidingCapacityLists
+     *
+     * @param MstRidingCapacityLists $model
      * @return RidingCapacity
      */
     private function toEntity(MstRidingCapacityLists $model): RidingCapacity

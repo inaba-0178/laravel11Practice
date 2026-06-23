@@ -5,6 +5,8 @@ use App\Domain\FeaturedBodyTypeList\Entities\BodyType;
 use App\Domain\FeaturedBodyTypeList\Repositories\BodyTypeRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
 use App\Infrastructure\Repositories\BaseRepository;
+use App\Domain\Common\Constants\CacheConstants;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentBodyTypesRepository extends BaseRepository implements BodyTypeRepositoryInterface
 {
@@ -16,13 +18,13 @@ class EloquentBodyTypesRepository extends BaseRepository implements BodyTypeRepo
 
     public function findByCodes(array $codes, array $conditions = []): array
     {
-        $bodyTypes = $this->model
-            ->whereIn('code', $codes)
-            ->orderBy('sort_order')
-            ->get();
-
-        return $this->toEntities($bodyTypes, fn($model) => $this->toEntity($model));
-        
+        $cacheKey = CacheConstants::KEY_BODY_TYPES . ':codes:' . md5(serialize($codes));
+        return Cache::remember($cacheKey, CacheConstants::TTL_MST, function () use ($codes) {
+            return $this->toEntities(
+                $this->model->whereIn('code', $codes)->orderBy('sort_order')->get(),
+                fn($model) => $this->toEntity($model)
+            );
+        });
     }
     /**
      * EloquentモデルをEntityに変換

@@ -4,6 +4,8 @@ namespace App\Infrastructure\Repositories\AreaCarList;
 use App\Domain\AreaCarList\Entities\Area;
 use App\Domain\AreaCarList\Repositories\AreaRepositoryInterface;
 use App\Infrastructure\Eloquent\Mst\MstAreas;
+use App\Domain\Common\Constants\CacheConstants;
+use Illuminate\Support\Facades\Cache;
 
 class EloquentAreaRepository implements AreaRepositoryInterface
 {
@@ -16,17 +18,19 @@ class EloquentAreaRepository implements AreaRepositoryInterface
 
     public function findAll(): array
     {
-        $areas = $this->model
-            ->orderBy('sort_order')
-            ->get();
-
-        return $areas->map(fn (MstAreas $area) => $this->toEntity($area))->all();
+        return Cache::remember(CacheConstants::KEY_AREAS, CacheConstants::TTL_MST, function () {
+            return $this->model
+                ->orderBy('sort_order')
+                ->get()
+                ->map(fn (MstAreas $area) => $this->toEntity($area))
+                ->all();
+        });
     }
 
     /**
      * EloquentモデルをEntityに変換
-     * 
-     * @param MstAreas
+     *
+     * @param MstAreas $model
      * @return Area
      */
     private function toEntity(MstAreas $model): Area
