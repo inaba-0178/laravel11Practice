@@ -18,6 +18,8 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Jeffgreco13\FilamentBreezy\Livewire\TwoFactorAuthentication;
+use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
+
         StkCar::observe(CarObserver::class);
         StkCarDetail::observe(CarObserver::class);
         StkCarImages::observe(CarObserver::class);
