@@ -189,7 +189,7 @@ Route::prefix('SelectCarData')->group(function () {
     Route::get('/', SelectCarDataController::class)->name('SelectCarData.list');
 });
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('throttle:login')->post('/login', [AuthController::class, 'login']);
 
 Route::prefix('Password')->group(function () {
     Route::post('/forgot', [PasswordResetController::class, 'forgot']);
@@ -204,7 +204,7 @@ Route::prefix('Members')->group(function () {
 
 //　サイトのユーザーログイン
 Route::prefix('MemberAuth')->group(function () {
-    Route::post('/login',  [MemberAuthController::class, 'login']);
+    Route::middleware('throttle:login')->post('/login', [MemberAuthController::class, 'login']);
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [MemberAuthController::class, 'logout']);
     });
