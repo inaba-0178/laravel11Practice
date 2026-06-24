@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\ExtendTokenExpiration;
 use App\Presentation\Console\Commands\PublishScheduledCarsCommand;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -17,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         PublishScheduledCarsCommand::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->appendToGroup('api', ExtendTokenExpiration::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

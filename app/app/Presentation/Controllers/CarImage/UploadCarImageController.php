@@ -9,6 +9,7 @@ use App\Application\UseCases\CarImage\UploadCarImageInputData;
 use App\Domain\CarImage\ValueObjects\CarId;
 use App\Domain\CarImage\ValueObjects\ImageType;
 use App\Domain\CarImage\Exceptions\CarNotFoundException;
+use App\Domain\Common\Constants\FileConstants;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -28,7 +29,7 @@ class UploadCarImageController extends Controller
             $request->validate([
                 'car_id'     => 'required|integer|min:1',
                 'image_type' => 'required|string',
-                'file'       => 'required|file|image|max:51200',
+                'file'       => 'required|file|mimes:' . FileConstants::ALLOWED_IMAGE_MIMES . '|max:51200',
             ]);
 
             $input = new UploadCarImageInputData(

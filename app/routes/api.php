@@ -278,11 +278,12 @@ Route::get('/SelectDealerInfoData', SelectDealerInfoDataController::class);
 Route::get('/SelectDealerStaffData', SelectDealerStaffDataController::class);
 
 // 画像アップロード
-Route::post('/CarImages/upload', UploadCarImageController::class);
-Route::post('/DealerImages/upload', UploadDealerImageController::class);
-Route::post('/StaffImages/upload', UploadStaffImageController::class);
-
-Route::post('/Assets/upload', UploadAssetController::class);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/CarImages/upload', UploadCarImageController::class);
+    Route::post('/DealerImages/upload', UploadDealerImageController::class);
+    Route::post('/StaffImages/upload', UploadStaffImageController::class);
+    Route::post('/Assets/upload', UploadAssetController::class);
+});
 
 Route::get('/SelectDealerContentData', SelectDealerContentDataController::class);
 Route::get('/SelectDealerReviewData', SelectDealerReviewDataController::class);

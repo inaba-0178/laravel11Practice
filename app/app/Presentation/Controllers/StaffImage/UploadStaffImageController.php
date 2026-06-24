@@ -8,6 +8,7 @@ use App\Application\UseCases\StaffImage\UploadStaffImageUseCase;
 use App\Application\UseCases\StaffImage\UploadStaffImageInputData;
 use App\Domain\StaffImage\ValueObjects\StaffId;
 use App\Domain\StaffImage\Exceptions\StaffNotFoundException;
+use App\Domain\Common\Constants\FileConstants;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -26,7 +27,7 @@ class UploadStaffImageController extends Controller
         try {
             $request->validate([
                 'staff_id' => 'required|integer|min:1',
-                'file'     => 'required|file|image|max:10240',
+                'file'     => 'required|file|mimes:' . FileConstants::ALLOWED_IMAGE_MIMES . '|max:10240',
             ]);
 
             $input = new UploadStaffImageInputData(
