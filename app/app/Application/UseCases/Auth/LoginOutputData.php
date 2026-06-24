@@ -10,9 +10,13 @@ class LoginOutputData
         private readonly string $token,
     ) {}
 
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
     public function toArray(): array
     {
-
         return [
             'success'   => true,
             'token'     => $this->token,

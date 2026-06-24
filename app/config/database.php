@@ -154,6 +154,25 @@ return [
             ]) : [],
         ],
 
+        'log' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_LOG_HOST', 'log-db'),
+            'port'      => env('DB_LOG_PORT', '3306'),
+            'database'  => env('LOG_DATABASE', 'log_db'),
+            'username'  => env('LOG_USER', 'log_user'),
+            'password'  => env('LOG_PASSWORD', 'log_pass'),
+            'unix_socket' => '',
+            'charset'   => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix'    => '',
+            'strict'    => true,
+            'engine'    => null,
+            'timezone'  => '+09:00',
+            'options'   => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::ATTR_TIMEOUT => 5,
+            ]) : [],
+        ],
+
         'mst_backup' => [
             'driver'    => 'mysql',
             'host'      => env('DB_MST_BACKUP_HOST', 'mst-backup-db'),

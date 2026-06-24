@@ -124,6 +124,31 @@ services:
     networks:
       - app-network
 
+  log-db:
+    container_name: log-db
+    image: mariadb:11
+    ports:
+      - "3310:3306"
+    environment:
+      MYSQL_DATABASE: ${LOG_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${LOG_ROOT_PASSWORD}
+      MYSQL_USER: ${LOG_USER}
+      MYSQL_PASSWORD: ${LOG_PASSWORD}
+      TZ: Asia/Tokyo
+    volumes:
+      - log-db-data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+09:00
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
   mailhog:
       image: mailhog/mailhog
       ports:
@@ -189,3 +214,4 @@ volumes:
   minio-data:
   redis-data:
   mst-backup-db-data:
+  log-db-data:
