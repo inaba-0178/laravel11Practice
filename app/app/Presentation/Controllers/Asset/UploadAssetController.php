@@ -8,6 +8,7 @@ use App\Application\UseCases\Asset\UploadAssetUseCase;
 use App\Application\UseCases\Asset\UploadAssetInputData;
 use App\Domain\Asset\ValueObjects\AssetType;
 use App\Domain\Asset\Exceptions\AssetRecordNotFoundException;
+use App\Domain\Common\Constants\FileConstants;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -27,7 +28,7 @@ class UploadAssetController extends Controller
             $request->validate([
                 'type'      => 'required|string',
                 'record_id' => 'required|integer|min:1',
-                'file'      => 'required|file|image|max:10240',
+                'file'      => 'required|file|mimes:' . FileConstants::ALLOWED_IMAGE_MIMES . '|max:10240',
             ]);
 
             $input = new UploadAssetInputData(

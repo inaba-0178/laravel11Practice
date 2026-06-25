@@ -11,6 +11,11 @@ class MemberLoginOutputData
         private readonly string  $token,
     ) {}
 
+    public function getMember(): UsrUser
+    {
+        return $this->member;
+    }
+
     public function toArray(): array
     {
         return [

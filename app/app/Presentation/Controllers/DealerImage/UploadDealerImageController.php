@@ -8,6 +8,7 @@ use App\Application\UseCases\DealerImage\UploadDealerImageUseCase;
 use App\Application\UseCases\DealerImage\UploadDealerImageInputData;
 use App\Domain\DealerImage\ValueObjects\DealerId;
 use App\Domain\DealerImage\Exceptions\DealerNotFoundException;
+use App\Domain\Common\Constants\FileConstants;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -27,7 +28,7 @@ class UploadDealerImageController extends Controller
         try {
             $request->validate([
                 'dealer_id' => 'required|integer|min:1',
-                'file'      => 'required|file|image|max:10240',
+                'file'      => 'required|file|mimes:' . FileConstants::ALLOWED_IMAGE_MIMES . '|max:10240',
                 'alt_text'  => 'nullable|string|max:255',
             ]);
 

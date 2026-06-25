@@ -2,6 +2,7 @@
 
 namespace App\Presentation\Controllers\MemberAuth;
 
+use App\Application\Services\AuditLogger;
 use App\Application\UseCases\MemberAuth\MemberLoginUseCase;
 use App\Application\UseCases\MemberAuth\MemberLogoutUseCase;
 use App\Domain\Auth\ValueObjects\LoginCredentials;
@@ -26,9 +27,13 @@ class MemberAuthController extends Controller
 
             $result = $this->memberLoginUseCase->execute($credentials);
 
+            $member = $result->getMember();
+            AuditLogger::logAuth('login', $member->id, $member->sei . $member->mei, 'member', 'success');
+
             return response()->json($result->toArray());
 
         } catch (\RuntimeException $e) {
+            AuditLogger::logAuth('login', null, $request->email ?? '', 'member', 'failed');
             return response()->json(['message' => $e->getMessage()], 401);
         } catch (\InvalidArgumentException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
@@ -37,7 +42,10 @@ class MemberAuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $this->memberLogoutUseCase->execute($request->user('member'));
+        $user = $request->user('member');
+        AuditLogger::logAuth('logout', $user?->id, $user ? ($user->sei . $user->mei) : null, 'member', 'success');
+
+        $this->memberLogoutUseCase->execute($user);
 
         return response()->json(['status' => 'ok']);
     }
