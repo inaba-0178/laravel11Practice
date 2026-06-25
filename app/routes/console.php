@@ -42,3 +42,6 @@ Schedule::call(function () {
 
 // 既存のメンテナンスSchedule::callの下に追加
 Schedule::command('cars:publish-scheduled')->everyMinute();
+
+// 2FA未設定ユーザーへの週次リマインドメール（毎週月曜 09:00）
+Schedule::command('security:send-2fa-reminder')->weeklyOn(1, '09:00');
