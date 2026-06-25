@@ -21,6 +21,8 @@ services:
         condition: service_started
       mst-backup-db:
         condition: service_healthy
+      log-db:
+        condition: service_healthy
     environment:
       DB_MST_HOST: mst-db
       DB_MST_PORT: 3306
