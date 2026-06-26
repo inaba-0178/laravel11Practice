@@ -444,7 +444,7 @@ class ViewChat extends Page
     public function getListeners(): array
     {
         return [
-            "echo-private:room.{$this->record->id},.message.sent" => 'onMessageReceived',
+            "echo:room.{$this->record->id},.message.sent" => 'onMessageReceived',
         ];
     }
 
