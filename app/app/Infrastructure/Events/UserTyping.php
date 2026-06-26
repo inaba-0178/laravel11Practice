@@ -4,6 +4,7 @@ namespace App\Infrastructure\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 
@@ -21,7 +22,7 @@ class UserTyping implements ShouldBroadcast
 
     public function broadcastOn(): Channel
     {
-        return new Channel("room.{$this->roomId}");
+        return new PrivateChannel("room.{$this->roomId}");
     }
 
     public function broadcastAs(): string

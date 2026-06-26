@@ -1,5 +1,6 @@
 <?php
 
+use App\Infrastructure\Eloquent\User\UsrUser;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
@@ -7,7 +8,11 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('room.{roomId}', function ($user, $roomId) {
-    return $user->rooms()->where('room_id', $roomId)->exists()
-        ? ['id' => $user->id, 'name' => $user->name]
-        : null;
+    if ($user instanceof UsrUser) {
+        return $user->rooms()->where('rooms.id', $roomId)->exists()
+            ? ['id' => $user->id, 'name' => $user->display_name]
+            : null;
+    }
+    // Staff (admin) は全ルームにアクセス可
+    return ['id' => $user->id, 'name' => $user->name];
 });
