@@ -2,8 +2,10 @@
 
 namespace App\Infrastructure\Eloquent\User;
 
+use App\Domain\Shared\Constants\UserType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -59,6 +61,12 @@ class UsrUser extends Authenticatable
     public function getFullNameKanaAttribute(): string
     {
         return $this->sei_kana . ' ' . $this->mei_kana;
+    }
+
+    public function rooms(): BelongsToMany
+    {
+        return $this->belongsToMany(Room::class, 'room_users', 'user_id', 'room_id')
+            ->wherePivot('user_type', UserType::MEMBER);
     }
 
     public function reviews()
