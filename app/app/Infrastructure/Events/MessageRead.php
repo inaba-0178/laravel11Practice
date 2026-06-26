@@ -19,9 +19,12 @@ class MessageRead implements ShouldBroadcast
         public readonly array  $messageIds,
     ) {}
 
-    public function broadcastOn(): Channel
+    public function broadcastOn(): array
     {
-        return new PrivateChannel("room.{$this->roomId}");
+        return [
+            new Channel("room.{$this->roomId}"),
+            new PrivateChannel("room.{$this->roomId}"),
+        ];
     }
 
     public function broadcastAs(): string
