@@ -28,9 +28,12 @@ class MemberAuthController extends Controller
             $result = $this->memberLoginUseCase->execute($credentials);
 
             $member = $result->getMember();
-            AuditLogger::logAuth('login', $member->id, $member->sei . $member->mei, 'member', 'success');
+            AuditLogger::logAuth('login', (int) $member->id, $member->sei . $member->mei, 'member', 'success');
 
-            return response()->json($result->toArray());
+            $cookieMinutes = (int) config('sanctum.expiration', 10080);
+
+            return response()->json($result->toArray())
+                ->cookie('member_token', $result->getToken(), $cookieMinutes, '/', null, false, true);
 
         } catch (\RuntimeException $e) {
             AuditLogger::logAuth('login', null, $request->email ?? '', 'member', 'failed');
@@ -43,10 +46,11 @@ class MemberAuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $user = $request->user('member');
-        AuditLogger::logAuth('logout', $user?->id, $user ? ($user->sei . $user->mei) : null, 'member', 'success');
+        AuditLogger::logAuth('logout', $user ? (int) $user->id : null, $user ? ($user->sei . $user->mei) : null, 'member', 'success');
 
         $this->memberLogoutUseCase->execute($user);
 
-        return response()->json(['status' => 'ok']);
+        return response()->json(['status' => 'ok'])
+            ->withoutCookie('member_token');
     }
 }

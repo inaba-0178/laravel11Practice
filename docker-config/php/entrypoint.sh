@@ -26,5 +26,9 @@ chmod -R 777 /var/www/storage /var/www/bootstrap/cache
 echo "Starting cron..."
 service cron start
 
+# Reverb起動（バックグラウンド）
+echo "Starting Reverb..."
+php artisan reverb:start --host=0.0.0.0 --port=8085 >> /var/log/reverb.log 2>&1 &
+
 # php-fpm起動
 exec "$@"

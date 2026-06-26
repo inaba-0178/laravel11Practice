@@ -16,6 +16,7 @@ use App\Infrastructure\Observers\CarObserver;
 use App\Infrastructure\Observers\MemberObserver;
 use App\Infrastructure\Observers\MstObserver;
 use App\Listeners\SendLoginNotification;
+use App\Models\PersonalAccessToken;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Jeffgreco13\FilamentBreezy\Livewire\TwoFactorAuthentication;
 use Jeffgreco13\FilamentBreezy\Models\BreezySession;
+use Laravel\Sanctum\Sanctum;
 use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
@@ -35,6 +37,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
         Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
 
         StkCar::observe(CarObserver::class);
