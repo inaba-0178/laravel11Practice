@@ -18,6 +18,7 @@ enum NavigationSort :int
     case MST_COUNTRY                = 112;
     case MST_VEHICLE                = 113;
     case MST_VEHICLE_TAX            = 114;
+    case MST_SEAT_OPTION            = 115;
 
     // opr系
     case OPR_MAIL_TEMPLATE          = 201;
