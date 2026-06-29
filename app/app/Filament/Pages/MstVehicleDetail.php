@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Domain\Common\Enums\ProductionStatus;
 use App\Filament\Resources\MstCarSeriesResource;
 use App\Filament\Resources\MstVehiclesResource;
 use App\Infrastructure\Eloquent\Mst\MstVehicleYearVersions;
@@ -36,7 +37,7 @@ class MstVehicleDetail extends Page implements HasTable
     {
         $this->id           = $request->input('id');
         $this->fromSeriesId = $request->integer('from_series') ?: null;
-        $this->mstVehicle   = MstVehicles::with(['manufacturer', 'carSeries'])
+        $this->mstVehicle   = MstVehicles::with(['manufacturer', 'carSeries', 'bodyType'])
             ->findOrFail($this->id);
     }
 
@@ -68,9 +69,9 @@ class MstVehicleDetail extends Page implements HasTable
                 'id'           => $this->mstVehicle->id,
                 'name'         => $this->mstVehicle->name,
                 'model_code'   => $this->mstVehicle->model_code,
-                'body_type'    => $this->mstVehicle->body_type,
+                'body_type'    => $this->mstVehicle->bodyType?->name,
                 'country_code' => $this->mstVehicle->country_code,
-                'status'       => $this->mstVehicle->status,
+                'status'       => $this->mstVehicle->status ? (ProductionStatus::tryFrom($this->mstVehicle->status)?->label() ?? $this->mstVehicle->status) : null,
                 'series_name'  => $this->mstVehicle->carSeries?->series_name,
                 'manufacturer' => $this->mstVehicle->manufacturer?->name,
                 'created_at'   => $this->mstVehicle->created_at,

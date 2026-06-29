@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Constants\NavigationSort;
+use App\Domain\Common\Enums\ProductionStatus;
 use App\Filament\Pages\MstVehicleDetail;
 use App\Filament\Resources\MstVehiclesResource\Pages;
 use App\Infrastructure\Eloquent\Mst\MstVehicles;
@@ -22,12 +23,14 @@ class MstVehiclesResource extends Resource
     protected static ?string $navigationGroup  = 'マスタ参照';
     protected static ?int    $navigationSort   = NavigationSort::MST_VEHICLE->value;
     protected static ?string $pluralModelLabel = '車両マスタ一覧';
+    // 注文あれば表示: protected static bool $shouldRegisterNavigation = true;
+    protected static bool    $shouldRegisterNavigation = false;
 
     public static function table(Table $table): Table
     {
         return $table
             ->searchable(false)
-            ->query(MstVehicles::query()->with(['manufacturer', 'carSeries']))
+            ->query(MstVehicles::query()->with(['manufacturer', 'carSeries', 'bodyType']))
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
@@ -44,11 +47,12 @@ class MstVehiclesResource extends Resource
                 TextColumn::make('model_code')
                     ->label('モデルコード')
                     ->sortable(),
-                TextColumn::make('body_type')
+                TextColumn::make('bodyType.name')
                     ->label('ボディタイプ')
                     ->sortable(),
                 TextColumn::make('status')
                     ->label('ステータス')
+                    ->formatStateUsing(fn ($state) => $state ? (ProductionStatus::tryFrom($state)?->label() ?? $state) : null)
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('作成日時')

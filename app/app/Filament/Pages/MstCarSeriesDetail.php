@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Domain\Common\Enums\ProductionStatus;
 use App\Filament\Pages\MstVehicleDetail;
 use App\Filament\Resources\MstCarSeriesResource;
 use App\Infrastructure\Eloquent\Mst\MstCarSeries;
@@ -58,14 +59,16 @@ class MstCarSeriesDetail extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(MstVehicles::query()->where('series_id', $this->seriesId))
+            ->query(MstVehicles::query()->where('series_id', $this->seriesId)->with('bodyType'))
             ->heading('紐づく車両マスタ一覧')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable(),
                 TextColumn::make('name')->label('車両名')->sortable(),
                 TextColumn::make('model_code')->label('モデルコード')->sortable(),
-                TextColumn::make('body_type')->label('ボディタイプ')->sortable(),
-                TextColumn::make('status')->label('ステータス')->sortable(),
+                TextColumn::make('bodyType.name')->label('ボディタイプ')->sortable(),
+                TextColumn::make('status')->label('ステータス')
+                    ->formatStateUsing(fn ($state) => $state ? (ProductionStatus::tryFrom($state)?->label() ?? $state) : null)
+                    ->sortable(),
             ])
             ->actions([
                 Action::make('detail')

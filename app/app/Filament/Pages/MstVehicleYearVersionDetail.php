@@ -34,7 +34,7 @@ class MstVehicleYearVersionDetail extends Page
     {
         $this->id           = $request->input('id');
         $this->fromSeriesId = $request->integer('from_series') ?: null;
-        $this->yearVersion  = MstVehicleYearVersions::with(['vehicle.manufacturer', 'vehicle.carSeries'])->findOrFail($this->id);
+        $this->yearVersion  = MstVehicleYearVersions::with(['vehicle.manufacturer', 'vehicle.carSeries', 'vehicle.bodyType'])->findOrFail($this->id);
         $this->resolveTax();
     }
 
@@ -111,7 +111,7 @@ class MstVehicleYearVersionDetail extends Page
                 'vehicle_manufacturer' => $v->vehicle?->manufacturer?->name,
                 'vehicle_series'       => $v->vehicle?->carSeries?->series_name,
                 'vehicle_model_code'   => $v->vehicle?->model_code,
-                'vehicle_body_type'    => $v->vehicle?->body_type,
+                'vehicle_body_type'    => $v->vehicle?->bodyType?->name,
                 'vehicle_country_code' => $v->vehicle?->country_code,
                 'vehicle_status'       => $v->vehicle?->status,
                 'id'               => $v->id,

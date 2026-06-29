@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Constants\NavigationSort;
+use App\Filament\Pages\MstVehicleTaxDetail;
 use App\Filament\Resources\MstVehicleTaxResource\Pages;
 use App\Infrastructure\Eloquent\Mst\MstVehicleTax;
 use Filament\Resources\Resource;
@@ -62,7 +63,12 @@ class MstVehicleTaxResource extends Resource
             ], FiltersLayout::AboveContent)
             ->deferFilters()
             ->hiddenFilterIndicators()
-            ->filtersApplyAction(fn(Action $action) => $action->label('適用'));
+            ->filtersApplyAction(fn(Action $action) => $action->label('適用'))
+            ->actions([
+                Action::make('detail')
+                    ->label('詳細')
+                    ->url(fn(MstVehicleTax $record) => MstVehicleTaxDetail::getUrl(['id' => $record->id])),
+            ], position: ActionsPosition::BeforeColumns);
     }
 
     public static function getRelations(): array
