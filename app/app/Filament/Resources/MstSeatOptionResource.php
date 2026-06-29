@@ -12,9 +12,12 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\ActionsPosition;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class MstSeatOptionResource extends Resource
 {
@@ -51,6 +54,16 @@ class MstSeatOptionResource extends Resource
                     ->sortable(),
             ])
             ->filters([
+                Filter::make('label')
+                    ->form([TextInput::make('label')->label('ラベル')])
+                    ->query(fn(Builder $query, array $data) => blank($data['label'])
+                        ? $query
+                        : $query->where('label', 'like', "%{$data['label']}%")),
+                Filter::make('value')
+                    ->form([TextInput::make('value')->label('値')])
+                    ->query(fn(Builder $query, array $data) => blank($data['value'])
+                        ? $query
+                        : $query->where('value', 'like', "%{$data['value']}%")),
                 SelectFilter::make('is_active')
                     ->label('利用可否')
                     ->options([
