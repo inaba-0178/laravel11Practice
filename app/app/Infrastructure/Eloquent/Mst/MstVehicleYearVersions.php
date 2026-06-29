@@ -4,12 +4,13 @@ namespace App\Infrastructure\Eloquent\Mst;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MstVehicleYearVersions extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mst'; 
+    protected $connection = 'mst';
     protected $table = 'mst_vehicle_year_versions';
 
     protected $fillable = [
@@ -27,4 +28,12 @@ class MstVehicleYearVersions extends Model
         'is_latest',
     ];
 
+    protected $casts = [
+        'is_latest' => 'boolean',
+    ];
+
+    public function vehicle(): BelongsTo
+    {
+        return $this->belongsTo(MstVehicles::class, 'vehicle_id');
+    }
 }

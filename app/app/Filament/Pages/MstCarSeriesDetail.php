@@ -2,16 +2,25 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
-use Filament\Infolists\Infolist;
-use Filament\Infolists\Components\TextEntry;
-use Illuminate\Http\Request;
-use Filament\Infolists\Components\Section;
+use App\Filament\Pages\MstVehicleDetail;
 use App\Filament\Resources\MstCarSeriesResource;
 use App\Infrastructure\Eloquent\Mst\MstCarSeries;
+use App\Infrastructure\Eloquent\Mst\MstVehicles;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Pages\Page;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Table;
+use Illuminate\Http\Request;
 
-class MstCarSeriesDetail extends Page
+class MstCarSeriesDetail extends Page implements HasTable
 {
+    use InteractsWithTable;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string     $view                       = 'filament.pages.mst-car-series-detail';
@@ -44,6 +53,29 @@ class MstCarSeriesDetail extends Page
     public function getTitle(): string
     {
         return '車両ID : [' . $this->mstCarSeries->series_id . '] ' . $this->mstCarSeries->series_name;
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(MstVehicles::query()->where('series_id', $this->seriesId))
+            ->heading('紐づく車両マスタ一覧')
+            ->columns([
+                TextColumn::make('id')->label('ID')->sortable(),
+                TextColumn::make('name')->label('車両名')->sortable(),
+                TextColumn::make('model_code')->label('モデルコード')->sortable(),
+                TextColumn::make('body_type')->label('ボディタイプ')->sortable(),
+                TextColumn::make('status')->label('ステータス')->sortable(),
+            ])
+            ->actions([
+                Action::make('detail')
+                    ->label('詳細')
+                    ->url(fn(MstVehicles $record) => MstVehicleDetail::getUrl([
+                        'id'          => $record->id,
+                        'from_series' => $this->seriesId,
+                    ])),
+            ], position: ActionsPosition::BeforeColumns)
+            ->paginated(false);
     }
 
     public function infoList(): Infolist
