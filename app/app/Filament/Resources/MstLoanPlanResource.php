@@ -66,6 +66,16 @@ class MstLoanPlanResource extends Resource
                     ->query(fn(Builder $query, array $data) => blank($data['name'])
                         ? $query
                         : $query->where('name', 'like', "%{$data['name']}%")),
+                Filter::make('interest_rate_from')
+                    ->form([TextInput::make('interest_rate_from')->label('金利（%）以上')->numeric()])
+                    ->query(fn(Builder $query, array $data) => blank($data['interest_rate_from'])
+                        ? $query
+                        : $query->where('interest_rate', '>=', $data['interest_rate_from'])),
+                Filter::make('interest_rate_to')
+                    ->form([TextInput::make('interest_rate_to')->label('金利（%）以下')->numeric()])
+                    ->query(fn(Builder $query, array $data) => blank($data['interest_rate_to'])
+                        ? $query
+                        : $query->where('interest_rate', '<=', $data['interest_rate_to'])),
                 SelectFilter::make('is_default')
                     ->label('デフォルト')
                     ->options(['1' => 'デフォルト', '0' => '非デフォルト']),
