@@ -6,6 +6,7 @@ use App\Filament\Pages\MstCarSeriesDetail;
 use App\Filament\Pages\MstVehicleDetail;
 use App\Filament\Resources\MstCarSeriesResource;
 use App\Filament\Resources\MstVehiclesResource;
+use App\Domain\Common\Enums\ProductionStatus;
 use App\Infrastructure\Eloquent\Mst\MstDisplacementList;
 use App\Infrastructure\Eloquent\Mst\MstVehicleYearVersions;
 use App\Infrastructure\Eloquent\Mst\MstVehicleTax;
@@ -33,7 +34,7 @@ class MstVehicleYearVersionDetail extends Page
     {
         $this->id           = $request->input('id');
         $this->fromSeriesId = $request->integer('from_series') ?: null;
-        $this->yearVersion  = MstVehicleYearVersions::with('vehicle')->findOrFail($this->id);
+        $this->yearVersion  = MstVehicleYearVersions::with(['vehicle.manufacturer', 'vehicle.carSeries'])->findOrFail($this->id);
         $this->resolveTax();
     }
 
@@ -106,13 +107,20 @@ class MstVehicleYearVersionDetail extends Page
         $v = $this->yearVersion;
         return Infolist::make()
             ->state([
+                'vehicle_name'         => $v->vehicle?->name,
+                'vehicle_manufacturer' => $v->vehicle?->manufacturer?->name,
+                'vehicle_series'       => $v->vehicle?->carSeries?->series_name,
+                'vehicle_model_code'   => $v->vehicle?->model_code,
+                'vehicle_body_type'    => $v->vehicle?->body_type,
+                'vehicle_country_code' => $v->vehicle?->country_code,
+                'vehicle_status'       => $v->vehicle?->status,
                 'id'               => $v->id,
-                'vehicle_name'     => $v->vehicle?->name,
                 'year_from'        => $v->year_from,
                 'year_to'          => $v->year_to,
                 'displacement_cc'  => $v->displacement_cc ? number_format($v->displacement_cc) . 'cc' : null,
                 'drive_type'       => $v->drive_type,
-                'fuel_efficiency'  => $v->fuel_efficiency,
+                'fuel_efficiency_from' => $v->fuel_efficiency_from,
+                'fuel_efficiency_to'   => $v->fuel_efficiency_to,
                 'max_power_kw'     => $v->max_power_kw,
                 'transmission_type'=> $v->transmission_type,
                 'weight_kg'        => $v->weight_kg ? number_format($v->weight_kg) . 'kg' : null,
@@ -125,6 +133,18 @@ class MstVehicleYearVersionDetail extends Page
                 'updated_at'       => $v->updated_at,
             ])
             ->schema([
+                Section::make('車両基本情報')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('vehicle_name')->label('車両名'),
+                        TextEntry::make('vehicle_manufacturer')->label('メーカー'),
+                        TextEntry::make('vehicle_series')->label('車種シリーズ'),
+                        TextEntry::make('vehicle_model_code')->label('型式'),
+                        TextEntry::make('vehicle_body_type')->label('ボディタイプ'),
+                        TextEntry::make('vehicle_country_code')->label('国コード'),
+                        TextEntry::make('vehicle_status')->label('ステータス')
+                            ->formatStateUsing(fn ($state) => $state ? (ProductionStatus::tryFrom($state)?->label() ?? $state) : null),
+                    ]),
                 Section::make('年式バージョン情報')
                     ->columns(2)
                     ->schema([
@@ -135,12 +155,13 @@ class MstVehicleYearVersionDetail extends Page
                         TextEntry::make('displacement_cc')->label('排気量'),
                         TextEntry::make('drive_type')->label('駆動方式'),
                         TextEntry::make('transmission_type')->label('ミッション'),
-                        TextEntry::make('fuel_efficiency')->label('燃費'),
                         TextEntry::make('max_power_kw')->label('最大出力(kW)'),
-                        TextEntry::make('weight_kg')->label('車両重量'),
+                        TextEntry::make('fuel_efficiency_from')->label('燃費（下限）'),
+                        TextEntry::make('fuel_efficiency_to')->label('燃費（上限）'),
                         TextEntry::make('price_range_from')->label('価格（下限）'),
                         TextEntry::make('price_range_to')->label('価格（上限）'),
                         TextEntry::make('is_latest')->label('最新フラグ'),
+                        TextEntry::make('weight_kg')->label('車両重量'),
                         TextEntry::make('created_at')->label('作成日時'),
                         TextEntry::make('updated_at')->label('更新日時'),
                     ]),
