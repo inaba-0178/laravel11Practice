@@ -25,6 +25,7 @@ enum NavigationSort :int
     case MST_FEATURED_BODY_TYPE     = 119;
     case MST_EQUIPMENT_SAFETY       = 120;
     case MST_EQUIPMENT_BASIC        = 121;
+    case MST_EQUIPMENT_DRESSUP      = 122;
 
     // opr系
     case OPR_MAIL_TEMPLATE          = 201;
