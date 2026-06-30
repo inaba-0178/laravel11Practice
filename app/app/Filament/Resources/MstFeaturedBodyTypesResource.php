@@ -4,10 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Constants\NavigationGroup;
 use App\Constants\NavigationSort;
-use App\Filament\Pages\MstFeaturedBrandDetail;
-use App\Filament\Resources\MstFeaturedBrandsResource\Pages;
-use App\Infrastructure\Eloquent\Mst\MstFeaturedBrands;
-use App\Constants\FeaturedBrandPosition;
+use App\Filament\Pages\MstFeaturedBodyTypeDetail;
+use App\Filament\Resources\MstFeaturedBodyTypesResource\Pages;
+use App\Infrastructure\Eloquent\Mst\MstFeaturedBodyTypes;
+use App\Constants\FeaturedBodyTypePosition;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
@@ -20,14 +20,14 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class MstFeaturedBrandsResource extends Resource
+class MstFeaturedBodyTypesResource extends Resource
 {
-    protected static ?string $model = MstFeaturedBrands::class;
+    protected static ?string $model = MstFeaturedBodyTypes::class;
 
     protected static ?string $navigationIcon   = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup  = NavigationGroup::MST_GROUP->value;
-    protected static ?int    $navigationSort   = NavigationSort::MST_FEATURED_BRAND->value;
-    protected static ?string $pluralModelLabel = '特集ブランド一覧';
+    protected static ?int    $navigationSort   = NavigationSort::MST_FEATURED_BODY_TYPE->value;
+    protected static ?string $pluralModelLabel = '特集ボディタイプ一覧';
 
     public static function table(Table $table): Table
     {
@@ -37,12 +37,12 @@ class MstFeaturedBrandsResource extends Resource
                 TextColumn::make('id')
                     ->label('ID')
                     ->sortable(),
-                TextColumn::make('manufacturer_code')
-                    ->label('メーカーコード')
+                TextColumn::make('body_type_code')
+                    ->label('ボディタイプコード')
                     ->sortable(),
                 TextColumn::make('position')
                     ->label('表示位置')
-                    ->formatStateUsing(fn(string $state) => FeaturedBrandPosition::LABELS[$state] ?? $state)
+                    ->formatStateUsing(fn(string $state) => FeaturedBodyTypePosition::LABELS[$state] ?? $state)
                     ->sortable(),
                 TextColumn::make('sort_order')
                     ->label('表示順')
@@ -56,14 +56,14 @@ class MstFeaturedBrandsResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                Filter::make('manufacturer_code')
-                    ->form([TextInput::make('manufacturer_code')->label('メーカーコード')])
-                    ->query(fn(Builder $query, array $data) => blank($data['manufacturer_code'])
+                Filter::make('body_type_code')
+                    ->form([TextInput::make('body_type_code')->label('ボディタイプコード')])
+                    ->query(fn(Builder $query, array $data) => blank($data['body_type_code'])
                         ? $query
-                        : $query->where('manufacturer_code', 'like', "%{$data['manufacturer_code']}%")),
+                        : $query->where('body_type_code', 'like', "%{$data['body_type_code']}%")),
                 SelectFilter::make('position')
                     ->label('表示位置')
-                    ->options(FeaturedBrandPosition::LABELS),
+                    ->options(FeaturedBodyTypePosition::LABELS),
                 SelectFilter::make('is_active')
                     ->label('有効')
                     ->options(['1' => '有効', '0' => '無効']),
@@ -74,7 +74,7 @@ class MstFeaturedBrandsResource extends Resource
             ->actions([
                 Action::make('detail')
                     ->label('詳細')
-                    ->url(fn(MstFeaturedBrands $record) => MstFeaturedBrandDetail::getUrl(['id' => $record->id])),
+                    ->url(fn(MstFeaturedBodyTypes $record) => MstFeaturedBodyTypeDetail::getUrl(['id' => $record->id])),
             ], position: ActionsPosition::BeforeColumns);
     }
 
@@ -86,7 +86,7 @@ class MstFeaturedBrandsResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMstFeaturedBrands::route('/'),
+            'index' => Pages\ListMstFeaturedBodyTypes::route('/'),
         ];
     }
 }

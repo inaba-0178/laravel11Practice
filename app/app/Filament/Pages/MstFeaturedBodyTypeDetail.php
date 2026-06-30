@@ -2,64 +2,64 @@
 
 namespace App\Filament\Pages;
 
-use App\Constants\FeaturedBrandPosition;
-use App\Filament\Resources\MstFeaturedBrandsResource;
-use App\Infrastructure\Eloquent\Mst\MstFeaturedBrands;
+use App\Constants\FeaturedBodyTypePosition;
+use App\Filament\Resources\MstFeaturedBodyTypesResource;
+use App\Infrastructure\Eloquent\Mst\MstFeaturedBodyTypes;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Http\Request;
 
-class MstFeaturedBrandDetail extends Page
+class MstFeaturedBodyTypeDetail extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static string  $view           = 'filament.pages.mst-featured-brand-detail';
+    protected static string  $view           = 'filament.pages.mst-featured-body-type-detail';
     protected static bool    $shouldRegisterNavigation = false;
     protected static ?string $title          = '';
 
-    public ?int               $id                 = null;
-    public ?MstFeaturedBrands $mstFeaturedBrand   = null;
+    public ?int                $id                   = null;
+    public ?MstFeaturedBodyTypes $mstFeaturedBodyType = null;
 
     public function mount(Request $request): void
     {
-        $this->id               = $request->input('id');
-        $this->mstFeaturedBrand = MstFeaturedBrands::findOrFail($this->id);
+        $this->id                   = $request->input('id');
+        $this->mstFeaturedBodyType  = MstFeaturedBodyTypes::findOrFail($this->id);
     }
 
     public function getBreadcrumbs(): array
     {
         return [
-            MstFeaturedBrandsResource::getUrl()                        => '特集ブランド一覧',
-            MstFeaturedBrandDetail::getUrl(['id' => $this->id])        => '詳細ページ',
+            MstFeaturedBodyTypesResource::getUrl()                      => '特集ボディタイプ一覧',
+            MstFeaturedBodyTypeDetail::getUrl(['id' => $this->id])      => '詳細ページ',
         ];
     }
 
     public function getTitle(): string
     {
-        return '特集ブランドID : [' . $this->mstFeaturedBrand->id . '] ' . $this->mstFeaturedBrand->manufacturer_code;
+        return '特集ボディタイプID : [' . $this->mstFeaturedBodyType->id . '] ' . $this->mstFeaturedBodyType->body_type_code;
     }
 
     public function infoList(): Infolist
     {
-        $p = $this->mstFeaturedBrand;
+        $p = $this->mstFeaturedBodyType;
 
         return Infolist::make()
             ->state([
-                'id'                => $p->id,
-                'manufacturer_code' => $p->manufacturer_code,
-                'position'          => FeaturedBrandPosition::LABELS[$p->position] ?? $p->position,
-                'sort_order'        => $p->sort_order,
-                'is_active'         => $p->is_active,
-                'created_at'        => $p->created_at,
-                'updated_at'        => $p->updated_at,
+                'id'             => $p->id,
+                'body_type_code' => $p->body_type_code,
+                'position'       => FeaturedBodyTypePosition::LABELS[$p->position] ?? $p->position,
+                'sort_order'     => $p->sort_order,
+                'is_active'      => $p->is_active,
+                'created_at'     => $p->created_at,
+                'updated_at'     => $p->updated_at,
             ])
             ->schema([
                 Section::make('基本情報')
                     ->columns(2)
                     ->schema([
                         TextEntry::make('id')->label('ID'),
-                        TextEntry::make('manufacturer_code')->label('メーカーコード'),
+                        TextEntry::make('body_type_code')->label('ボディタイプコード'),
                         TextEntry::make('position')->label('表示位置'),
                         TextEntry::make('sort_order')->label('表示順'),
                         TextEntry::make('is_active')->label('有効')
