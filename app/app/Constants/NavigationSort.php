@@ -28,6 +28,7 @@ enum NavigationSort :int
     case MST_EQUIPMENT_DRESSUP      = 122;
     case MST_EQUIPMENT_ENV          = 123;
     case MST_DETAIL_OPTIONS         = 124;
+    case MST_COLOR_OPTIONS          = 125;
 
     // opr系
     case OPR_MAIL_TEMPLATE          = 201;
