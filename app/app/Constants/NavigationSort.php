@@ -23,6 +23,7 @@ enum NavigationSort :int
     case MST_DISPLACEMENT_LIST      = 117;
     case MST_FEATURED_BRAND         = 118;
     case MST_FEATURED_BODY_TYPE     = 119;
+    case MST_EQUIPMENT_SAFETY       = 120;
 
     // opr系
     case OPR_MAIL_TEMPLATE          = 201;
