@@ -11,6 +11,7 @@ use App\Filament\Resources\MstVersionResource\Pages\ListMstVersions;
 use App\Filament\Resources\MstVersionResource\Pages\ViewMstVersion;
 use App\Infrastructure\Eloquent\Mst\MstVersion;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MstVersionResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = MstVersion::class;
     protected static ?string $navigationIcon   = 'heroicon-o-archive-box';
     protected static ?string $navigationGroup  = NavigationGroup::MST_UPDATE_GROUP->value;

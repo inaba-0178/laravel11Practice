@@ -8,9 +8,11 @@ use App\Infrastructure\Eloquent\User\StkCarDealer;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 
 class LoanSettingRequestPage extends Page
 {
+    use HasResourcePermission;
     protected static string  $view           = 'filament.pages.loan-setting-request';
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
     protected static ?string $navigationGroup = 'ディーラーメニュー';

@@ -11,6 +11,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -22,7 +23,8 @@ use Illuminate\Http\Request;
 
 class MstVehicleDetail extends Page implements HasTable
 {
-    use InteractsWithTable;
+    use HasResourcePermission;
+use InteractsWithTable;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static string  $view           = 'filament.pages.mst-vehicle-detail';

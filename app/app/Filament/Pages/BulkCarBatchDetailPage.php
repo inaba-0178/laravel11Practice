@@ -12,12 +12,14 @@ use App\Infrastructure\Eloquent\User\StkCar;
 use App\Infrastructure\Eloquent\User\StkCarImages;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class BulkCarBatchDetailPage extends Page
 {
+    use HasResourcePermission;
     protected static string $view = 'filament.pages.bulk-car-batch-detail';
     protected static bool   $shouldRegisterNavigation = false;
 

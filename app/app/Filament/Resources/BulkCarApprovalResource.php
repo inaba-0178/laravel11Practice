@@ -10,11 +10,13 @@ use App\Filament\Resources\BulkCarApprovalResource\Pages\ListBulkCarApprovals;
 use App\Filament\Resources\BulkCarApprovalResource\Pages\ViewBulkCarApproval;
 use App\Infrastructure\Eloquent\User\StkBulkUploadBatch;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables;
 use Filament\Tables\Table;
 
 class BulkCarApprovalResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = StkBulkUploadBatch::class;
     protected static ?string $navigationIcon   = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationGroup  = NavigationGroup::ADMIN_GROUP->value;

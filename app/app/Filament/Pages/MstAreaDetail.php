@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Http\Request;
@@ -19,7 +20,8 @@ use App\Filament\Pages\MstRegionDetail;
 
 class MstAreaDetail extends Page implements HasTable
 {
-    use InteractsWithTable;
+    use HasResourcePermission;
+use InteractsWithTable;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.mst-area-detail';

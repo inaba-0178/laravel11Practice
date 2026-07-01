@@ -10,6 +10,7 @@ use App\Infrastructure\Eloquent\Mst\MstFeaturedBrands;
 use App\Constants\FeaturedBrandPosition;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MstFeaturedBrandsResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = MstFeaturedBrands::class;
 
     protected static ?string $navigationIcon   = 'heroicon-o-rectangle-stack';

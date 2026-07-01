@@ -9,6 +9,7 @@ use App\Filament\Resources\CarApprovalResource\Pages\ListCarApprovals;
 use App\Filament\Resources\CarApprovalResource\Pages\ViewCarApproval;
 use App\Infrastructure\Eloquent\User\StkCar;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +18,7 @@ use App\Constants\NavigationSort;
 
 class CarApprovalResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model             = StkCar::class;
     protected static ?string $navigationIcon    = 'heroicon-o-clipboard-document-check';
     protected static ?string $navigationGroup   = NavigationGroup::ADMIN_GROUP->value;

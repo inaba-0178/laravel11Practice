@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Forms\Form;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Components\TextInput;
@@ -16,7 +17,8 @@ use App\Constants\NavigationGroup;
 
 class ChangePassword extends Page
 {
-    use InteractsWithForms;
+    use HasResourcePermission;
+use InteractsWithForms;
 
     protected static ?string $navigationGroup = NavigationGroup::USER_GROUP->value;
     protected static ?string $navigationIcon  = 'heroicon-o-lock-closed';

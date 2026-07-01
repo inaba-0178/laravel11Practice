@@ -8,10 +8,12 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Illuminate\Http\Request;
 
 class MstDisplacementListDetail extends Page
 {
+    use HasResourcePermission;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static string  $view           = 'filament.pages.mst-displacement-list-detail';
     protected static bool    $shouldRegisterNavigation = false;

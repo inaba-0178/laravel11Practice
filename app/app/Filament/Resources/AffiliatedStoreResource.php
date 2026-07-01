@@ -13,6 +13,7 @@ use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
 use App\Constants\Role\RoleManagement;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
@@ -28,6 +29,7 @@ use Filament\Forms\Components\TextInput;
 
 class AffiliatedStoreResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = StkAffiliatedStore::class;
     protected static ?string $navigationIcon   = 'heroicon-o-building-storefront';
     protected static ?string $navigationGroup  = NavigationGroup::DEALER_GROUP->value;

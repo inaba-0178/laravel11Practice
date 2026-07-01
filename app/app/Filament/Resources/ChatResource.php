@@ -11,6 +11,7 @@ use App\Filament\Resources\ChatResource\Pages\ListChats;
 use App\Filament\Resources\ChatResource\Pages\ViewChat;
 use App\Infrastructure\Eloquent\User\Room;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,6 +20,7 @@ use Filament\Tables\Columns\TextColumn;
 
 class ChatResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = Room::class;
     protected static ?string $navigationIcon   = 'heroicon-o-chat-bubble-left-right';
     protected static ?string $navigationGroup  = NavigationGroup::DEALER_GROUP->value;

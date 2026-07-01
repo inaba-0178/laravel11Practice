@@ -6,10 +6,12 @@ use App\Filament\Widgets\DealerReservationCalendarWidget;
 use App\Filament\Widgets\DealerBulkCarStatusWidget;
 use App\Filament\Widgets\DealerCarStatusWidget;
 use App\Filament\Widgets\DealerAnalyticsWidget;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
 {
+    use HasResourcePermission;
     public function getColumns(): int | string | array
     {
         return 12; // 12カラムグリッドを明示

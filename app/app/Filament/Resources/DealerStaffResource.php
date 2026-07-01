@@ -12,6 +12,7 @@ use App\Infrastructure\Eloquent\User\StkDealerStaff;
 use App\Constants\NavigationSort;
 use App\Constants\NavigationGroup;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components\TextInput;
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class DealerStaffResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = StkDealerStaff::class;
     protected static ?string $navigationIcon   = 'heroicon-o-users';
     protected static ?string $navigationGroup  = NavigationGroup::DEALER_GROUP->value;

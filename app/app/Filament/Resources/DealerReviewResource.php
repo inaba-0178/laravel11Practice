@@ -12,6 +12,7 @@ use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
 use App\Constants\Role\RoleManagement;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class DealerReviewResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = StkDealerReview::class;
     protected static ?string $navigationIcon   = 'heroicon-o-star';
     protected static ?string $navigationGroup  = NavigationGroup::DEALER_GROUP->value;

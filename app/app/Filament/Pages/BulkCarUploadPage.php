@@ -10,6 +10,7 @@ use App\Constants\NavigationGroup;
 use App\Constants\NavigationSort;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -17,6 +18,7 @@ use App\Infrastructure\Eloquent\User\StkBulkUploadBatch;
 
 class BulkCarUploadPage extends Page
 {
+    use HasResourcePermission;
     protected static ?string $navigationIcon  = 'heroicon-o-arrow-up-tray';
     protected static ?string $navigationGroup = NavigationGroup::DEALER_GROUP->value;
     protected static ?int    $navigationSort  = NavigationSort::BULK_CAR_UPLOAD->value;

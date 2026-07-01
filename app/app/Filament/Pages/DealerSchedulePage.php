@@ -12,12 +12,14 @@ use App\Infrastructure\Eloquent\Opr\OprReservationTypes;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\Constants\ScheduleTimeInterval;
 
 class DealerSchedulePage extends Page
 {
+    use HasResourcePermission;
     protected static ?string $navigationIcon  = 'heroicon-o-calendar-days';
     protected static ?string $navigationGroup = NavigationGroup::DEALER_GROUP->value;
     protected static ?int    $navigationSort  = NavigationSort::DEALER_SCHEDULE->value;

@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Filament\Infolists\Components\ImageEntry;
 
 class MstManufacturerDetail extends Page
 {
+    use HasResourcePermission;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.mst-manufacturer-detail';

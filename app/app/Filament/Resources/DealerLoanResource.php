@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +23,7 @@ use Filament\Forms\Components\Grid;
 
 class DealerLoanResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = StkDealerLoanPlan::class;
     protected static ?string $navigationIcon   = 'heroicon-o-banknotes';
     protected static ?string $navigationGroup  = 'ディーラーメニュー';

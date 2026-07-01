@@ -22,6 +22,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -60,6 +61,7 @@ use App\Constants\LoanPlanLabel;
 
 class CarRegistrationResource extends Resource
 {
+    use HasResourcePermission;
  
     protected static ?string    $model              = StkCar::class;
     protected static ?string    $navigationIcon     = 'heroicon-o-truck';
