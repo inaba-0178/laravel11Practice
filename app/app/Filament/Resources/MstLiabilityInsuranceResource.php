@@ -9,6 +9,7 @@ use App\Infrastructure\Eloquent\Mst\MstLiabilityInsurance;
 use App\Constants\NavigationSort;
 use App\Constants\NavigationGroup;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
@@ -17,6 +18,7 @@ use Filament\Tables\Enums\ActionsPosition;
 
 class MstLiabilityInsuranceResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = MstLiabilityInsurance::class;
     protected static ?string $navigationIcon   = 'heroicon-o-shield-check';
     protected static ?string $navigationGroup  = NavigationGroup::MST_GROUP->value;

@@ -8,6 +8,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -18,6 +19,7 @@ use App\Constants\NavigationGroup;
 
 class MailTemplateResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = OprMailTemplate::class;
 
     protected static ?string    $navigationIcon     = 'heroicon-o-envelope';

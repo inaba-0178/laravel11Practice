@@ -8,6 +8,7 @@ use App\Filament\Pages\MstVehicleDetail;
 use App\Filament\Resources\MstVehiclesResource\Pages;
 use App\Infrastructure\Eloquent\Mst\MstVehicles;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\ActionsPosition;
@@ -17,6 +18,7 @@ use Filament\Tables\Table;
 
 class MstVehiclesResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = MstVehicles::class;
 
     protected static ?string $navigationIcon   = 'heroicon-o-rectangle-stack';

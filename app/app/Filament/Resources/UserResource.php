@@ -13,6 +13,7 @@ use App\Constants\NavigationSort;
 use App\Constants\NavigationGroup;
 use App\Models\User;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components\TextInput;
@@ -26,6 +27,7 @@ use Filament\Tables\Actions\Action;
 
 class UserResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = User::class;
     protected static ?string $navigationIcon   = 'heroicon-o-user-group';
     protected static ?string $navigationGroup  = NavigationGroup::SYSTEM_GROUP->value;
@@ -33,11 +35,6 @@ class UserResource extends Resource
     protected static ?string $pluralModelLabel = 'ユーザー管理';
     protected static ?string $modelLabel       = 'ユーザー';
 
-    public static function canAccess(): bool
-    {
-        $role = Auth::user()?->role;
-        return in_array($role, RoleManagement::USER_MANAGEMENT_ACCESS_ROLES);
-    }
 
     public static function getEloquentQuery(): Builder
     {

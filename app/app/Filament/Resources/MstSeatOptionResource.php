@@ -8,6 +8,7 @@ use App\Filament\Pages\MstSeatOptionDetail;
 use App\Filament\Resources\MstSeatOptionResource\Pages;
 use App\Infrastructure\Eloquent\Mst\MstSeatOption;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MstSeatOptionResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = MstSeatOption::class;
 
     protected static ?string $navigationIcon   = 'heroicon-o-rectangle-stack';

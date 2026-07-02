@@ -9,6 +9,7 @@ use App\Infrastructure\Eloquent\Mst\MstVehicleWeightTax;
 use App\Constants\NavigationSort;
 use App\Constants\NavigationGroup;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
@@ -18,6 +19,7 @@ use Filament\Tables\Enums\ActionsPosition;
 
 class MstVehicleWeightTaxResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = MstVehicleWeightTax::class;
     protected static ?string $navigationIcon   = 'heroicon-o-scale';
     protected static ?string $navigationGroup  = NavigationGroup::MST_GROUP->value;

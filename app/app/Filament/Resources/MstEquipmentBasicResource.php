@@ -9,6 +9,7 @@ use App\Filament\Resources\MstEquipmentBasicResource\Pages;
 use App\Infrastructure\Eloquent\Mst\MstEquipmentBasic;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MstEquipmentBasicResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = MstEquipmentBasic::class;
 
     protected static ?string $navigationIcon   = 'heroicon-o-rectangle-stack';

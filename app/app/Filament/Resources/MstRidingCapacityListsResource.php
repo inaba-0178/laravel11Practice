@@ -6,6 +6,7 @@ use App\Filament\Resources\MstRidingCapacityListsResource\Pages;
 use App\Infrastructure\Eloquent\Mst\MstRidingCapacityLists;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Enums\FiltersLayout;
@@ -18,6 +19,7 @@ use App\Domain\Common\Enums\RidingCapacityList;
 
 class MstRidingCapacityListsResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = MstRidingCapacityLists::class;
 
     protected static ?string    $navigationIcon     = 'heroicon-o-rectangle-stack';

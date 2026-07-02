@@ -9,6 +9,7 @@ use App\Filament\Resources\MstEquipmentSafetyResource\Pages;
 use App\Infrastructure\Eloquent\Mst\MstEquipmentSafety;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MstEquipmentSafetyResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = MstEquipmentSafety::class;
 
     protected static ?string $navigationIcon   = 'heroicon-o-rectangle-stack';

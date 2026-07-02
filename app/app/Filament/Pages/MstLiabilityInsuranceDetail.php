@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
@@ -14,6 +15,7 @@ use App\Infrastructure\Eloquent\Mst\MstLiabilityInsurance;
 
 class MstLiabilityInsuranceDetail extends Page
 {
+    use HasResourcePermission;
     protected static ?string $navigationIcon           = 'heroicon-o-document-text';
     protected static string  $view                     = 'filament.pages.mst-liability-insurance-detail';
     protected static bool    $shouldRegisterNavigation = false;

@@ -8,6 +8,7 @@ use App\Filament\Resources\ReservationResource\Pages;
 use App\Infrastructure\Eloquent\User\StkReservation;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -19,6 +20,7 @@ use Filament\Tables\Enums\FiltersLayout;
 
 class ReservationResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model             = StkReservation::class;
     protected static ?string $navigationIcon    = 'heroicon-o-calendar';
     protected static ?string $navigationGroup   = NavigationGroup::DEALER_GROUP->value;

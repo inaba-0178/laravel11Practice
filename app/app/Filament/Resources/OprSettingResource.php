@@ -13,6 +13,7 @@ use App\Infrastructure\Eloquent\Opr\OprSetting;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Section;
@@ -23,6 +24,7 @@ use Filament\Tables\Actions\EditAction;
 
 class OprSettingResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = OprSetting::class;
     protected static ?string $navigationIcon   = 'heroicon-o-cog-6-tooth';
     protected static ?string $navigationGroup  = NavigationGroup::OPR_GROUP->value;
@@ -30,10 +32,6 @@ class OprSettingResource extends Resource
     protected static ?string $pluralModelLabel = 'システム設定';
     protected static ?string $modelLabel       = 'システム設定';
 
-    public static function canAccess(): bool
-    {
-        return in_array(auth()->user()?->role, ['super', 'admin']);
-    }
 
     public static function form(Form $form): Form
     {

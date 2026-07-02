@@ -8,20 +8,18 @@ use App\Filament\Resources\LoanSettingResource\Pages\ListLoanSettings;
 use App\Filament\Resources\LoanSettingResource\Pages\ViewLoanSetting;
 use App\Infrastructure\Eloquent\User\StkCarDealer;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables;
 use Filament\Tables\Table;
 
 class LoanSettingResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model           = StkCarDealer::class;
     protected static ?string $navigationIcon  = 'heroicon-o-banknotes';
     protected static ?string $navigationGroup = '管理者メニュー';
     protected static ?string $pluralModelLabel = 'ローン設定申請';
 
-    public static function canAccess(): bool
-    {
-        return in_array(auth()->user()?->role, ['super', 'admin']);
-    }
 
     public static function getNavigationBadge(): ?string
     {

@@ -6,6 +6,7 @@ use App\Filament\Resources\MstBodyTypesResource\Pages;
 use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Table;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\ActionsPosition;
@@ -17,6 +18,7 @@ use Filament\Tables\Columns\ImageColumn;
 
 class MstBodyTypesResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = MstBodyTypes::class;
 
     protected static ?string    $navigationIcon     = 'heroicon-o-rectangle-stack';

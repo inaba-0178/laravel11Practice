@@ -10,6 +10,7 @@ use App\Filament\Resources\OprMainViewResource\Pages\EditOprMainView;
 use App\Filament\Pages\OprMainViewDetail;
 use App\Infrastructure\Eloquent\Opr\OprMainView;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components\TextInput;
@@ -26,6 +27,7 @@ use Illuminate\Support\HtmlString;
 
 class OprMainViewResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = OprMainView::class;
     protected static ?string $navigationIcon   = 'heroicon-o-photo';
     protected static ?string $pluralModelLabel = 'メインビュー';

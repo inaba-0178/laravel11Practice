@@ -9,11 +9,13 @@ use App\Constants\NavigationSort;
 use App\Constants\Role\RoleManagement;
 use App\Infrastructure\Eloquent\Opr\OprMaintenance;
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
 class MaintenancePage extends Page
 {
+    use HasResourcePermission;
     protected static ?string $navigationIcon  = 'heroicon-o-wrench-screwdriver';
     protected static ?string $navigationGroup = NavigationGroup::MST_UPDATE_GROUP->value;
     protected static ?int    $navigationSort  = NavigationSort::MAINTENANCE->value;
@@ -22,10 +24,6 @@ class MaintenancePage extends Page
     
     public string $mode = 'manual';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, RoleManagement::MAINTENANCE_ROLES);
-    }
 
     // ===== プロパティ =====
     public bool    $isMaintenance   = false;

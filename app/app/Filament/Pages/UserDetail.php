@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 
 class UserDetail extends Page
 {
+    use HasResourcePermission;
     protected static ?string $navigationIcon           = 'heroicon-o-user';
     protected static string  $view                     = 'filament.pages.user-detail';
     protected static bool    $shouldRegisterNavigation = false;

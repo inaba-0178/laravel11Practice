@@ -7,6 +7,7 @@ use App\Infrastructure\Eloquent\Mst\MstRegions;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\Filter;
@@ -20,6 +21,7 @@ use Filament\Tables\Filters\SelectFilter;
 
 class MstRegionsResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = MstRegions::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';

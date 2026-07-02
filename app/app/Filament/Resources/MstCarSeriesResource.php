@@ -8,6 +8,7 @@ use App\Infrastructure\Eloquent\Mst\MstBodyTypes;
 use App\Infrastructure\Eloquent\Mst\MstManufacturers;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Table;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\ActionsPosition;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MstCarSeriesResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = MstCarSeries::class;
 
     protected static ?string    $navigationIcon     = 'heroicon-o-rectangle-stack';

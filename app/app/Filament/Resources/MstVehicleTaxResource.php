@@ -7,6 +7,7 @@ use App\Filament\Pages\MstVehicleTaxDetail;
 use App\Filament\Resources\MstVehicleTaxResource\Pages;
 use App\Infrastructure\Eloquent\Mst\MstVehicleTax;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -17,6 +18,7 @@ use Filament\Tables\Table;
 
 class MstVehicleTaxResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model = MstVehicleTax::class;
 
     protected static ?string $navigationIcon   = 'heroicon-o-rectangle-stack';

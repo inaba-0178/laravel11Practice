@@ -12,6 +12,7 @@ use App\Domain\Mst\Services\MstImportService;
 use App\Domain\Mst\Services\MstValidatorService;
 use App\Infrastructure\Eloquent\Mst\MstVersion;
 use Filament\Pages\Page;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -19,16 +20,13 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class MstUpload extends Page
 {
+    use HasResourcePermission;
     protected static ?string $navigationIcon  = 'heroicon-o-arrow-up-tray';
     protected static ?string $navigationGroup = NavigationGroup::MST_UPDATE_GROUP->value;
     protected static ?int    $navigationSort  = NavigationSort::MST_UPLOAD->value;
     protected static ?string $title           = 'マスタアップロード';
     protected static string  $view            = 'filament.pages.mst-upload';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, RoleManagement::MST_OPERATOR_ROLES);
-    }
 
     // ===== STEPフロー =====
     // STEP1: xlsxアップロード・バリデーション

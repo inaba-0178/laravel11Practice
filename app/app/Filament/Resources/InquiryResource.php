@@ -12,6 +12,7 @@ use App\Filament\Resources\InquiryResource\Pages\ViewInquiry;
 use App\Infrastructure\Eloquent\User\StkInquiry;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 
 class InquiryResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = StkInquiry::class;
     protected static ?string $navigationIcon   = 'heroicon-o-envelope';
     protected static ?string $navigationGroup  = NavigationGroup::DEALER_GROUP->value;
@@ -28,11 +30,6 @@ class InquiryResource extends Resource
     protected static ?string $pluralModelLabel = '問い合わせ管理';
     protected static ?string $modelLabel       = '問い合わせ';
 
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-        return in_array($user?->role, ['super', 'admin']) || $user?->dealer_id !== null;
-    }
 
     public static function getNavigationBadge(): ?string
     {

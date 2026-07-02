@@ -13,6 +13,7 @@ use App\Infrastructure\Eloquent\Mst\MstAreas;
 use App\Constants\NavigationSort;
 use App\Constants\NavigationGroup;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -32,6 +33,7 @@ use App\Domain\Common\Services\GeocodingService;
 
 class DealerShopResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = StkCarDealer::class;
     protected static ?string $navigationIcon   = 'heroicon-o-building-storefront';
     protected static ?string $navigationGroup  = NavigationGroup::DEALER_GROUP->value;
@@ -39,10 +41,6 @@ class DealerShopResource extends Resource
     protected static ?string $pluralModelLabel = '店舗情報';
     protected static ?string $modelLabel       = '店舗情報';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
-    }
 
     public static function getEloquentQuery(): Builder
     {

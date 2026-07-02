@@ -12,6 +12,7 @@ use App\Infrastructure\Eloquent\User\StkDealerContent;
 use App\Constants\NavigationSort;
 use App\Constants\NavigationGroup;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components\TextInput;
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class DealerContentResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = StkDealerContent::class;
     protected static ?string $navigationIcon   = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup  = NavigationGroup::DEALER_GROUP->value;
@@ -35,10 +37,6 @@ class DealerContentResource extends Resource
     protected static ?string $pluralModelLabel = 'サービス・イベント・保証';
     protected static ?string $modelLabel       = 'コンテンツ';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
-    }
 
     public static function getEloquentQuery(): Builder
     {

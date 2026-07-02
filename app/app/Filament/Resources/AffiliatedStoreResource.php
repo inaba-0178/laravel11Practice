@@ -13,6 +13,7 @@ use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
 use App\Constants\Role\RoleManagement;
 use Filament\Resources\Resource;
+use App\Filament\Concerns\HasResourcePermission;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
@@ -28,6 +29,7 @@ use Filament\Forms\Components\TextInput;
 
 class AffiliatedStoreResource extends Resource
 {
+    use HasResourcePermission;
     protected static ?string $model            = StkAffiliatedStore::class;
     protected static ?string $navigationIcon   = 'heroicon-o-building-storefront';
     protected static ?string $navigationGroup  = NavigationGroup::DEALER_GROUP->value;
@@ -35,10 +37,6 @@ class AffiliatedStoreResource extends Resource
     protected static ?string $pluralModelLabel = '系列店・提携店管理';
     protected static ?string $modelLabel       = '系列店・提携店';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, RoleManagement::AFFILIATED_STORE_ACCESS_ROLES);
-    }
 
     public static function getEloquentQuery(): Builder
     {
