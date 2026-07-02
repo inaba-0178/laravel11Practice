@@ -30,11 +30,6 @@ class InquiryResource extends Resource
     protected static ?string $pluralModelLabel = '問い合わせ管理';
     protected static ?string $modelLabel       = '問い合わせ';
 
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-        return in_array($user?->role, ['super', 'admin']) || $user?->dealer_id !== null;
-    }
 
     public static function getNavigationBadge(): ?string
     {

@@ -26,10 +26,6 @@ class BulkCarUploadPage extends Page
     protected static string  $view            = 'filament.pages.bulk-car-upload';
 
     // dealer/dealer_staffのみアクセス可能
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
-    }
 
     // ===== State =====
 

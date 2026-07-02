@@ -37,10 +37,6 @@ class AffiliatedStoreResource extends Resource
     protected static ?string $pluralModelLabel = '系列店・提携店管理';
     protected static ?string $modelLabel       = '系列店・提携店';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, RoleManagement::AFFILIATED_STORE_ACCESS_ROLES);
-    }
 
     public static function getEloquentQuery(): Builder
     {

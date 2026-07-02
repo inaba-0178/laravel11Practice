@@ -35,10 +35,6 @@ class DealerFeeResource extends Resource
     protected static ?string $pluralModelLabel = '諸費用管理';
     protected static ?string $modelLabel       = '諸費用';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
-    }
 
     public static function getEloquentQuery(): Builder
     {

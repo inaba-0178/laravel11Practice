@@ -27,10 +27,6 @@ class MstUpload extends Page
     protected static ?string $title           = 'マスタアップロード';
     protected static string  $view            = 'filament.pages.mst-upload';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, RoleManagement::MST_OPERATOR_ROLES);
-    }
 
     // ===== STEPフロー =====
     // STEP1: xlsxアップロード・バリデーション

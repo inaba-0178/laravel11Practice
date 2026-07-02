@@ -37,10 +37,6 @@ class DealerContentResource extends Resource
     protected static ?string $pluralModelLabel = 'サービス・イベント・保証';
     protected static ?string $modelLabel       = 'コンテンツ';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
-    }
 
     public static function getEloquentQuery(): Builder
     {

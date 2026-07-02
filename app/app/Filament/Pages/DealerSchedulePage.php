@@ -31,11 +31,6 @@ class DealerSchedulePage extends Page
     // アクセス制御
     // -------------------------------------------------------
 
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-        return $user && $user->isDealerRole();
-    }
 
     // -------------------------------------------------------
     // カレンダー表示用

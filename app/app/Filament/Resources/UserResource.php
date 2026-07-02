@@ -35,11 +35,6 @@ class UserResource extends Resource
     protected static ?string $pluralModelLabel = 'ユーザー管理';
     protected static ?string $modelLabel       = 'ユーザー';
 
-    public static function canAccess(): bool
-    {
-        $role = Auth::user()?->role;
-        return in_array($role, RoleManagement::USER_MANAGEMENT_ACCESS_ROLES);
-    }
 
     public static function getEloquentQuery(): Builder
     {

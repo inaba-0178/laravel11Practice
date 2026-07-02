@@ -9,6 +9,15 @@ use App\Domain\Common\Services\PermissionCacheService;
 
 trait HasResourcePermission
 {
+    public static function shouldRegisterNavigation(): bool
+    {
+        if (!static::$shouldRegisterNavigation) {
+            return false;
+        }
+
+        return static::canAccess();
+    }
+
     public static function canAccess(): bool
     {
         $user = auth()->user();

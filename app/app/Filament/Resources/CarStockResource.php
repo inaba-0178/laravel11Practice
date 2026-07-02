@@ -29,10 +29,6 @@ class CarStockResource extends Resource
     protected static ?string $pluralModelLabel = '車両一覧';
     protected static ?string $modelLabel       = '車両一覧';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
-    }
 
     public static function table(Table $table): Table
     {

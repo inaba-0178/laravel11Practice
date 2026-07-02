@@ -26,10 +26,6 @@ class CarApprovalResource extends Resource
     protected static ?string $pluralModelLabel  = '車両承認';
     protected static ?string $modelLabel        = '車両承認';
 
-    public static function canAccess(): bool
-    {
-        return in_array(auth()->user()?->role, ['super', 'admin']);
-    }
 
     public static function getNavigationBadge(): ?string
     {

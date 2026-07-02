@@ -28,10 +28,6 @@ class MstVersionResource extends Resource
     protected static ?string $pluralModelLabel = 'バージョン管理';
     protected static ?string $modelLabel       = 'バージョン';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, RoleManagement::MST_OPERATOR_ROLES);
-    }
 
     public static function table(Table $table): Table
     {

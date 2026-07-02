@@ -29,11 +29,6 @@ class DealerLoanResource extends Resource
     protected static ?string $navigationGroup  = 'ディーラーメニュー';
     protected static ?string $pluralModelLabel = 'ローンプラン管理';
 
-    public static function canAccess(): bool
-    {
-        $dealer = StkCarDealer::find(auth()->user()?->dealer_id);
-        return $dealer?->loan_setting_enabled == 1;
-    }
 
     public static function getEloquentQuery(): Builder
     {

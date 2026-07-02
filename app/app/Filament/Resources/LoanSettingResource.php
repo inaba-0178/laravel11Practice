@@ -20,10 +20,6 @@ class LoanSettingResource extends Resource
     protected static ?string $navigationGroup = '管理者メニュー';
     protected static ?string $pluralModelLabel = 'ローン設定申請';
 
-    public static function canAccess(): bool
-    {
-        return in_array(auth()->user()?->role, ['super', 'admin']);
-    }
 
     public static function getNavigationBadge(): ?string
     {

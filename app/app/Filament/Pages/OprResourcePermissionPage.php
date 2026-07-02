@@ -57,13 +57,10 @@ class OprResourcePermissionPage extends Page implements HasTable
                     ->size('sm'),
                 TextColumn::make('allowed_roles')
                     ->label('許可ロール')
-                    ->formatStateUsing(function ($state) {
-                        $roles = is_array($state) ? $state : (json_decode($state, true) ?? []);
-                        return implode('・', array_map(
-                            fn($r) => RoleConstants::LABELS[$r] ?? $r,
-                            $roles
-                        ));
-                    }),
+                    ->getStateUsing(fn(OprResourcePermission $record) => implode('・', array_map(
+                        fn($r) => RoleConstants::LABELS[$r] ?? $r,
+                        $record->allowed_roles ?? []
+                    ))),
                 TextColumn::make('updated_at')
                     ->label('最終更新')
                     ->since()
@@ -113,7 +110,7 @@ class OprResourcePermissionPage extends Page implements HasTable
                                 ),
                             CheckboxList::make('allowed_roles')
                                 ->label('許可ロール')
-                                ->options(RoleConstants::LABELS)
+                                ->options(collect(RoleConstants::LABELS)->except(RoleConstants::SUPER)->toArray())
                                 ->columns(2),
                         ];
                     })
@@ -236,13 +233,10 @@ class OprResourcePermissionPage extends Page implements HasTable
 
     private function getRoleOptions(): array
     {
-        $user    = auth()->user();
         $options = RoleConstants::LABELS;
 
-        // admin以下はsuperロールを変更不可（選択肢から除外）
-        if ($user->role !== RoleConstants::SUPER) {
-            unset($options[RoleConstants::SUPER]);
-        }
+        // superは常に全アクセス可能なので選択肢から除外（設定しても意味がないため）
+        unset($options[RoleConstants::SUPER]);
 
         return $options;
     }

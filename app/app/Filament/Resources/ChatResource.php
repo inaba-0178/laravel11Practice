@@ -31,10 +31,6 @@ class ChatResource extends Resource
     private const ACCESSIBLE_ROLES = ['dealer', 'dealer_staff', 'super', 'admin'];
     private const CREATABLE_ROLES  = ['dealer', 'dealer_staff'];
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, self::ACCESSIBLE_ROLES);
-    }
 
     public static function canCreate(): bool
     {

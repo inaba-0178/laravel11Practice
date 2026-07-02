@@ -24,10 +24,6 @@ class BulkCarApprovalResource extends Resource
     protected static ?string $pluralModelLabel = '一括車両承認';
     protected static ?string $modelLabel       = '一括車両承認';
 
-    public static function canAccess(): bool
-    {
-        return in_array(auth()->user()?->role, ['super', 'admin']);
-    }
 
     public static function getNavigationBadge(): ?string
     {

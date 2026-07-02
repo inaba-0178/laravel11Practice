@@ -35,10 +35,6 @@ class DealerStaffResource extends Resource
     protected static ?string $pluralModelLabel = 'スタッフ管理';
     protected static ?string $modelLabel       = 'スタッフ';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
-    }
 
     public static function getEloquentQuery(): Builder
     {

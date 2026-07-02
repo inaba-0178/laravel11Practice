@@ -32,10 +32,6 @@ class OprSettingResource extends Resource
     protected static ?string $pluralModelLabel = 'システム設定';
     protected static ?string $modelLabel       = 'システム設定';
 
-    public static function canAccess(): bool
-    {
-        return in_array(auth()->user()?->role, ['super', 'admin']);
-    }
 
     public static function form(Form $form): Form
     {

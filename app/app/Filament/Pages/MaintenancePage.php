@@ -24,10 +24,6 @@ class MaintenancePage extends Page
     
     public string $mode = 'manual';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, RoleManagement::MAINTENANCE_ROLES);
-    }
 
     // ===== プロパティ =====
     public bool    $isMaintenance   = false;

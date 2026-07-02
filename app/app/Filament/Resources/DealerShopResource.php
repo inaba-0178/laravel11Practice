@@ -41,10 +41,6 @@ class DealerShopResource extends Resource
     protected static ?string $pluralModelLabel = '店舗情報';
     protected static ?string $modelLabel       = '店舗情報';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
-    }
 
     public static function getEloquentQuery(): Builder
     {

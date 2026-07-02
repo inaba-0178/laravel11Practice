@@ -35,10 +35,6 @@ class DealerReviewResource extends Resource
     protected static ?string $pluralModelLabel = '口コミ管理';
     protected static ?string $modelLabel       = '口コミ';
 
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, RoleManagement::REVIEW_ACCESS_ROLES);
-    }
 
     public static function getEloquentQuery(): Builder
     {

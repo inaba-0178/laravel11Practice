@@ -71,10 +71,6 @@ class CarRegistrationResource extends Resource
     protected static ?string    $modelLabel         = '車両登録';
     
     // dealer/dealer_staffのみアクセス可能
-    public static function canAccess(): bool
-    {
-        return in_array(Auth::user()?->role, ['dealer', 'dealer_staff']);
-    }
 
     public static function form(Form $form): Form
     {
