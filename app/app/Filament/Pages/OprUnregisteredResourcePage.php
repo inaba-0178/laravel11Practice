@@ -48,12 +48,14 @@ class OprUnregisteredResourcePage extends Page implements HasActions
                 $basename = pathinfo($file, PATHINFO_FILENAME);
 
                 if (in_array($basename, $registered, true)) continue;
-                if ($basename === 'OprResourcePermissionPage') continue;
 
                 if (str_ends_with($basename, 'Detail')) continue;
                 if (str_ends_with($basename, 'DetailPage')) continue;
 
                 $content = file_get_contents($file);
+
+                // 独自 canAccess() を持つページはDB管理外（スーパー固定等）のためスキップ
+                if (str_contains($content, 'function canAccess(')) continue;
                 $m       = [];
                 $gm      = [];
 
