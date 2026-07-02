@@ -80,4 +80,10 @@ class MstCountryDetail extends Page
                     ]),
             ]);
     }
+
+    protected static function getParentPermissionKey(): ?string
+    {
+        return 'MstCountriesResource';
+    }
+
 }

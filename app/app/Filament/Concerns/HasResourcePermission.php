@@ -37,6 +37,12 @@ trait HasResourcePermission
             $parentKey = static::getParentPermissionKey();
             if ($parentKey !== null) {
                 $allowedRoles = PermissionCacheService::getAllowedRoles($parentKey);
+                // 複数形フォールバック: MstAreaResource → MstAreasResource
+                if ($allowedRoles === null && str_ends_with($parentKey, 'Resource')) {
+                    $allowedRoles = PermissionCacheService::getAllowedRoles(
+                        substr($parentKey, 0, -8) . 'sResource'
+                    );
+                }
             }
         }
 

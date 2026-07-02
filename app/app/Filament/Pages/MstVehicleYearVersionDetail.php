@@ -175,4 +175,10 @@ class MstVehicleYearVersionDetail extends Page
                     ]),
             ]);
     }
+
+    protected static function getParentPermissionKey(): ?string
+    {
+        return 'MstVehiclesResource';
+    }
+
 }

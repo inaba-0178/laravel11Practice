@@ -333,4 +333,10 @@ class BulkCarBatchDetailPage extends Page
     {
         return route('filament.admin.pages.bulk-car-batch-detail-page', $parameters, $isAbsolute);
     }
+
+    protected static function getParentPermissionKey(): ?string
+    {
+        return 'BulkCarApprovalResource';
+    }
+
 }

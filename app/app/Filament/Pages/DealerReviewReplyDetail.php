@@ -133,4 +133,10 @@ class DealerReviewReplyDetail extends Page
                 }),
         ];
     }
+
+    protected static function getParentPermissionKey(): ?string
+    {
+        return 'DealerReviewResource';
+    }
+
 }

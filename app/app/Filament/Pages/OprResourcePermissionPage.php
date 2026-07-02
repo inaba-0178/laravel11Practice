@@ -19,8 +19,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class OprResourcePermissionPage extends Page implements HasTable
 {
@@ -75,8 +78,85 @@ class OprResourcePermissionPage extends Page implements HasTable
                             ->pluck('resource_group', 'resource_group')
                             ->toArray()
                     ),
-            ])
+                Filter::make('resource_label')
+                    ->label('機能名')
+                    ->form([
+                        TextInput::make('resource_label')
+                            ->label('機能名')
+                            ->placeholder('キーワード検索'),
+                    ])
+                    ->query(fn(Builder $query, array $data) =>
+                        $query->when($data['resource_label'] ?? null,
+                            fn($q, $v) => $q->where('resource_label', 'like', "%{$v}%")
+                        )
+                    ),
+                SelectFilter::make('allowed_role')
+                    ->label('ロール（含む）')
+                    ->options(collect(RoleConstants::LABELS)->except(RoleConstants::SUPER)->toArray())
+                    ->query(fn(Builder $query, array $data) =>
+                        $query->when($data['value'] ?? null,
+                            fn($q, $v) => $q->whereJsonContains('allowed_roles', $v)
+                        )
+                    ),
+            ], FiltersLayout::AboveContent)
+            ->deferFilters()
+            ->hiddenFilterIndicators()
+            ->filtersApplyAction(fn(Action $action) => $action->label('適用'))
             ->headerActions([
+                Action::make('bulk_group')
+                    ->label('グループ一括設定')
+                    ->icon('heroicon-o-user-group')
+                    ->color('warning')
+                    ->form([
+                        Select::make('resource_group')
+                            ->label('グループ')
+                            ->options(
+                                OprResourcePermission::query()
+                                    ->distinct()
+                                    ->orderBy('resource_group')
+                                    ->pluck('resource_group', 'resource_group')
+                                    ->toArray()
+                            )
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function (?string $state, Set $set): void {
+                                if (!$state) return;
+                                $roles = OprResourcePermission::where('resource_group', $state)
+                                    ->first()?->allowed_roles ?? [];
+                                $set('allowed_roles', $roles);
+                            })
+                            ->helperText('選択するとそのグループの現在の設定を読み込みます'),
+                        CheckboxList::make('allowed_roles')
+                            ->label('許可ロール（グループ内全件に適用）')
+                            ->options(collect(RoleConstants::LABELS)->except(RoleConstants::SUPER)->toArray())
+                            ->columns(2),
+                    ])
+                    ->action(function (array $data): void {
+                        $user    = auth()->user();
+                        $group   = $data['resource_group'];
+                        $roles   = $data['allowed_roles'] ?? [];
+                        $records = OprResourcePermission::where('resource_group', $group)->get();
+
+                        foreach ($records as $record) {
+                            OprPermissionLog::create([
+                                'resource_key'    => $record->resource_key,
+                                'changed_by'      => $user->id,
+                                'changed_by_role' => $user->role,
+                                'before_roles'    => $record->allowed_roles,
+                                'after_roles'     => $roles,
+                            ]);
+                        }
+
+                        OprResourcePermission::where('resource_group', $group)
+                            ->update(['allowed_roles' => json_encode($roles)]);
+
+                        PermissionCacheService::clearCache();
+
+                        Notification::make()
+                            ->title("{$group} の権限を一括更新しました（{$records->count()}件）")
+                            ->success()
+                            ->send();
+                    }),
                 Action::make('create')
                     ->label('新規追加')
                     ->icon('heroicon-o-plus')
