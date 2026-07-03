@@ -10,12 +10,14 @@ use App\Domain\Shared\Constants\UserType;
 use App\Filament\Resources\ChatResource\Pages\ListChats;
 use App\Filament\Resources\ChatResource\Pages\ViewChat;
 use App\Infrastructure\Eloquent\User\Room;
+use App\Infrastructure\Eloquent\User\UsrUser;
+use App\Models\User;
 use Filament\Resources\Resource;
 use App\Filament\Concerns\HasResourcePermission;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Infrastructure\Eloquent\User\Message;
 use Filament\Tables\Columns\TextColumn;
 
 class ChatResource extends Resource
@@ -28,8 +30,7 @@ class ChatResource extends Resource
     protected static ?string $pluralModelLabel = 'チャット';
     protected static ?string $modelLabel       = 'チャット';
 
-    private const ACCESSIBLE_ROLES = ['dealer', 'dealer_staff', 'super', 'admin'];
-    private const CREATABLE_ROLES  = ['dealer', 'dealer_staff'];
+    private const CREATABLE_ROLES = ['dealer', 'dealer_staff'];
 
 
     public static function canCreate(): bool
@@ -46,14 +47,38 @@ class ChatResource extends Resource
                     ->label('ルーム名')
                     ->default('ダイレクトメッセージ'),
 
+                TextColumn::make('unread_badge')
+                    ->label('')
+                    ->getStateUsing(function (Room $record) {
+                        $userId = (string) Auth::id();
+                        $count = Message::where('user_type', UserType::MEMBER)
+                            ->where('room_id', $record->id)
+                            ->whereDoesntHave('messageReads', fn($q) => $q
+                                ->where('user_id', $userId)
+                                ->where('user_type', UserType::STAFF)
+                            )
+                            ->count();
+                        return $count > 0 ? 'NEW ' . $count : null;
+                    })
+                    ->badge()
+                    ->color('danger'),
+
                 TextColumn::make('messages_count')
                     ->label('メッセージ数')
                     ->counts('messages'),
 
                 TextColumn::make('latest_message')
                     ->label('最後のメッセージ')
-                    ->getStateUsing(fn (Room $record) => $record->messages->first()?->message ?? '-')
-                    ->limit(30),
+                    ->getStateUsing(fn (Room $record) => 'メッセージ：' . ($record->messages->first()?->message ?? '-'))
+                    ->description(function (Room $record) {
+                        $msg = $record->messages->first();
+                        if (!$msg) return null;
+                        $sender = $msg->user_type === UserType::STAFF
+                            ? User::find($msg->user_id)
+                            : UsrUser::find($msg->user_id);
+                        return '送信者：' . UserType::getDisplayName($sender, $msg->user_type);
+                    })
+                    ->limit(40),
 
                 TextColumn::make('updated_at')
                     ->label('最終更新')
@@ -61,6 +86,7 @@ class ChatResource extends Resource
                     ->sortable(),
             ])
             ->defaultSort('updated_at', 'desc')
+            ->poll('10s')
             ->recordUrl(fn (Room $record) => ViewChat::getUrl(['record' => $record]));
     }
 

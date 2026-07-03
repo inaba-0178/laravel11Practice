@@ -6,16 +6,19 @@ namespace App\Livewire;
 
 use App\Constants\CarStatus;
 use App\Constants\InquiryStatus;
+use App\Constants\ReservationStatus;
 use App\Domain\Shared\Constants\UserType;
 use App\Filament\Pages\BulkCarUploadPage;
 use App\Filament\Resources\BulkCarApprovalResource\Pages\ListBulkCarApprovals;
 use App\Filament\Resources\CarApprovalResource\Pages\ListCarApprovals;
 use App\Filament\Resources\ChatResource\Pages\ListChats;
 use App\Filament\Resources\InquiryResource\Pages\ListInquiries;
+use App\Filament\Resources\ReservationResource\Pages\ListReservations;
 use App\Infrastructure\Eloquent\User\Message;
 use App\Infrastructure\Eloquent\User\StkBulkUploadBatch;
 use App\Infrastructure\Eloquent\User\StkCar;
 use App\Infrastructure\Eloquent\User\StkInquiry;
+use App\Infrastructure\Eloquent\User\StkReservation;
 use Livewire\Component;
 
 class NotificationBell extends Component
@@ -25,6 +28,7 @@ class NotificationBell extends Component
     public int $bulkCarCount       = 0;
     public int $carApprovalCount      = 0;
     public int $bulkCarApprovalCount  = 0;
+    public int $reservationCount      = 0;
     public int $totalCount            = 0;
 
     public function mount(): void
@@ -39,7 +43,8 @@ class NotificationBell extends Component
         $this->loadBulkCarCount();
         $this->loadCarApprovalCount();
         $this->loadBulkCarApprovalCount();
-        $this->totalCount = $this->chatUnreadCount + $this->inquiryCount + $this->bulkCarCount + $this->carApprovalCount + $this->bulkCarApprovalCount;
+        $this->loadReservationCount();
+        $this->totalCount = $this->chatUnreadCount + $this->inquiryCount + $this->bulkCarCount + $this->carApprovalCount + $this->bulkCarApprovalCount + $this->reservationCount;
     }
 
     private function loadChatUnreadCount(): void
@@ -76,6 +81,17 @@ class NotificationBell extends Component
 
         $this->carApprovalCount = StkCar::whereNull('bulk_upload_key')
             ->where('status', CarStatus::PENDING)
+            ->count();
+    }
+
+    private function loadReservationCount(): void
+    {
+        $user = auth()->user();
+        if (!$user || !$user->dealer_id) return;
+
+        $this->reservationCount = StkReservation::where('dealer_id', $user->dealer_id)
+            ->where('status', ReservationStatus::PENDING->value)
+            ->whereHas('schedule', fn($q) => $q->where('date', '>=', now()->toDateString()))
             ->count();
     }
 
@@ -122,6 +138,11 @@ class NotificationBell extends Component
     public function getBulkCarApprovalUrl(): string
     {
         return ListBulkCarApprovals::getUrl();
+    }
+
+    public function getReservationUrl(): string
+    {
+        return ListReservations::getUrl();
     }
 
     #[\Livewire\Attributes\On('messages-read-by-staff')]
