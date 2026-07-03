@@ -85,6 +85,22 @@
                             </div>
                         </a>
                     @endif
+
+                    @if ($bulkCarCount > 0)
+                        <a
+                            href="{{ $this->getBulkCarUploadUrl() }}"
+                            @click="open = false"
+                            class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors"
+                        >
+                            <div class="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-red-500/20">
+                                <x-heroicon-s-truck class="w-5 h-5 text-red-400" />
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-white leading-snug">車両一括登録</p>
+                                <p class="text-xs text-red-400 font-medium mt-0.5">{{ $bulkCarCount }}件の差し戻し</p>
+                            </div>
+                        </a>
+                    @endif
                 </div>
             @else
                 <div class="px-4 pb-4 text-sm text-gray-500 text-center py-3">

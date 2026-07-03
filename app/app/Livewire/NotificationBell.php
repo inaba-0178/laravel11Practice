@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Constants\CarStatus;
 use App\Constants\InquiryStatus;
 use App\Domain\Shared\Constants\UserType;
+use App\Filament\Pages\BulkCarUploadPage;
 use App\Filament\Resources\ChatResource\Pages\ListChats;
 use App\Filament\Resources\InquiryResource\Pages\ListInquiries;
 use App\Infrastructure\Eloquent\User\Message;
+use App\Infrastructure\Eloquent\User\StkBulkUploadBatch;
 use App\Infrastructure\Eloquent\User\StkInquiry;
 use Livewire\Component;
 
@@ -16,6 +19,7 @@ class NotificationBell extends Component
 {
     public int $chatUnreadCount    = 0;
     public int $inquiryCount       = 0;
+    public int $bulkCarCount       = 0;
     public int $totalCount         = 0;
 
     public function mount(): void
@@ -27,7 +31,8 @@ class NotificationBell extends Component
     {
         $this->loadChatUnreadCount();
         $this->loadInquiryCount();
-        $this->totalCount = $this->chatUnreadCount + $this->inquiryCount;
+        $this->loadBulkCarCount();
+        $this->totalCount = $this->chatUnreadCount + $this->inquiryCount + $this->bulkCarCount;
     }
 
     private function loadChatUnreadCount(): void
@@ -57,6 +62,18 @@ class NotificationBell extends Component
             ->count();
     }
 
+    private function loadBulkCarCount(): void
+    {
+        $user = auth()->user();
+        if (!$user || !$user->dealer_id) return;
+
+        // 差し戻しあり（rejected_count > 0）かつ未公開のバッチ
+        $this->bulkCarCount = StkBulkUploadBatch::where('dealer_id', $user->dealer_id)
+            ->where('rejected_count', '>', 0)
+            ->whereDoesntHave('cars', fn($q) => $q->where('status', CarStatus::AVAILABLE))
+            ->count();
+    }
+
     public function getChatListUrl(): string
     {
         return ListChats::getUrl();
@@ -65,6 +82,11 @@ class NotificationBell extends Component
     public function getInquiryListUrl(): string
     {
         return ListInquiries::getUrl();
+    }
+
+    public function getBulkCarUploadUrl(): string
+    {
+        return BulkCarUploadPage::getUrl();
     }
 
     #[\Livewire\Attributes\On('messages-read-by-staff')]
