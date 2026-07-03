@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
@@ -16,7 +17,7 @@ class OprSystemHealthPage extends Page
 {
     protected static ?string $navigationIcon  = 'heroicon-o-heart';
     protected static string  $view            = 'filament.pages.opr-system-health';
-    protected static ?string $navigationGroup = 'システム';
+    protected static ?string $navigationGroup = NavigationGroup::SYSTEM_GROUP->value;
     protected static ?string $title           = 'システムヘルス';
     protected static ?int    $navigationSort  = 905;
 

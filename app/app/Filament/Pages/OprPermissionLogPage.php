@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
 use App\Infrastructure\Eloquent\Opr\OprPermissionLog;
 use App\Infrastructure\Eloquent\Opr\OprResourcePermission;
@@ -23,7 +24,7 @@ class OprPermissionLogPage extends Page implements HasTable
 
     protected static ?string $navigationIcon  = 'heroicon-o-clock';
     protected static string  $view            = 'filament.pages.opr-permission-log';
-    protected static ?string $navigationGroup = 'システム';
+    protected static ?string $navigationGroup = NavigationGroup::SYSTEM_GROUP->value;
     protected static ?string $title           = '権限変更履歴';
     protected static ?int    $navigationSort  = 901;
 

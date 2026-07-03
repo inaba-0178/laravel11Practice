@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
 use App\Domain\Common\Services\PermissionCacheService;
 use App\Infrastructure\Eloquent\Opr\OprPermissionLog;
@@ -24,7 +25,7 @@ class OprUnregisteredResourcePage extends Page implements HasActions
 
     protected static ?string $navigationIcon  = 'heroicon-o-exclamation-triangle';
     protected static string  $view            = 'filament.pages.opr-unregistered-resource';
-    protected static ?string $navigationGroup = 'システム';
+    protected static ?string $navigationGroup = NavigationGroup::SYSTEM_GROUP->value;
     protected static ?string $title           = '未登録ページ検出';
     protected static ?int    $navigationSort  = 903;
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Constants\NavigationGroup;
 use App\Infrastructure\Eloquent\User\StkCarDealer;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -15,7 +16,7 @@ class LoanSettingRequestPage extends Page
     use HasResourcePermission;
     protected static string  $view           = 'filament.pages.loan-setting-request';
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
-    protected static ?string $navigationGroup = 'ディーラーメニュー';
+    protected static ?string $navigationGroup = NavigationGroup::ADMIN_GROUP->value;
     protected static ?string $title          = 'ローン設定申請';
 
     public ?StkCarDealer $dealer = null;
