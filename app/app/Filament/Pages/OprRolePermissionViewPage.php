@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
 use App\Infrastructure\Eloquent\Opr\OprResourcePermission;
 use Filament\Forms\Components\Select;
@@ -23,7 +24,7 @@ class OprRolePermissionViewPage extends Page implements HasTable, HasForms
 
     protected static ?string $navigationIcon  = 'heroicon-o-magnifying-glass';
     protected static string  $view            = 'filament.pages.opr-role-permission-view';
-    protected static ?string $navigationGroup = 'システム';
+    protected static ?string $navigationGroup = NavigationGroup::SYSTEM_GROUP->value;
     protected static ?string $title           = 'ロール別アクセス確認';
     protected static ?int    $navigationSort  = 902;
 

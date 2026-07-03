@@ -48,9 +48,9 @@ class InquiryResource extends Resource
         $query = parent::getEloquentQuery();
         $user  = Auth::user();
 
-        // ディーラーは自分の問い合わせのみ
-        if (!in_array($user?->role, ['super', 'admin']) && $user?->dealer_id) {
-            $query->where('dealer_id', $user->dealer_id);
+        $dealerId = $user?->getEffectiveDealerId();
+        if ($dealerId) {
+            $query->where('dealer_id', $dealerId);
         }
 
         return $query;

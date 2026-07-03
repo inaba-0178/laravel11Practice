@@ -34,8 +34,9 @@ class TodayReservationResource extends Resource
         $query = parent::getEloquentQuery();
         $user  = Auth::user();
 
-        if ($user->isDealerRole()) {
-            $query->where('stk_reservations.dealer_id', $user->dealer_id);
+        $dealerId = $user->getEffectiveDealerId();
+        if ($dealerId) {
+            $query->where('stk_reservations.dealer_id', $dealerId);
         }
 
         return $query

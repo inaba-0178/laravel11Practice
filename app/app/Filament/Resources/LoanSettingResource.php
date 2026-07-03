@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Constants\NavigationGroup;
 use App\Filament\Resources\LoanSettingResource\Pages\ListLoanSettings;
 use App\Filament\Resources\LoanSettingResource\Pages\ViewLoanSetting;
 use App\Infrastructure\Eloquent\User\StkCarDealer;
@@ -17,7 +18,7 @@ class LoanSettingResource extends Resource
     use HasResourcePermission;
     protected static ?string $model           = StkCarDealer::class;
     protected static ?string $navigationIcon  = 'heroicon-o-banknotes';
-    protected static ?string $navigationGroup = '管理者メニュー';
+    protected static ?string $navigationGroup = NavigationGroup::ADMIN_GROUP->value;
     protected static ?string $pluralModelLabel = 'ローン設定申請';
 
 

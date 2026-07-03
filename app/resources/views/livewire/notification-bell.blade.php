@@ -135,6 +135,22 @@
                         </a>
                     @endif
 
+                    @if ($bulkCarApprovedCount > 0)
+                        <a
+                            href="{{ $this->getCarStockUrl() }}"
+                            @click="open = false"
+                            class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors"
+                        >
+                            <div class="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-green-500/20">
+                                <x-heroicon-s-check-circle class="w-5 h-5 text-green-400" />
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-white leading-snug">一括登録 承認完了</p>
+                                <p class="text-xs text-green-400 font-medium mt-0.5">{{ $bulkCarApprovedCount }}件 公開設定が可能です</p>
+                            </div>
+                        </a>
+                    @endif
+
                     @if ($bulkCarCount > 0)
                         <a
                             href="{{ $this->getBulkCarUploadUrl() }}"

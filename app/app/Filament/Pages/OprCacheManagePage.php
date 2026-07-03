@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
 use App\Domain\Common\Constants\CacheConstants;
 use App\Domain\Common\Services\PermissionCacheService;
@@ -21,7 +22,7 @@ class OprCacheManagePage extends Page implements HasActions
 
     protected static ?string $navigationIcon  = 'heroicon-o-circle-stack';
     protected static string  $view            = 'filament.pages.opr-cache-manage';
-    protected static ?string $navigationGroup = 'システム';
+    protected static ?string $navigationGroup = NavigationGroup::SYSTEM_GROUP->value;
     protected static ?string $title           = 'キャッシュ管理';
     protected static ?int    $navigationSort  = 904;
 

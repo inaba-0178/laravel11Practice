@@ -40,12 +40,13 @@ class AffiliatedStoreResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $user  = Auth::user();
+        $user     = Auth::user();
+        $dealerId = $user->getEffectiveDealerId();
         $query = parent::getEloquentQuery()
             ->with(['dealer', 'affiliatedDealer'])
-            ->where(function ($q) use ($user) {
-                $q->where('dealer_id', $user->dealer_id)
-                  ->orWhere('affiliated_dealer_id', $user->dealer_id);
+            ->where(function ($q) use ($dealerId) {
+                $q->where('dealer_id', $dealerId)
+                  ->orWhere('affiliated_dealer_id', $dealerId);
             });
 
         return $query;

@@ -20,20 +20,21 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Grid;
+use App\Constants\NavigationGroup;
 
 class DealerLoanResource extends Resource
 {
     use HasResourcePermission;
     protected static ?string $model            = StkDealerLoanPlan::class;
     protected static ?string $navigationIcon   = 'heroicon-o-banknotes';
-    protected static ?string $navigationGroup  = 'ディーラーメニュー';
+    protected static ?string $navigationGroup  = NavigationGroup::DEALER_GROUP->value;
     protected static ?string $pluralModelLabel = 'ローンプラン管理';
 
 
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('dealer_id', auth()->user()->dealer_id)
+            ->where('dealer_id', auth()->user()->getEffectiveDealerId())
             ->withTrashed();
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Constants\NavigationGroup;
 use App\Constants\RoleConstants;
 use App\Infrastructure\Eloquent\Log\LogAuth;
 use Filament\Pages\Page;
@@ -21,7 +22,7 @@ class OprLoginLogPage extends Page implements HasTable
 
     protected static ?string $navigationIcon  = 'heroicon-o-arrow-right-end-on-rectangle';
     protected static string  $view            = 'filament.pages.opr-login-log';
-    protected static ?string $navigationGroup = 'システム';
+    protected static ?string $navigationGroup = NavigationGroup::SYSTEM_GROUP->value;
     protected static ?string $title           = 'ログインログ';
     protected static ?int    $navigationSort  = 907;
 

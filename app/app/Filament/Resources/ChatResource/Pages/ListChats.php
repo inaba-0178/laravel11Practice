@@ -99,7 +99,7 @@ class ListChats extends ListRecords
                     Select::make('user_id')
                         ->label('担当者')
                         ->options(fn () => User::where('is_active', 1)
-                            ->where('dealer_id', Auth::user()->dealer_id)
+                            ->where('dealer_id', Auth::user()->getEffectiveDealerId())
                             ->where('id', '!=', Auth::id())
                             ->orderBy('name')
                             ->pluck('name', 'id')
@@ -203,7 +203,7 @@ class ListChats extends ListRecords
 
     private function generateRelatedId(): string
     {
-        $dealerId = Auth::user()->dealer_id;
+        $dealerId = Auth::user()->getEffectiveDealerId();
 
         do {
             $relatedId = $dealerId . '-' . Str::random(8);

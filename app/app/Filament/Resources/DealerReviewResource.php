@@ -41,8 +41,9 @@ class DealerReviewResource extends Resource
         $user  = Auth::user();
         $query = parent::getEloquentQuery()->with(['member', 'activeReplies']);
 
-        if (in_array($user->role, RoleManagement::DEALER_ROLES)) {
-            $query->where('dealer_id', $user->dealer_id);
+        $dealerId = $user->getEffectiveDealerId();
+        if ($dealerId) {
+            $query->where('dealer_id', $dealerId);
         }
 
         return $query;
