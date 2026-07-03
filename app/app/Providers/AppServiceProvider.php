@@ -15,6 +15,7 @@ use App\Infrastructure\Observers\BreezySessionObserver;
 use App\Infrastructure\Observers\CarObserver;
 use App\Infrastructure\Observers\MemberObserver;
 use App\Infrastructure\Observers\MstObserver;
+use App\Listeners\RecordLoginLog;
 use App\Listeners\SendLoginNotification;
 use App\Models\PersonalAccessToken;
 use Illuminate\Auth\Events\Login;
@@ -60,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
         BreezySession::observe(BreezySessionObserver::class);
 
         Event::listen(Login::class, SendLoginNotification::class);
+        Event::listen(Login::class, RecordLoginLog::class);
 
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
