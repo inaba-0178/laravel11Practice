@@ -80,6 +80,15 @@ class User extends Authenticatable implements FilamentUser
         return in_array($this->role, ['dealer', 'dealer_staff']);
     }
 
+    // スーパーユーザーのなりすまし中はセッションのdealer_id、それ以外は自身のdealer_id
+    public function getEffectiveDealerId(): ?int
+    {
+        if ($this->isSuper()) {
+            return \App\Services\ImpersonationService::getDealerId();
+        }
+        return $this->dealer_id;
+    }
+
     // 在籍年数の自動計算
     public function getYearsOfServiceAttribute(): ?int
     {

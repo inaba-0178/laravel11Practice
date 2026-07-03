@@ -23,9 +23,10 @@ class ListInquiries extends ListRecords
 
     public function getTabs(): array
     {
+        $dealerId  = Auth::user()?->getEffectiveDealerId();
         $baseQuery = fn (Builder $query) => $query->when(
-            !in_array(Auth::user()?->role, ['super', 'admin']) && Auth::user()?->dealer_id,
-            fn ($q) => $q->where('dealer_id', Auth::user()->dealer_id)
+            $dealerId,
+            fn ($q) => $q->where('dealer_id', $dealerId)
         );
 
         return [
@@ -33,20 +34,16 @@ class ListInquiries extends ListRecords
                 ->modifyQueryUsing(fn (Builder $query) => $baseQuery($query)
                     ->where('status', InquiryStatus::NEW))
                 ->badge(StkInquiry::where('status', InquiryStatus::NEW)
-                    ->when(
-                        !in_array(Auth::user()?->role, ['super', 'admin']) && Auth::user()?->dealer_id,
-                        fn ($q) => $q->where('dealer_id', Auth::user()->dealer_id)
-                    )->count())
+                    ->when($dealerId, fn ($q) => $q->where('dealer_id', $dealerId))
+                    ->count())
                 ->badgeColor('warning'),
 
             'draft' => Tab::make('一時保存')
                 ->modifyQueryUsing(fn (Builder $query) => $baseQuery($query)
                     ->where('status', InquiryStatus::DRAFT))
                 ->badge(StkInquiry::where('status', InquiryStatus::DRAFT)
-                    ->when(
-                        !in_array(Auth::user()?->role, ['super', 'admin']) && Auth::user()?->dealer_id,
-                        fn ($q) => $q->where('dealer_id', Auth::user()->dealer_id)
-                    )->count() ?: null)
+                    ->when($dealerId, fn ($q) => $q->where('dealer_id', $dealerId))
+                    ->count() ?: null)
                 ->badgeColor('info'),
 
             'replied' => Tab::make('返信済み')

@@ -105,6 +105,8 @@ class OprDealerImpersonatePage extends Page
 
     public function confirmImpersonate(): void
     {
+        abort_unless(auth()->user()?->role === RoleConstants::SUPER, 403);
+
         if (!$this->selectedDealerId || !$this->selectedDealerName) return;
 
         ImpersonationService::set($this->selectedDealerId, $this->selectedDealerName);
@@ -118,6 +120,8 @@ class OprDealerImpersonatePage extends Page
 
     public function clearImpersonate(): void
     {
+        abort_unless(auth()->user()?->role === RoleConstants::SUPER, 403);
+
         ImpersonationService::clear();
 
         Notification::make()

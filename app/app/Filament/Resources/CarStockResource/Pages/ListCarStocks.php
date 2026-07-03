@@ -23,7 +23,7 @@ class ListCarStocks extends ListRecords
 
     public function getTabs(): array
     {
-        $dealerId = Auth::user()?->dealer_id;
+        $dealerId = Auth::user()?->getEffectiveDealerId();
 
         return [
             'available' => Tab::make('公開中')

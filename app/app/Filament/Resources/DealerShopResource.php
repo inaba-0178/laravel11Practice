@@ -45,7 +45,7 @@ class DealerShopResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('id', Auth::user()?->dealer_id);
+            ->where('id', Auth::user()?->getEffectiveDealerId());
     }
 
     public static function form(Form $form): Form

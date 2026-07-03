@@ -43,8 +43,9 @@ class UserResource extends Resource
         $lowerRoles = RoleConstants::getLowerOrEqualRoles($role);
         $query      = parent::getEloquentQuery()->whereIn('role', $lowerRoles);
 
-        if (in_array($role, RoleManagement::DEALER_ROLES)) {
-            $query->where('dealer_id', $user->dealer_id);
+        $dealerId = $user->getEffectiveDealerId();
+        if ($dealerId) {
+            $query->where('dealer_id', $dealerId);
         }
 
         return $query;

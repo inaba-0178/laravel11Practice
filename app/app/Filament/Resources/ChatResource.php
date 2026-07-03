@@ -105,8 +105,15 @@ class ChatResource extends Resource
             ->where('is_active', 1)
             ->with(['messages' => fn ($q) => $q->latest()->limit(1), 'roomUsers']);
 
-        // super/admin は全ルーム閲覧可能
+        // super/admin はなりすまし中のみ絞り込み
         if (in_array($role, ['super', 'admin'])) {
+            $dealerId = Auth::user()?->getEffectiveDealerId();
+            if ($dealerId) {
+                return $query->whereHas('roomUsers', function (Builder $q) use ($dealerId) {
+                    $q->where('user_type', UserType::STAFF)
+                      ->whereIn('user_id', \App\Models\User::where('dealer_id', $dealerId)->pluck('id')->map(fn($id) => (string) $id));
+                });
+            }
             return $query;
         }
 

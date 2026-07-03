@@ -34,7 +34,7 @@ class DealerLoanResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('dealer_id', auth()->user()->dealer_id)
+            ->where('dealer_id', auth()->user()->getEffectiveDealerId())
             ->withTrashed();
     }
 

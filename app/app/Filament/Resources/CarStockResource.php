@@ -35,7 +35,7 @@ class CarStockResource extends Resource
         return $table
             ->query(
                 StkCar::query()
-                    ->where('dealer_id', Auth::user()?->dealer_id)
+                    ->where('dealer_id', Auth::user()?->getEffectiveDealerId())
                     ->whereIn('status', [
                         CarStatus::APPROVED_PENDING,
                         CarStatus::SCHEDULED,
