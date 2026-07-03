@@ -8,10 +8,12 @@ use App\Constants\CarStatus;
 use App\Constants\InquiryStatus;
 use App\Domain\Shared\Constants\UserType;
 use App\Filament\Pages\BulkCarUploadPage;
+use App\Filament\Resources\CarApprovalResource\Pages\ListCarApprovals;
 use App\Filament\Resources\ChatResource\Pages\ListChats;
 use App\Filament\Resources\InquiryResource\Pages\ListInquiries;
 use App\Infrastructure\Eloquent\User\Message;
 use App\Infrastructure\Eloquent\User\StkBulkUploadBatch;
+use App\Infrastructure\Eloquent\User\StkCar;
 use App\Infrastructure\Eloquent\User\StkInquiry;
 use Livewire\Component;
 
@@ -20,6 +22,7 @@ class NotificationBell extends Component
     public int $chatUnreadCount    = 0;
     public int $inquiryCount       = 0;
     public int $bulkCarCount       = 0;
+    public int $carApprovalCount   = 0;
     public int $totalCount         = 0;
 
     public function mount(): void
@@ -32,7 +35,8 @@ class NotificationBell extends Component
         $this->loadChatUnreadCount();
         $this->loadInquiryCount();
         $this->loadBulkCarCount();
-        $this->totalCount = $this->chatUnreadCount + $this->inquiryCount + $this->bulkCarCount;
+        $this->loadCarApprovalCount();
+        $this->totalCount = $this->chatUnreadCount + $this->inquiryCount + $this->bulkCarCount + $this->carApprovalCount;
     }
 
     private function loadChatUnreadCount(): void
@@ -62,6 +66,16 @@ class NotificationBell extends Component
             ->count();
     }
 
+    private function loadCarApprovalCount(): void
+    {
+        $user = auth()->user();
+        if (!$user || !in_array($user->role, ['super', 'admin'])) return;
+
+        $this->carApprovalCount = StkCar::whereNull('bulk_upload_key')
+            ->where('status', CarStatus::PENDING)
+            ->count();
+    }
+
     private function loadBulkCarCount(): void
     {
         $user = auth()->user();
@@ -87,6 +101,11 @@ class NotificationBell extends Component
     public function getBulkCarUploadUrl(): string
     {
         return BulkCarUploadPage::getUrl();
+    }
+
+    public function getCarApprovalUrl(): string
+    {
+        return ListCarApprovals::getUrl();
     }
 
     #[\Livewire\Attributes\On('messages-read-by-staff')]

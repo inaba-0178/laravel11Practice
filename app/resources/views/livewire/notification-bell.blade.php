@@ -42,8 +42,9 @@
             x-transition:leave="transition ease-in duration-75"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            :style="`position: fixed; top: ${top}px; right: ${right}px; transform-origin: top right;`"
-            class="w-72 rounded-2xl bg-gray-900 shadow-xl ring-1 ring-white/10 z-[9999] overflow-hidden"
+            :style="`position: fixed; top: ${top}px; right: ${right}px; transform-origin: top right; background-color: #111827;`"
+            class="w-72 rounded-2xl shadow-2xl z-[9999] overflow-hidden"
+            style="background-color: #111827; border: 1px solid rgba(255,255,255,0.1);"
             @click.outside="open = false"
         >
             {{-- ヘッダー --}}
@@ -82,6 +83,22 @@
                             <div class="min-w-0">
                                 <p class="text-sm font-medium text-white leading-snug">問い合わせ</p>
                                 <p class="text-xs text-amber-400 font-medium mt-0.5">{{ $inquiryCount }}件の新規</p>
+                            </div>
+                        </a>
+                    @endif
+
+                    @if ($carApprovalCount > 0)
+                        <a
+                            href="{{ $this->getCarApprovalUrl() }}"
+                            @click="open = false"
+                            class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors"
+                        >
+                            <div class="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/20">
+                                <x-heroicon-s-clipboard-document-check class="w-5 h-5 text-amber-400" />
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-white leading-snug">車両承認</p>
+                                <p class="text-xs text-amber-400 font-medium mt-0.5">{{ $carApprovalCount }}件の承認待ち</p>
                             </div>
                         </a>
                     @endif
