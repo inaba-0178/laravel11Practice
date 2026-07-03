@@ -11,7 +11,7 @@
         }
     }"
     x-on:click.outside="open = false"
-    wire:poll.30s="loadUnreadCount"
+    wire:poll.30s="loadAllCounts"
     class="relative flex items-center"
 >
     {{-- ベルボタン --}}
@@ -23,11 +23,11 @@
     >
         <x-heroicon-o-bell class="w-5 h-5" />
 
-        @if ($unreadCount > 0)
+        @if ($totalCount > 0)
             <span
                 class="absolute flex items-center justify-center rounded-full text-white font-bold"
                 style="top:1px; right:1px; min-width:18px; height:18px; background-color:#ef4444; font-size:10px; line-height:1; padding:0 3px; border:2px solid #374151; z-index:10;"
-            >{{ $unreadCount > 99 ? '99+' : $unreadCount }}</span>
+            >{{ $totalCount > 99 ? '99+' : $totalCount }}</span>
         @endif
     </div>
 
@@ -52,20 +52,40 @@
             </div>
 
             {{-- コンテンツ --}}
-            @if ($unreadCount > 0)
-                <a
-                    href="{{ $this->getChatListUrl() }}"
-                    @click="open = false"
-                    class="flex items-center gap-3 mx-3 mb-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors"
-                >
-                    <div class="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-indigo-500/20">
-                        <x-heroicon-s-chat-bubble-left-ellipsis class="w-5 h-5 text-indigo-400" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-sm font-medium text-white leading-snug">未読メッセージ</p>
-                        <p class="text-xs text-pink-400 font-medium mt-0.5">{{ $unreadCount }}件の未読</p>
-                    </div>
-                </a>
+            @if ($totalCount > 0)
+                <div class="mx-3 mb-3 flex flex-col gap-1">
+                    @if ($chatUnreadCount > 0)
+                        <a
+                            href="{{ $this->getChatListUrl() }}"
+                            @click="open = false"
+                            class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors"
+                        >
+                            <div class="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-indigo-500/20">
+                                <x-heroicon-s-chat-bubble-left-ellipsis class="w-5 h-5 text-indigo-400" />
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-white leading-snug">未読メッセージ</p>
+                                <p class="text-xs text-pink-400 font-medium mt-0.5">{{ $chatUnreadCount }}件の未読</p>
+                            </div>
+                        </a>
+                    @endif
+
+                    @if ($inquiryCount > 0)
+                        <a
+                            href="{{ $this->getInquiryListUrl() }}"
+                            @click="open = false"
+                            class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors"
+                        >
+                            <div class="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/20">
+                                <x-heroicon-s-envelope class="w-5 h-5 text-amber-400" />
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-white leading-snug">問い合わせ</p>
+                                <p class="text-xs text-amber-400 font-medium mt-0.5">{{ $inquiryCount }}件の新規</p>
+                            </div>
+                        </a>
+                    @endif
+                </div>
             @else
                 <div class="px-4 pb-4 text-sm text-gray-500 text-center py-3">
                     通知はありません
