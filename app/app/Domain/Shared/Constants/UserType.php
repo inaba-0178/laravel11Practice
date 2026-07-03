@@ -15,7 +15,7 @@ final class UserType
         return $role ?? 'dealer';
     }
 
-    public static function getDisplayName(object $user, string $userType): string
+    public static function getDisplayName(?object $user, string $userType): string
     {
         if ($userType === self::STAFF) {
             return $user->name ?? '不明';

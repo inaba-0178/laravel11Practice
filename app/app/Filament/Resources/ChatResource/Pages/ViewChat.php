@@ -216,16 +216,15 @@ class ViewChat extends Page
             ->toArray();
 
         if (!empty($unreadIds)) {
-            foreach ($unreadIds as $messageId) {
-                MessageRead::firstOrCreate(
-                    [
-                        'message_id' => $messageId,
-                        'user_id'    => $authId,
-                        'user_type'  => UserType::STAFF,
-                    ],
-                    ['read_at' => now()]
-                );
-            }
+            $now = now();
+            MessageRead::insertOrIgnore(
+                array_map(fn($id) => [
+                    'message_id' => $id,
+                    'user_id'    => $authId,
+                    'user_type'  => UserType::STAFF,
+                    'read_at'    => $now,
+                ], $unreadIds)
+            );
 
             broadcast(new MessageReadEvent(
                 roomId:     $this->record->id,
@@ -233,6 +232,8 @@ class ViewChat extends Page
                 userType:   UserType::STAFF,
                 messageIds: $unreadIds,
             ));
+
+            $this->dispatch('messages-read-by-staff')->to('notification-bell');
         }
 
         $this->messages = $messages->map(function ($message) use ($authId) {

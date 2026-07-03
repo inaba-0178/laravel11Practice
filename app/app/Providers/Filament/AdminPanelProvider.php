@@ -62,6 +62,10 @@ class AdminPanelProvider extends PanelProvider
             )
             ->broadcasting()
             ->renderHook(
+                'panels::user-menu.before',
+                fn () => auth()->check() ? view('livewire.notification-bell-wrapper') : ''
+            )
+            ->renderHook(
                 'panels::head.end',
                 fn () => '<script>
                     document.addEventListener("DOMContentLoaded", function() {
